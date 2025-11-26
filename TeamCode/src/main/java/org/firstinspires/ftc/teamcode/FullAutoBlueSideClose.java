@@ -18,7 +18,7 @@ public class FullAutoBlueSideClose extends AbstractFullAuto {
 
     @Override
     public Pose2d getInitialPose() {
-        return new Pose2d(-48, -48, Math.toRadians(45));
+        return new Pose2d(-50.04, -43.655, Math.toRadians(69.1));
 
     }
 
@@ -33,8 +33,8 @@ public class FullAutoBlueSideClose extends AbstractFullAuto {
     public void runFirstPath(MecanumDrive drive, Pose2d initialPose) {
         TrajectoryActionBuilder goToLaunchSpot = drive.actionBuilder(initialPose)
                 .setTangent(Math.toRadians(35))
-                .strafeToConstantHeading(new Vector2d(-9, -23))
-                .turn(Math.toRadians(-7));
+                .strafeToConstantHeading(new Vector2d(-9, -23));
+//                .turn(Math.toRadians(-7));
 
 //                .splineToConstantHeading(new Vector2d(-9, -23), Math.toRadians(-90));
         Action trajectoryActionChosen = goToLaunchSpot.build();
@@ -45,14 +45,14 @@ public class FullAutoBlueSideClose extends AbstractFullAuto {
     public void runSecondPath(MecanumDrive drive) {
         Action trajectoryActionChosen;
         TrajectoryActionBuilder goToIntake = drive.actionBuilder(getCurrentPos(drive))
-                .turn(Math.toRadians(-135))
+                .turn(Math.toRadians(-159.1))
                 .strafeToConstantHeading(new Vector2d(-12, -48));
         trajectoryActionChosen = goToIntake.build();
         Actions.runBlocking(trajectoryActionChosen);
         intakemotor.setPower(1);
         transfermotor.setPower(1);
         TrajectoryActionBuilder goToLaunchSpot2 = drive.actionBuilder(getCurrentPos(drive))
-                .turn(Math.toRadians(135))
+                .turn(Math.toRadians(159.1))
                 .strafeToConstantHeading(new Vector2d(-12, -23));
 
         trajectoryActionChosen = goToLaunchSpot2.build();

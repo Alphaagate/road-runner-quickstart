@@ -56,6 +56,9 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         kickTimer.reset();
 
         waitForStart();
+//        while (opModeIsActive()) {
+//
+//        }
         visionPortal.close();
 
         // First run
