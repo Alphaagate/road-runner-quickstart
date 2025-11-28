@@ -31,8 +31,10 @@ public class FullAutoRedSideFar extends AbstractFullAuto {
     public void runFirstPath(MecanumDrive drive, Pose2d initialPose) {
         TrajectoryActionBuilder goToLaunchSpot = drive.actionBuilder(initialPose)
                 .setTangent(Math.toRadians(180))
-                .strafeToConstantHeading(new Vector2d(53, 15))
-                .turn(Math.toRadians(-22));
+//                .strafeToConstantHeading(new Vector2d(53, 15))
+//                .turn(Math.toRadians(-22));
+                .strafeToSplineHeading(new Vector2d(53, 15), Math.toRadians(-20)); //option 3
+
         Action trajectoryActionChosen = goToLaunchSpot.build();
         Actions.runBlocking(trajectoryActionChosen);
 
@@ -43,8 +45,10 @@ public class FullAutoRedSideFar extends AbstractFullAuto {
     public void runSecondPath(MecanumDrive drive) {
         Action trajectoryActionChosen;
         TrajectoryActionBuilder goToIntake = drive.actionBuilder(getCurrentPos(drive))
-                .strafeToConstantHeading(new Vector2d(36, 20))
-                .turn(Math.toRadians(112));
+//                .strafeToConstantHeading(new Vector2d(36, 20))
+//                .turn(Math.toRadians(112));
+                .splineToSplineHeading(new Pose2d(36, 15, Math.toRadians(90)), Math.toRadians(90));   //Option 2
+
         trajectoryActionChosen = goToIntake.build();
         Actions.runBlocking(trajectoryActionChosen);
 
@@ -53,22 +57,23 @@ public class FullAutoRedSideFar extends AbstractFullAuto {
 
         TrajectoryActionBuilder adjustIntakePos = drive.actionBuilder(getCurrentPos(drive))
                 .strafeToConstantHeading(new Vector2d(36, 50), new TranslationalVelConstraint(30.0))
-                .splineToConstantHeading(new Vector2d(36, 15), Math.toRadians(0));
+//                .splineToConstantHeading(new Vector2d(36, 15), Math.toRadians(0));
+                .splineToSplineHeading(new Pose2d(53, 15, Math.toRadians(-20)), Math.toRadians(135));   //to launch spot
+
         trajectoryActionChosen = adjustIntakePos.build();
         Actions.runBlocking(trajectoryActionChosen);
-        TrajectoryActionBuilder goToLaunchSpot2 = drive.actionBuilder(getCurrentPos(drive))
-                .turn(Math.toRadians(-112))
-                .strafeToConstantHeading(new Vector2d(53, 15));
-
-        trajectoryActionChosen = goToLaunchSpot2.build();
-        Actions.runBlocking(trajectoryActionChosen);
+//        TrajectoryActionBuilder goToLaunchSpot2 = drive.actionBuilder(getCurrentPos(drive))
+//
+//
+//        trajectoryActionChosen = goToLaunchSpot2.build();
+//        Actions.runBlocking(trajectoryActionChosen);
     }
 
     @Override
     public void parkOutsideLaunch(MecanumDrive drive) {
         Action trajectoryActionChosen;
         TrajectoryActionBuilder goToPark = drive.actionBuilder(getCurrentPos(drive))
-                .splineToConstantHeading(new Vector2d(36, 45), Math.toRadians(-90));
+                .strafeToConstantHeading(new Vector2d(36, 30));
         trajectoryActionChosen = goToPark.build();
         Actions.runBlocking(trajectoryActionChosen);
 

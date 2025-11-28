@@ -51,8 +51,10 @@ public class FullAutoRedSideClose extends AbstractFullAuto {
         transfermotor.setPower(1);
 
         TrajectoryActionBuilder goToLaunchSpot2 = drive.actionBuilder(getCurrentPos(drive))
-                .turn(Math.toRadians(-135-24.1))
-                .strafeToConstantHeading(new Vector2d(-12, 23));
+//                .turn(Math.toRadians(-135-24.1))
+//                .strafeToConstantHeading(new Vector2d(-12, 23));
+                .splineToSplineHeading(new Pose2d(-12, 23, Math.toRadians(-69.1)), Math.toRadians(90));   //to launch spot
+
         trajectoryActionChosen = goToLaunchSpot2.build();
         Actions.runBlocking(trajectoryActionChosen);
     }
@@ -60,7 +62,7 @@ public class FullAutoRedSideClose extends AbstractFullAuto {
     public void parkOutsideLaunch(MecanumDrive drive) {
         Action trajectoryActionChosen;
         TrajectoryActionBuilder goToPark = drive.actionBuilder(getCurrentPos(drive))
-                .splineToConstantHeading(new Vector2d(-20, 48), Math.toRadians(-90));
+                .strafeToConstantHeading(new Vector2d(-20, 48));
         trajectoryActionChosen = goToPark.build();
         Actions.runBlocking(trajectoryActionChosen);
 
