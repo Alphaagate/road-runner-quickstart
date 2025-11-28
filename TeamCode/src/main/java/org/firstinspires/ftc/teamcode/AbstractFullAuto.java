@@ -110,15 +110,15 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
     public void kickBalls() {
         kickAuto(1); // 1st ball
-
+        intakemotor.setPower(1);
         transfermotor.setPower(1);  // Push 2nd ball forward
         waitForTime(kickCycleTime*0.15); //wait for 2nd / 3rd ready
 
         kickAuto(2); // 2nd ball
 
-        intakemotor.setPower(1); // Push 3rd ball forward
-        transfermotor.setPower(1);
-        waitForTime(kickCycleTime*0.15); //wait for the intake stop completely
+//        intakemotor.setPower(1); // Push 3rd ball forward
+//        transfermotor.setPower(1);
+//        waitForTime(kickCycleTime*0.15); //wait for the intake stop completely
 
         kickAuto(3); // kick 3rd ball
     }
