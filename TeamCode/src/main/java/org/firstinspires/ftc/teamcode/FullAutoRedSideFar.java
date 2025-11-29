@@ -23,8 +23,8 @@ public class FullAutoRedSideFar extends AbstractFullAuto {
 
     @Override
     public void setOuttakePower() {
-        outtakemotorright.setPower(-0.46*0.95);
-        outtakemotorleft.setPower(0.46*0.95);
+        outtakemotorright.setPower(-0.35);
+        outtakemotorleft.setPower(0.35);
     }
 
     @Override
@@ -53,12 +53,12 @@ public class FullAutoRedSideFar extends AbstractFullAuto {
         Actions.runBlocking(trajectoryActionChosen);
 
         intakemotor.setPower(1);
-        transfermotor.setPower(1);
+        transfermotor.setPower(-1);
 
         TrajectoryActionBuilder adjustIntakePos = drive.actionBuilder(getCurrentPos(drive))
                 .strafeToConstantHeading(new Vector2d(36, 50), new TranslationalVelConstraint(30.0))
 //                .splineToConstantHeading(new Vector2d(36, 15), Math.toRadians(0));
-                .splineToSplineHeading(new Pose2d(53, 15, Math.toRadians(-20)), Math.toRadians(135));   //to launch spot
+                .strafeToSplineHeading(new Vector2d(53, 15), Math.toRadians(-20));   //to launch spot
 
         trajectoryActionChosen = adjustIntakePos.build();
         Actions.runBlocking(trajectoryActionChosen);

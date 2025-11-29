@@ -25,13 +25,13 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     private VisionPortal visionPortal;
     protected DcMotorEx intakemotor = null;
     private ElapsedTime kickTimer = new ElapsedTime();
-    private double kickCycleTime = 2.5;
+    private double kickCycleTime = 3;
     private Servo kicker;
     protected DcMotorEx outtakemotorright = null;
     protected DcMotorEx outtakemotorleft = null;
     protected DcMotorEx transfermotor = null;
     private Servo outtakeservo = null;
-    private double home = 0, kick = 0.3;
+    private double home = 0, kick = 0.26;
 
     @Override
     public void runOpMode() {
@@ -47,18 +47,16 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
 
         // Wait for the DS start button to be touched.
-        telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
-        telemetry.addData(">", "Touch START to start OpMode");
+        telemetry.addData("outtake motor left speed:", outtakemotorleft.getVelocity());
+        telemetry.addData("outtake motor right speed:", outtakemotorright.getVelocity());
+
         telemetry.update();
 
-        kicker.setPosition(0.1);
+        kicker.setPosition(0.075);
         outtakeservo.setPosition(0.475);
         kickTimer.reset();
 
         waitForStart();
-        while (opModeIsActive()) {
-
-        }
         visionPortal.close();
 
         // First run
@@ -73,13 +71,12 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         transfermotor.setPower(0);
         runSecondPath(drive);
 
-//        waitForTime(2);
-//        intakemotor.setPower(0);
-//        transfermotor.setPower(0);
+        intakemotor.setPower(0);
+        transfermotor.setPower(0);
 
         setOuttakePower();
         kickBalls();
-//        parkOutsideLaunch(drive);
+        parkOutsideLaunch(drive);
 
         if (isStopRequested()) {
             return;
@@ -112,16 +109,16 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         kickAuto(1); // 1st ball
 
         intakemotor.setPower(1);
-        transfermotor.setPower(0.6);  // Push 2nd ball forward
+        transfermotor.setPower(-0.5);  // Push 2nd ball forward
         waitForTime(kickCycleTime*0.15); //wait for 2nd / 3rd ready
 
-//        intakemotor.setPower(0); //stop
-//        transfermotor.setPower(0);
+        transfermotor.setPower(0);
+        waitForTime(kickCycleTime*0.5); //wait for motor stop
+
         kickAuto(2); // 2nd ball
 
-//        intakemotor.setPower(1);
-//        transfermotor.setPower(1);  // Push 3rd ball forward
-        waitForTime(kickCycleTime*0.2); //wait for the intake stop completely
+        transfermotor.setPower(-0.5);  // Push 3rd ball forward
+        waitForTime(kickCycleTime*0.5); //wait for the intake stop completely
 
         kickAuto(3); // kick 3rd ball
     }
@@ -131,7 +128,8 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         kicker.setPosition(kick);
         waitForTime(kickCycleTime*0.25);
 
-        kicker.setPosition(0.1);
+        kicker.setPosition(0.075);
+
         if (ballNumber<3) {
             //So kicker has time to go back to position 0
             waitForTime(kickCycleTime*0.25);

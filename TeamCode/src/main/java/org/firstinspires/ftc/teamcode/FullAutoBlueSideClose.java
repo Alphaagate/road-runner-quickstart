@@ -50,7 +50,7 @@ public class FullAutoBlueSideClose extends AbstractFullAuto {
         trajectoryActionChosen = goToIntake.build();
         Actions.runBlocking(trajectoryActionChosen);
         intakemotor.setPower(1);
-        transfermotor.setPower(1);
+        transfermotor.setPower(-1);
         TrajectoryActionBuilder goToLaunchSpot2 = drive.actionBuilder(getCurrentPos(drive))
 //                .turn(Math.toRadians(159.1))
 //                .strafeToConstantHeading(new Vector2d(-12, -23));
