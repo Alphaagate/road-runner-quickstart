@@ -47,10 +47,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
 
         // Wait for the DS start button to be touched.
-        telemetry.addData("outtake motor left speed:", outtakemotorleft.getVelocity());
-        telemetry.addData("outtake motor right speed:", outtakemotorright.getVelocity());
 
-        telemetry.update();
 
         kicker.setPosition(0.075);
         outtakeservo.setPosition(0.475);
@@ -60,9 +57,12 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         visionPortal.close();
 
         // First run
-        setOuttakePower();
+
 
         runFirstPath(drive, initialPose);
+        setOuttakePower();
+
+        waitForTime(0.6); //wait for the outtake to slow down
         kickBalls();
 
 
@@ -80,7 +80,9 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
         if (isStopRequested()) {
             return;
-        }
+
+            }
+
 
     }
 
@@ -110,7 +112,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
         intakemotor.setPower(1);
         transfermotor.setPower(-0.5);  // Push 2nd ball forward
-        waitForTime(kickCycleTime*0.15); //wait for 2nd / 3rd ready
+        waitForTime(kickCycleTime*0.3); //wait for 2nd / 3rd ready
 
         transfermotor.setPower(0);
         waitForTime(kickCycleTime*0.5); //wait for motor stop
@@ -118,29 +120,41 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         kickAuto(2); // 2nd ball
 
         transfermotor.setPower(-0.5);  // Push 3rd ball forward
-        waitForTime(kickCycleTime*0.5); //wait for the intake stop completely
+        waitForTime(kickCycleTime* 0.5); //wait for the intake stop,and out take back to speed completely
 
         kickAuto(3); // kick 3rd ball
     }
 
 
     protected void kickAuto(int ballNumber) {
+        telemetry.addData("outtake motor left speed:", outtakemotorleft.getVelocity());
+        telemetry.addData("outtake motor right speed:", outtakemotorright.getVelocity());
+
         kicker.setPosition(kick);
         waitForTime(kickCycleTime*0.25);
 
-        kicker.setPosition(0.075);
+        kicker.setPosition(0.055);
 
         if (ballNumber<3) {
             //So kicker has time to go back to position 0
             waitForTime(kickCycleTime*0.25);
+
         }
+        telemetry.addData("outtake motor left speed:", outtakemotorleft.getVelocity());
+        telemetry.addData("outtake motor right speed:", outtakemotorright.getVelocity());
+
+        telemetry.update();
     }
 
     private void waitForTime(double waitTime) {
         kickTimer.reset();
+
         while (kickTimer.seconds() < waitTime) {
             //do nothing, just wait
+            telemetry.addData("outtake motor left speed:", outtakemotorleft.getVelocity());
+            telemetry.addData("outtake motor right speed:", outtakemotorright.getVelocity());
 
+            telemetry.update();
             //telemetry.addData("waiting to kick: ", kickTimer.time());
         }
     }

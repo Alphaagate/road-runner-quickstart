@@ -22,8 +22,10 @@ public class FullAutoBlueSideFar extends AbstractFullAuto {
 
     @Override
     public void setOuttakePower() {
-        outtakemotorright.setPower(-0.35);
-        outtakemotorleft.setPower(0.35);
+//        outtakemotorright.setPower(-0.35);
+//        outtakemotorleft.setPower(0.35);
+        outtakemotorright.setVelocity(-1120);
+        outtakemotorleft.setVelocity(1120);
     }
 
     @Override
@@ -35,7 +37,7 @@ public class FullAutoBlueSideFar extends AbstractFullAuto {
 
 //                .splineToSplineHeading(new Pose2d(53, -15, Math.toRadians(20)), Math.toRadians(180));   //option 2
 
-                .strafeToSplineHeading(new Vector2d(53, -15), Math.toRadians(20)); //option 3
+                .strafeToSplineHeading(new Vector2d(53, -15), Math.toRadians(22)); //option 3
 
 
         Action trajectoryActionChosen = goToLaunchSpot.build();
@@ -45,6 +47,7 @@ public class FullAutoBlueSideFar extends AbstractFullAuto {
     @Override
     public void runSecondPath(MecanumDrive drive) {
         Action trajectoryActionChosen;
+
         TrajectoryActionBuilder goToIntake = drive.actionBuilder(getCurrentPos(drive))
 //                .splineToConstantHeading(new Vector2d(36, -15), Math.toRadians(-90))
 //                .turn(Math.toRadians(-110));      //Option 1
@@ -56,7 +59,7 @@ public class FullAutoBlueSideFar extends AbstractFullAuto {
         Actions.runBlocking(trajectoryActionChosen);
 
         intakemotor.setPower(1);
-        transfermotor.setPower(-1);
+        transfermotor.setPower(-0.5);
 
         //   old two steps path intake and launch
 //        TrajectoryActionBuilder adjustIntakePos = drive.actionBuilder(getCurrentPos(drive))
@@ -76,17 +79,13 @@ public class FullAutoBlueSideFar extends AbstractFullAuto {
         // New step path to intake and launch spot
         TrajectoryActionBuilder adjustIntakePos = drive.actionBuilder(getCurrentPos(drive))
                 .strafeToConstantHeading(new Vector2d(36, -64), new TranslationalVelConstraint(30.0))  // to intake spot
-                .strafeToSplineHeading(new Vector2d(53, -15), Math.toRadians(20));   //to launch spot
+                .strafeToSplineHeading(new Vector2d(53, -15), Math.toRadians(22));   //to launch spot
 
         trajectoryActionChosen = adjustIntakePos.build();
         Actions.runBlocking(trajectoryActionChosen);
         intakemotor.setPower(0);
         transfermotor.setPower(0);
-        TrajectoryActionBuilder goToLaunchTwo = drive.actionBuilder(getCurrentPos(drive))
-                .strafeToSplineHeading(new Vector2d(53, -15), Math.toRadians(20));   //to launch spot
 
-        trajectoryActionChosen = goToLaunchTwo.build();
-        Actions.runBlocking(trajectoryActionChosen);
 
 
 
