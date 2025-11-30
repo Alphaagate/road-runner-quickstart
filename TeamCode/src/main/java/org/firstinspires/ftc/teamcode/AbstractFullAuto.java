@@ -31,7 +31,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     protected DcMotorEx outtakemotorleft = null;
     protected DcMotorEx transfermotor = null;
     private Servo outtakeservo = null;
-    private double home = 0, kick = 0.26;
+    private double home = 0, kick = 0.3;
 
     @Override
     public void runOpMode() {
@@ -55,24 +55,21 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
         waitForStart();
         visionPortal.close();
+        setOuttakePower();
 
         // First run
 
 
         runFirstPath(drive, initialPose);
-        setOuttakePower();
 
-        waitForTime(0.6); //wait for the outtake to slow down
+        waitForTime(1); //wait for the outtake to slow down
         kickBalls();
 
 
         // 2nd run
-        intakemotor.setPower(0);
-        transfermotor.setPower(0);
+//        intakemotor.setPower(0);
+//        transfermotor.setPower(0);
         runSecondPath(drive);
-
-        intakemotor.setPower(0);
-        transfermotor.setPower(0);
 
         setOuttakePower();
         kickBalls();
@@ -109,13 +106,14 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
     public void kickBalls() {
         kickAuto(1); // 1st ball
+        waitForTime(kickCycleTime*0.3); //wait for 2nd / 3rd ready
 
         intakemotor.setPower(1);
         transfermotor.setPower(-0.5);  // Push 2nd ball forward
         waitForTime(kickCycleTime*0.3); //wait for 2nd / 3rd ready
 
         transfermotor.setPower(0);
-        waitForTime(kickCycleTime*0.5); //wait for motor stop
+        waitForTime(kickCycleTime*0.2); //wait for motor stop
 
         kickAuto(2); // 2nd ball
 

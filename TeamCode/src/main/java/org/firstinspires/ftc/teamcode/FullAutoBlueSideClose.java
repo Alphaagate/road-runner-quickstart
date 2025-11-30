@@ -18,14 +18,14 @@ public class FullAutoBlueSideClose extends AbstractFullAuto {
 
     @Override
     public Pose2d getInitialPose() {
-        return new Pose2d(-50.04, -43.655, Math.toRadians(69.1));
+        return new Pose2d(-57, -47, Math.toRadians(55));
 
     }
 
     @Override
     public void setOuttakePower() {
-        outtakemotorright.setVelocity(-800);
-        outtakemotorleft.setPower(800);
+        outtakemotorright.setPower(-0.37);
+        outtakemotorleft.setPower(0.37);
 
     }
 
@@ -33,7 +33,7 @@ public class FullAutoBlueSideClose extends AbstractFullAuto {
     public void runFirstPath(MecanumDrive drive, Pose2d initialPose) {
         TrajectoryActionBuilder goToLaunchSpot = drive.actionBuilder(initialPose)
                 .setTangent(Math.toRadians(35))
-                .strafeToConstantHeading(new Vector2d(-9, -23));
+                .strafeToConstantHeading(new Vector2d(-12, -12));
 //                .turn(Math.toRadians(-7));
 
 //                .splineToConstantHeading(new Vector2d(-9, -23), Math.toRadians(-90));
@@ -47,7 +47,7 @@ public class FullAutoBlueSideClose extends AbstractFullAuto {
         Action trajectoryActionChosen;
         TrajectoryActionBuilder goToIntake = drive.actionBuilder(getCurrentPos(drive))
                 .turn(Math.toRadians(-159.1))
-                .strafeToConstantHeading(new Vector2d(-12, -48));
+                .strafeToConstantHeading(new Vector2d(-24, -48));
         trajectoryActionChosen = goToIntake.build();
         Actions.runBlocking(trajectoryActionChosen);
         intakemotor.setPower(1);
@@ -55,7 +55,7 @@ public class FullAutoBlueSideClose extends AbstractFullAuto {
         TrajectoryActionBuilder goToLaunchSpot2 = drive.actionBuilder(getCurrentPos(drive))
 //                .turn(Math.toRadians(159.1))
 //                .strafeToConstantHeading(new Vector2d(-12, -23));
-                .splineToSplineHeading(new Pose2d(-12, -23, Math.toRadians(69.1)), Math.toRadians(-90));   //to launch spot
+                .splineToSplineHeading(new Pose2d(-12, -12, Math.toRadians(55)), Math.toRadians(-90));   //to launch spot
 
 
         trajectoryActionChosen = goToLaunchSpot2.build();
