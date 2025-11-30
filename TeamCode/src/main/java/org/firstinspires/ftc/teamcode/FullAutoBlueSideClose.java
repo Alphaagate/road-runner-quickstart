@@ -41,6 +41,7 @@ public class FullAutoBlueSideClose extends AbstractFullAuto {
         Actions.runBlocking(trajectoryActionChosen);
     }
 
+
     @Override
     public void runSecondPath(MecanumDrive drive) {
         Action trajectoryActionChosen;

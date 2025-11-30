@@ -28,6 +28,7 @@ public class FullAutoRedSideClose extends AbstractFullAuto {
     }
 
 
+
     @Override
     public void runFirstPath(MecanumDrive drive, Pose2d initialPose) {
         TrajectoryActionBuilder goToLaunchSpot = drive.actionBuilder(initialPose)
