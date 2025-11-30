@@ -61,8 +61,6 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
 
         runFirstPath(drive, initialPose);
-
-        waitForTime(1); //wait for the outtake to slow down
         kickBalls();
 
 
@@ -71,7 +69,6 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 //        transfermotor.setPower(0);
         runSecondPath(drive);
 
-        setOuttakePower();
         kickBalls();
         parkOutsideLaunch(drive);
 

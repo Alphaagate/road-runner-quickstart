@@ -24,8 +24,10 @@ public class FullAutoBlueSideClose extends AbstractFullAuto {
 
     @Override
     public void setOuttakePower() {
-        outtakemotorright.setPower(-0.4);
-        outtakemotorleft.setPower(0.4);
+//        outtakemotorright.setPower(-0.4);
+//        outtakemotorleft.setPower(0.4);
+        outtakemotorright.setVelocity(-965);
+        outtakemotorleft.setVelocity(965);
 
     }
 
@@ -55,7 +57,7 @@ public class FullAutoBlueSideClose extends AbstractFullAuto {
         TrajectoryActionBuilder goToLaunchSpot2 = drive.actionBuilder(getCurrentPos(drive))
 //                .turn(Math.toRadians(159.1))
 //                .strafeToConstantHeading(new Vector2d(-12, -23));
-                .strafeToSplineHeading(new Vector2d(-12, -12), Math.toRadians(55));   //to launch spot
+                .strafeToSplineHeading(new Vector2d(-24, 0), Math.toRadians(55));   //to launch spot
 
 
         trajectoryActionChosen = goToLaunchSpot2.build();
