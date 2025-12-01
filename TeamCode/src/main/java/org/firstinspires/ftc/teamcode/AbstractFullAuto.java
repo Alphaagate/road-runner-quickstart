@@ -68,7 +68,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 //        intakemotor.setPower(0);
 //        transfermotor.setPower(0);
         runSecondPath(drive);
-
+        waitForTime(1.5);
         kickBalls();
         parkOutsideLaunch(drive);
 
