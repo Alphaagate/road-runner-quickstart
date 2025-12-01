@@ -35,7 +35,9 @@ public class FullAutoRedSideClose extends AbstractFullAuto {
     public void runFirstPath(MecanumDrive drive, Pose2d initialPose) {
         TrajectoryActionBuilder goToLaunchSpot = drive.actionBuilder(initialPose)
                 //.lineToYSplineHeading(24, Math.toRadians(0))
-                .strafeToConstantHeading(new Vector2d(-14, 22));
+//                .strafeToConstantHeading(new Vector2d(-14, 22))
+                .strafeToSplineHeading(new Vector2d(-14, 22), Math.toRadians(-45));   //to launch spot
+
 
         Action trajectoryActionChosen = goToLaunchSpot.build();
         Actions.runBlocking(trajectoryActionChosen);
@@ -46,17 +48,17 @@ public class FullAutoRedSideClose extends AbstractFullAuto {
         Action trajectoryActionChosen;
         TrajectoryActionBuilder goToIntake = drive.actionBuilder(getCurrentPos(drive))
                 .turn(Math.toRadians(135+24.1))    //24.1 = 69.1 - 45
-                .strafeToConstantHeading(new Vector2d(-24, 40));
+                .strafeToConstantHeading(new Vector2d(-23, 42));
         trajectoryActionChosen = goToIntake.build();
         Actions.runBlocking(trajectoryActionChosen);
 
         intakemotor.setPower(1);
-        transfermotor.setPower(-0.75);
+        transfermotor.setPower(-0.6);
 
         TrajectoryActionBuilder goToLaunchSpot2 = drive.actionBuilder(getCurrentPos(drive))
 //                .turn(Math.toRadians(-135-24.1))
 //                .strafeToConstantHeading(new Vector2d(-12, 23));
-                .strafeToSplineHeading(new Vector2d(-24, 14), Math.toRadians(-52));   //to launch spot
+                .strafeToSplineHeading(new Vector2d(-24, 14), Math.toRadians(-45));   //to launch spot
 
         trajectoryActionChosen = goToLaunchSpot2.build();
         Actions.runBlocking(trajectoryActionChosen);
