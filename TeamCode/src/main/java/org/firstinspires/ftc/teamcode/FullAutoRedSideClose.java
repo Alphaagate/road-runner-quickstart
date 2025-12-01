@@ -35,7 +35,7 @@ public class FullAutoRedSideClose extends AbstractFullAuto {
     public void runFirstPath(MecanumDrive drive, Pose2d initialPose) {
         TrajectoryActionBuilder goToLaunchSpot = drive.actionBuilder(initialPose)
                 //.lineToYSplineHeading(24, Math.toRadians(0))
-                .strafeToConstantHeading(new Vector2d(-14, 20));
+                .strafeToConstantHeading(new Vector2d(-14, 22));
 
         Action trajectoryActionChosen = goToLaunchSpot.build();
         Actions.runBlocking(trajectoryActionChosen);
@@ -56,7 +56,7 @@ public class FullAutoRedSideClose extends AbstractFullAuto {
         TrajectoryActionBuilder goToLaunchSpot2 = drive.actionBuilder(getCurrentPos(drive))
 //                .turn(Math.toRadians(-135-24.1))
 //                .strafeToConstantHeading(new Vector2d(-12, 23));
-                .strafeToSplineHeading(new Vector2d(-24, 14), Math.toRadians(-55));   //to launch spot
+                .strafeToSplineHeading(new Vector2d(-24, 14), Math.toRadians(-52));   //to launch spot
 
         trajectoryActionChosen = goToLaunchSpot2.build();
         Actions.runBlocking(trajectoryActionChosen);
