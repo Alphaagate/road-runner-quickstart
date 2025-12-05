@@ -23,20 +23,23 @@ public class FullAutoBlueSideClose extends AbstractFullAuto {
     }
 
     @Override
-    public void setOuttakePower() {
+    public void setOuttakePowerForClose() {
 //        outtakemotorright.setPower(-0.4);
 //        outtakemotorleft.setPower(0.4);
         outtakemotorright.setVelocity(-965);
         outtakemotorleft.setVelocity(965);
-
+    }
+    public void setOuttakePowerForFar() {
     }
 
     @Override
     public void runFirstPath(MecanumDrive drive, Pose2d initialPose) {
         TrajectoryActionBuilder goToLaunchSpot = drive.actionBuilder(initialPose)
                 .setTangent(Math.toRadians(35))
-                .strafeToConstantHeading(new Vector2d(-12, -12));
+//                .strafeToConstantHeading(new Vector2d(-12, -12));
 //                .turn(Math.toRadians(-7));
+                .strafeToSplineHeading(new Vector2d(-12, -12), Math.toRadians(47));   //to launch spot
+
 
 //                .splineToConstantHeading(new Vector2d(-9, -23), Math.toRadians(-90));
         Action trajectoryActionChosen = goToLaunchSpot.build();
@@ -57,7 +60,8 @@ public class FullAutoBlueSideClose extends AbstractFullAuto {
         TrajectoryActionBuilder goToLaunchSpot2 = drive.actionBuilder(getCurrentPos(drive))
 //                .turn(Math.toRadians(159.1))
 //                .strafeToConstantHeading(new Vector2d(-12, -23));
-                .strafeToSplineHeading(new Vector2d(-24, 0), Math.toRadians(55));   //to launch spot
+                .strafeToSplineHeading(new Vector2d(-24, -3), Math.toRadians(47));   //to launch spot
+
 
 
         trajectoryActionChosen = goToLaunchSpot2.build();

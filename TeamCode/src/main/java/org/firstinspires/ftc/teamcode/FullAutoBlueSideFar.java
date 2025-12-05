@@ -21,12 +21,19 @@ public class FullAutoBlueSideFar extends AbstractFullAuto {
     }
 
     @Override
-    public void setOuttakePower() {
+    public void setOuttakePowerForFar() {
+
 //        outtakemotorright.setPower(-0.44);
 //        outtakemotorleft.setVelocity(0.44);
-        outtakemotorright.setVelocity(-1120);
-        outtakemotorleft.setVelocity(1120);
+        outtakemotorright.setVelocity(-1100);
+        outtakemotorleft.setVelocity(1100);
+        waitForTime(2.6);
     }
+
+    @Override
+    public void setOuttakePowerForClose() {
+    }
+
 
     @Override
     public void runFirstPath(MecanumDrive drive, Pose2d initialPose) {
@@ -78,7 +85,7 @@ public class FullAutoBlueSideFar extends AbstractFullAuto {
 
         // New step path to intake and launch spot
         TrajectoryActionBuilder adjustIntakePos = drive.actionBuilder(getCurrentPos(drive))
-                .strafeToConstantHeading(new Vector2d(36, -64), new TranslationalVelConstraint(30.0))  // to intake spot
+                .strafeToConstantHeading(new Vector2d(36, -50), new TranslationalVelConstraint(30.0))  // to intake spot
                 .strafeToSplineHeading(new Vector2d(53, -15), Math.toRadians(22));   //to launch spot
 
         trajectoryActionChosen = adjustIntakePos.build();

@@ -55,7 +55,8 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
         waitForStart();
         visionPortal.close();
-        setOuttakePower();
+        setOuttakePowerForClose();
+        setOuttakePowerForFar();
 
         // First run
 
@@ -83,7 +84,8 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
 
     public abstract Pose2d getInitialPose();
-    public abstract void setOuttakePower();
+    public abstract void setOuttakePowerForClose();
+    public abstract void setOuttakePowerForFar();
     public abstract void runFirstPath(MecanumDrive drive, Pose2d initialPose);
     public abstract void runSecondPath(MecanumDrive drive);
     public abstract void parkOutsideLaunch(MecanumDrive drive);
@@ -143,10 +145,10 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         telemetry.update();
     }
 
-    private void waitForTime(double waitTime) {
+    protected void waitForTime(double waitTime) {
         kickTimer.reset();
 
-        while (kickTimer.seconds() < waitTime) {
+        while (this.opModeIsActive() && kickTimer.seconds() < waitTime) {
             //do nothing, just wait
             telemetry.addData("outtake motor left speed:", outtakemotorleft.getVelocity());
             telemetry.addData("outtake motor right speed:", outtakemotorright.getVelocity());

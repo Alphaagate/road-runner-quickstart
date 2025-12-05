@@ -22,11 +22,16 @@ public class FullAutoRedSideFar extends AbstractFullAuto {
     }
 
     @Override
-    public void setOuttakePower() {
-        outtakemotorright.setVelocity(-1120);
-        outtakemotorleft.setVelocity(1120);
+    public void setOuttakePowerForFar() {
+        outtakemotorright.setVelocity(-1080);
+        outtakemotorleft.setVelocity(1080);
 //        outtakemotorright.setPower(-0.44);
 //        outtakemotorleft.setVelocity(0.44);
+        waitForTime(1.7);
+    }
+
+    @Override
+    public void setOuttakePowerForClose() {
     }
 
     @Override
