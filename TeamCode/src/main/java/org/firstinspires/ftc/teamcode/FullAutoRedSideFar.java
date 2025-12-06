@@ -40,7 +40,7 @@ public class FullAutoRedSideFar extends AbstractFullAuto {
                 .setTangent(Math.toRadians(180))
 //                .strafeToConstantHeading(new Vector2d(53, 15))
 //                .turn(Math.toRadians(-22));
-                .strafeToSplineHeading(new Vector2d(53, 15), Math.toRadians(-20)); //option 3
+                .strafeToSplineHeading(new Vector2d(53, 15), Math.toRadians(-22)); //option 3
 
         Action trajectoryActionChosen = goToLaunchSpot.build();
         Actions.runBlocking(trajectoryActionChosen);
@@ -63,9 +63,9 @@ public class FullAutoRedSideFar extends AbstractFullAuto {
         transfermotor.setPower(-0.5);
 
         TrajectoryActionBuilder adjustIntakePos = drive.actionBuilder(getCurrentPos(drive))
-                .strafeToConstantHeading(new Vector2d(36, 50), new TranslationalVelConstraint(30.0))
+                .strafeToConstantHeading(new Vector2d(36, 54), new TranslationalVelConstraint(30.0))
 //                .splineToConstantHeading(new Vector2d(36, 15), Math.toRadians(0));
-                .strafeToSplineHeading(new Vector2d(53, 15), Math.toRadians(-20));   //to launch spot
+                .strafeToSplineHeading(new Vector2d(53, 15), Math.toRadians(-22));   //to launch spot
 
         trajectoryActionChosen = adjustIntakePos.build();
         Actions.runBlocking(trajectoryActionChosen);

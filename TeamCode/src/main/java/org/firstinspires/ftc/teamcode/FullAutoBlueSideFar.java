@@ -85,7 +85,7 @@ public class FullAutoBlueSideFar extends AbstractFullAuto {
 
         // New step path to intake and launch spot
         TrajectoryActionBuilder adjustIntakePos = drive.actionBuilder(getCurrentPos(drive))
-                .strafeToConstantHeading(new Vector2d(36, -50), new TranslationalVelConstraint(30.0))  // to intake spot
+                .strafeToConstantHeading(new Vector2d(36, -54), new TranslationalVelConstraint(30.0))  // to intake spot
                 .strafeToSplineHeading(new Vector2d(53, -15), Math.toRadians(22));   //to launch spot
 
         trajectoryActionChosen = adjustIntakePos.build();
