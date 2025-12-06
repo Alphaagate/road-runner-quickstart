@@ -33,6 +33,8 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     private Servo outtakeservo = null;
     private double home = 0, kick = 0.3;
 
+    private MecanumDrive drive;
+
     @Override
     public void runOpMode() {
 
@@ -42,7 +44,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         //63 is the edge of tile minus half the length of the robot
         Pose2d initialPose = getInitialPose();
 
-        MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
+        drive = new MecanumDrive(hardwareMap, initialPose);
         initAprilTag();
 
 
@@ -152,6 +154,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
             //do nothing, just wait
             telemetry.addData("outtake motor left speed:", outtakemotorleft.getVelocity());
             telemetry.addData("outtake motor right speed:", outtakemotorright.getVelocity());
+            telemetry.addData("getcurrentpos:", this.getCurrentPos(drive));
 
             telemetry.update();
             //telemetry.addData("waiting to kick: ", kickTimer.time());

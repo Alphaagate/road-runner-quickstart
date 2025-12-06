@@ -17,7 +17,7 @@ public class FullAutoRedSideClose extends AbstractFullAuto {
 
     @Override
     public Pose2d getInitialPose() {
-        return new Pose2d(-57, 47, Math.toRadians(-55));
+        return new Pose2d(-58.3, 44.5, Math.toRadians(-55));
     }
 
     @Override
@@ -54,7 +54,7 @@ public class FullAutoRedSideClose extends AbstractFullAuto {
         trajectoryActionChosen = goToIntake.build();
         Actions.runBlocking(trajectoryActionChosen);
 
-        intakemotor.setPower(1);
+        intakemotor.setPower(0.3);
 //        transfermotor.setPower(-0.15);
 
         TrajectoryActionBuilder goToLaunchSpot2 = drive.actionBuilder(getCurrentPos(drive))

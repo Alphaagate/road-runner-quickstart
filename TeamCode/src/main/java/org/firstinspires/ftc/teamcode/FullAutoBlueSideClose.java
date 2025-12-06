@@ -18,7 +18,7 @@ public class FullAutoBlueSideClose extends AbstractFullAuto {
 
     @Override
     public Pose2d getInitialPose() {
-        return new Pose2d(-57, -47, Math.toRadians(55));
+        return new Pose2d(-58.3, -45, Math.toRadians(55));
 
     }
 
@@ -51,16 +51,16 @@ public class FullAutoBlueSideClose extends AbstractFullAuto {
     public void runSecondPath(MecanumDrive drive) {
         Action trajectoryActionChosen;
         TrajectoryActionBuilder goToIntake = drive.actionBuilder(getCurrentPos(drive))
-                .turn(Math.toRadians(-159.1))
-                .strafeToConstantHeading(new Vector2d(-24, -40));
+                .turn(Math.toRadians(-137))
+                .strafeToConstantHeading(new Vector2d(-24, -30));
         trajectoryActionChosen = goToIntake.build();
         Actions.runBlocking(trajectoryActionChosen);
-        intakemotor.setPower(1);
+        intakemotor.setPower(0.3);
 //        transfermotor.setPower(-0.75);
         TrajectoryActionBuilder goToLaunchSpot2 = drive.actionBuilder(getCurrentPos(drive))
-//                .turn(Math.toRadians(159.1))
-//                .strafeToConstantHeading(new Vector2d(-12, -23));
-                .strafeToSplineHeading(new Vector2d(-24, -3), Math.toRadians(47));   //to launch spot
+//                .turn(Math.toRadians(137))
+//                .strafeToConstantHeading(new Vector2d(-30, -15));
+                .strafeToSplineHeading(new Vector2d(-24, -3 ), Math.toRadians(47));   //to launch spot
 
 
 
@@ -74,7 +74,7 @@ public class FullAutoBlueSideClose extends AbstractFullAuto {
     public void parkOutsideLaunch(MecanumDrive drive) {
         Action trajectoryActionChosen;
         TrajectoryActionBuilder goToPark = drive.actionBuilder(getCurrentPos(drive))
-                .splineToConstantHeading(new Vector2d(-12, -48), Math.toRadians(0));
+                .splineToConstantHeading(new Vector2d(-12, -40), Math.toRadians(0));
         trajectoryActionChosen = goToPark.build();
         Actions.runBlocking(trajectoryActionChosen);
 
