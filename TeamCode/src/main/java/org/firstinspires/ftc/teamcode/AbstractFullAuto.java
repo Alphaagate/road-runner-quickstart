@@ -30,7 +30,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     protected DcMotorEx outtakemotorright = null;
     protected DcMotorEx outtakemotorleft = null;
     protected DcMotorEx transfermotor = null;
-    private Servo outtakeservo = null;
+//    private Servo outtakeservo = null;
     private double home = 0, kick = 0.3;
 
     private MecanumDrive drive;
@@ -52,7 +52,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
 
         kicker.setPosition(0.075);
-        outtakeservo.setPosition(0.475);
+//        outtakeservo.setPosition(0.475);
         kickTimer.reset();
 
         waitForStart();
@@ -96,7 +96,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
     private void initHardware() {
         outtakemotorright = hardwareMap.get(DcMotorEx.class, "outtakemotorright");
-        outtakeservo = hardwareMap.get(Servo.class, "outtakeservo");
+//        outtakeservo = hardwareMap.get(Servo.class, "outtakeservo");
         transfermotor = hardwareMap.get(DcMotorEx.class, "transfermotor");
         outtakemotorleft = hardwareMap.get(DcMotorEx.class,"outtakemotorleft");
         intakemotor = hardwareMap.get(DcMotorEx.class,"intakemotor");
