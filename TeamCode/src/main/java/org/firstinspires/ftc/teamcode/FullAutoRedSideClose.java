@@ -50,12 +50,12 @@ public class FullAutoRedSideClose extends AbstractFullAuto {
         Action trajectoryActionChosen;
         TrajectoryActionBuilder goToIntake = drive.actionBuilder(getCurrentPos(drive))
                 .turn(Math.toRadians(135+24.1))    //24.1 = 69.1 - 45
-                .strafeToConstantHeading(new Vector2d(-24, 40));
+                .strafeToConstantHeading(new Vector2d(-24, 35));
         trajectoryActionChosen = goToIntake.build();
         Actions.runBlocking(trajectoryActionChosen);
 
         intakemotor.setPower(0.3);
-//        transfermotor.setPower(-0.15);
+        transfermotor.setPower(0);
 
         TrajectoryActionBuilder goToLaunchSpot2 = drive.actionBuilder(getCurrentPos(drive))
 //                .turn(Math.toRadians(-135-24.1))
