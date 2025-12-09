@@ -19,19 +19,45 @@ public class FullAutoBlueSideFar extends AbstractFullAuto {
     public Pose2d getInitialPose() {
         return new Pose2d(63, -15, Math.toRadians(0));
     }
+    @Override
+    protected Action getPathAction() {
+
+        return drive.actionBuilder(getInitialPose())
+                .strafeToSplineHeading(new Vector2d(53, -15), Math.toRadians(22)) //option 3
+                .afterTime(0, this.getLaunchAction())
+                .strafeToSplineHeading(new Vector2d(-12, 24), Math.toRadians(90))   //change heading
+                .afterDisp(1, this.getIntakeAction())
+                .strafeToConstantHeading(new Vector2d(-12, 48))                     //to intake
+                .strafeToSplineHeading(new Vector2d(-12, 12), Math.toRadians(-42))  //to launch spot
+                .afterTime(0, this.getLaunchAction())
+                .strafeToConstantHeading(new Vector2d(-12, 35))                     //park outside launch
+                .build();
+    }
 
     @Override
-    public void setOuttakePowerForFar() {
+    protected Action getLaunchAction() {
 
+//        Action launchAction = new Action() {
+//            @Override
+//            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+//                this.setOuttakePowerForClose();
+//                this.kickBalls();
+//                return false;
+//            }
+//        };
+//        return launchAction;
+
+        return telemetryPacket -> {
+            this.setOuttakePower();
+            this.kickBalls();
+            return false;
+        };
+    }
+    public void setOuttakePower() {
 //        outtakemotorright.setPower(-0.44);
 //        outtakemotorleft.setVelocity(0.44);
         outtakemotorright.setVelocity(-1100);
         outtakemotorleft.setVelocity(1100);
-        waitForTime(2.6);
-    }
-
-    @Override
-    public void setOuttakePowerForClose() {
     }
 
 

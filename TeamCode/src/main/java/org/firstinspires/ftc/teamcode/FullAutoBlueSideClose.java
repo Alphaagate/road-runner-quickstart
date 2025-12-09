@@ -17,68 +17,56 @@ public class FullAutoBlueSideClose extends AbstractFullAuto {
 
 
     @Override
+    protected Action getPathAction() {
+
+        return drive.actionBuilder(getInitialPose())
+                .strafeToSplineHeading(new Vector2d(-12, -12), Math.toRadians(47))   //to launch spot
+                .afterTime(0, this.getLaunchAction())
+                .strafeToSplineHeading(new Vector2d(-12, -24), Math.toRadians(-90))   //change heading
+                .afterDisp(1, this.getIntakeAction())
+                .strafeToConstantHeading(new Vector2d(-12, -48))                     //to intake
+                .strafeToSplineHeading(new Vector2d(-12, -12), Math.toRadians(47))  //to launch spot
+                .afterTime(0, this.getLaunchAction())
+                .strafeToConstantHeading(new Vector2d(-12, -35))                     //park outside launch
+                .build();
+    }
+
+
+    @Override
+    protected Action getLaunchAction() {
+
+//        Action launchAction = new Action() {
+//            @Override
+//            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+//                this.setOuttakePowerForClose();
+//                this.kickBalls();
+//                return false;
+//            }
+//        };
+//        return launchAction;
+
+        return telemetryPacket -> {
+            this.setOuttakePower();
+            this.kickBalls();
+            return false;
+        };
+    }
+
+
+    @Override
     public Pose2d getInitialPose() {
         return new Pose2d(-58.3, -45, Math.toRadians(55));
 
     }
 
-    @Override
-    public void setOuttakePowerForClose() {
+    public void setOuttakePower() {
 //        outtakemotorright.setPower(-0.4);
 //        outtakemotorleft.setPower(0.4);
         outtakemotorright.setVelocity(-965);
         outtakemotorleft.setVelocity(965);
     }
-    public void setOuttakePowerForFar() {
-    }
-
-    @Override
-    public void runFirstPath(MecanumDrive drive, Pose2d initialPose) {
-        TrajectoryActionBuilder goToLaunchSpot = drive.actionBuilder(initialPose)
-                .setTangent(Math.toRadians(35))
-//                .strafeToConstantHeading(new Vector2d(-12, -12));
-//                .turn(Math.toRadians(-7));
-                .strafeToSplineHeading(new Vector2d(-12, -12), Math.toRadians(47));   //to launch spot
 
 
-//                .splineToConstantHeading(new Vector2d(-9, -23), Math.toRadians(-90));
-        Action trajectoryActionChosen = goToLaunchSpot.build();
-        Actions.runBlocking(trajectoryActionChosen);
-    }
-
-
-    @Override
-    public void runSecondPath(MecanumDrive drive) {
-        Action trajectoryActionChosen;
-        TrajectoryActionBuilder goToIntake = drive.actionBuilder(getCurrentPos(drive))
-                .turn(Math.toRadians(-137))
-                .strafeToConstantHeading(new Vector2d(-24, -35));
-        trajectoryActionChosen = goToIntake.build();
-        Actions.runBlocking(trajectoryActionChosen);
-        intakemotor.setPower(0.3);
-        transfermotor.setPower(-0);
-        TrajectoryActionBuilder goToLaunchSpot2 = drive.actionBuilder(getCurrentPos(drive))
-//                .turn(Math.toRadians(137))
-//                .strafeToConstantHeading(new Vector2d(-30, -15));
-                .strafeToSplineHeading(new Vector2d(-24, -3 ), Math.toRadians(47));   //to launch spot
-
-
-
-        trajectoryActionChosen = goToLaunchSpot2.build();
-
-        Actions.runBlocking(trajectoryActionChosen);
-
-
-    }
-    @Override
-    public void parkOutsideLaunch(MecanumDrive drive) {
-        Action trajectoryActionChosen;
-        TrajectoryActionBuilder goToPark = drive.actionBuilder(getCurrentPos(drive))
-                .splineToConstantHeading(new Vector2d(-12, -40), Math.toRadians(0));
-        trajectoryActionChosen = goToPark.build();
-        Actions.runBlocking(trajectoryActionChosen);
-
-    }
 
 
 }

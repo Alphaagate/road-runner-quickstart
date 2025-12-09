@@ -3,7 +3,10 @@ package org.firstinspires.ftc.teamcode;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -33,7 +36,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 //    private Servo outtakeservo = null;
     private double home = 0, kick = 0.3;
 
-    private MecanumDrive drive;
+    protected MecanumDrive drive;
 
     @Override
     public void runOpMode() {
@@ -47,9 +50,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         drive = new MecanumDrive(hardwareMap, initialPose);
         initAprilTag();
 
-
         // Wait for the DS start button to be touched.
-
 
         kicker.setPosition(0.075);
 //        outtakeservo.setPosition(0.475);
@@ -57,40 +58,36 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
         waitForStart();
         visionPortal.close();
-        setOuttakePowerForClose();
-        setOuttakePowerForFar();
 
         // First run
+        Action pathAction = getPathAction();
 
-
-        runFirstPath(drive, initialPose);
-
-        kickBalls();
-
-
-        // 2nd run
-//        intakemotor.setPower(0);
-//        transfermotor.setPower(0);
-        runSecondPath(drive);
-        kickBalls();
-        parkOutsideLaunch(drive);
+        while(opModeIsActive() && pathAction.run(new TelemetryPacket())) {
+            //TODO: log the position to dashboard
+            getCurrentPos(drive);
+        }
 
         if (isStopRequested()) {
             return;
-
-            }
-
-
+        }
     }
 
 
 
+    protected abstract Action getPathAction();
+
+    protected abstract Action getLaunchAction();
+
+    protected Action getIntakeAction() {
+        return telemetryPacket -> {
+            intakemotor.setPower(0.3);
+            transfermotor.setPower(-0.3);
+
+            return false;
+        };
+    }
+
     public abstract Pose2d getInitialPose();
-    public abstract void setOuttakePowerForClose();
-    public abstract void setOuttakePowerForFar();
-    public abstract void runFirstPath(MecanumDrive drive, Pose2d initialPose);
-    public abstract void runSecondPath(MecanumDrive drive);
-    public abstract void parkOutsideLaunch(MecanumDrive drive);
 
 
 
@@ -181,6 +178,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         }
 
     }
+
     private void telemetryAprilTag () {
 
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
