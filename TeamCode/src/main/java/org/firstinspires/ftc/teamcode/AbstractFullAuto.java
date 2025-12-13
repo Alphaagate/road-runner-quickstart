@@ -1,12 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
 
-import androidx.annotation.NonNull;
-
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -20,10 +19,10 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
-
 public abstract class AbstractFullAuto extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
+    FtcDashboard dashboard = FtcDashboard.getInstance();
     private AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
     protected DcMotorEx intakemotor = null;
@@ -62,9 +61,14 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         // First run
         Action pathAction = getPathAction();
 
-        while(opModeIsActive() && pathAction.run(new TelemetryPacket())) {
-            //TODO: log the position to dashboard
-            getCurrentPos(drive);
+        while(opModeIsActive()) {
+
+            TelemetryPacket packet = new TelemetryPacket();
+
+            if (!pathAction.run(packet)) {
+                break;
+            }
+            drawAndLogTelemetry(packet);
         }
 
         if (isStopRequested()) {
@@ -72,6 +76,77 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         }
     }
 
+    private void drawAndLogTelemetry(TelemetryPacket packet) {
+        Pose2d pose = getCurrentPos(drive);
+        drawRobot(packet, pose);   // Draw robot on overlay
+
+// === Log basic pose ===
+        packet.put("x", pose.position.x);
+        packet.put("y", pose.position.y);
+        packet.put("headingDeg", Math.toDegrees(pose.heading.toDouble()));
+
+// === Log motor velocity ===
+        packet.put("outtake velocity left", drive.outtakemotorleft.getVelocity());
+        packet.put("outtake velocity right", drive.outtakemotorright.getVelocity());
+
+
+        // === Log PID error (your custom controller) ===
+        // Example:
+//            packet.put("lift_error", drive.leftFront.getPositionError());
+
+
+        // Send packet to dashboard
+        dashboard.sendTelemetryPacket(packet);
+    }
+
+    protected void drawRobot(TelemetryPacket packet, Pose2d pose) {
+        Canvas field = packet.fieldOverlay();
+
+        double x = pose.position.x;
+        double y = pose.position.y;
+        double heading = pose.heading.toDouble();
+
+        // === ROBOT DIMENSIONS (adjust to your bot!) ===
+        final double ROBOT_LENGTH = 18; // inches
+        final double ROBOT_WIDTH  = 18;
+
+        double halfL = ROBOT_LENGTH / 2.0;
+        double halfW = ROBOT_WIDTH / 2.0;
+
+        // Draw center
+        field.strokeCircle(x, y, 1);
+
+        // Draw heading arrow
+        double arrowLength = 9;
+        double arrowX = x + arrowLength * Math.cos(heading);
+        double arrowY = y + arrowLength * Math.sin(heading);
+        field.strokeLine(x, y, arrowX, arrowY);
+
+        // Draw rotated rectangle robot body
+        field.strokePolygon(
+                new double[]{x - halfL, x + halfL, x + halfL, x - halfL},
+                new double[]{y - halfW, y - halfW, y + halfW, y + halfW}
+
+        );
+
+        // Draw wheels
+        field.strokeCircle(x + halfL, y + halfW, 1);
+        field.strokeCircle(x + halfL, y - halfW, 1);
+        field.strokeCircle(x - halfL, y + halfW, 1);
+        field.strokeCircle(x - halfL, y - halfW, 1);
+    }
+
+    protected void logPidTelemetry(Pose2d targetPose, TelemetryPacket packet){
+
+        Pose2d curr = getCurrentPos(drive);
+        double xError = targetPose.position.x - curr.position.x;
+        double yError = targetPose.position.y - curr.position.y;
+        double hError = AngleUtil.normDelta(targetPose.heading.toDouble() - curr.heading.toDouble());
+
+        packet.put("xError", xError);
+        packet.put("yError", yError);
+        packet.put("headingErrorDeg", Math.toDegrees(hError));
+    }
 
 
     protected abstract Action getPathAction();

@@ -17,15 +17,15 @@ public class MeepMeepTesting {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
 
-        Action action = myBot.getDrive().actionBuilder(new Pose2d(-58.3, -45, Math.toRadians(55)))
-                .strafeToSplineHeading(new Vector2d(-12, -12), Math.toRadians(47))   //to launch spot
-//                .afterTime(0, this.getLaunchAction())
-                .strafeToSplineHeading(new Vector2d(-12, -24), Math.toRadians(-90))   //change heading
-//                .afterDisp(1, this.getIntakeAction())
-                .strafeToConstantHeading(new Vector2d(-12, -48))                     //to intake
-                .strafeToSplineHeading(new Vector2d(-12, -12), Math.toRadians(47))  //to launch spot
-//                .afterTime(0, this.getLaunchAction())
-                .strafeToConstantHeading(new Vector2d(-12, -35))                     //park outside launch
+        Action action = myBot.getDrive().actionBuilder(new Pose2d(-58.3, 44.5, Math.toRadians(-55)))
+                .strafeToSplineHeading(new Vector2d(-12, 12), Math.toRadians(-42))  //to launch spot
+//                .stopAndAdd(this.getLaunchAction())
+                .strafeToSplineHeading(new Vector2d(-12, 24), Math.toRadians(90))   //change heading
+//                .afterDisp(0, this.getIntakeAction())
+                .strafeToConstantHeading(new Vector2d(-12, 48))                     //to intake
+                .strafeToSplineHeading(new Vector2d(-12, 12), Math.toRadians(-42))  //to launch spot
+//                .stopAndAdd(this.getLaunchAction())
+                .strafeToConstantHeading(new Vector2d(-12, 35))                     //park outside launch
                 .build();
 
         myBot.runAction(action);

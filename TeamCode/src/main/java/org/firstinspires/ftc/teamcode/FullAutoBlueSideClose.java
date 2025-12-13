@@ -20,7 +20,7 @@ public class FullAutoBlueSideClose extends AbstractFullAuto {
     protected Action getPathAction() {
 
         return drive.actionBuilder(getInitialPose())
-                .strafeToSplineHeading(new Vector2d(-12, -12), Math.toRadians(47))   //to launch spot
+                .strafeToSplineHeading(new Vector2d(-12, -12), Math.toRadians(47))//to launch spot
                 .stopAndAdd(this.getLaunchAction())
                 .strafeToSplineHeading(new Vector2d(-12, -24), Math.toRadians(-90))   //change heading
                 .afterDisp(0, this.getIntakeAction())
