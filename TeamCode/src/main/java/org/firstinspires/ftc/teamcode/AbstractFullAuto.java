@@ -40,7 +40,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        initHardware();
+//        initHardware();
 
         //TODO: instantiate your MecanumDrive at a particular pose.
         //63 is the edge of tile minus half the length of the robot
@@ -86,8 +86,6 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         packet.put("headingDeg", Math.toDegrees(pose.heading.toDouble()));
 
 // === Log motor velocity ===
-        packet.put("outtake velocity left", drive.outtakemotorleft.getVelocity());
-        packet.put("outtake velocity right", drive.outtakemotorright.getVelocity());
 
 
         // === Log PID error (your custom controller) ===
@@ -166,18 +164,19 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
 
 
-    private void initHardware() {
-        outtakemotorright = hardwareMap.get(DcMotorEx.class, "outtakemotorright");
-//        outtakeservo = hardwareMap.get(Servo.class, "outtakeservo");
-        transfermotor = hardwareMap.get(DcMotorEx.class, "transfermotor");
-        outtakemotorleft = hardwareMap.get(DcMotorEx.class,"outtakemotorleft");
-        intakemotor = hardwareMap.get(DcMotorEx.class,"intakemotor");
-
-        kicker = hardwareMap.get(Servo.class,"kickservo");
-    }
+//    private void initHardware() {
+//        outtakemotorright = hardwareMap.get(DcMotorEx.class, "outtakemotorright");
+////        outtakeservo = hardwareMap.get(Servo.class, "outtakeservo");
+//        transfermotor = hardwareMap.get(DcMotorEx.class, "transfermotor");
+//        outtakemotorleft = hardwareMap.get(DcMotorEx.class,"outtakemotorleft");
+//        intakemotor = hardwareMap.get(DcMotorEx.class,"intakemotor");
+//
+//        kicker = hardwareMap.get(Servo.class,"kickservo");
+//    }
 
 
     public void kickBalls() {
+
         intakemotor.setPower(0);
         transfermotor.setPower(0); // stop intake and transfer
         kickAuto(1); // 1st ball
@@ -222,15 +221,19 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     protected void waitForTime(double waitTime) {
         kickTimer.reset();
 
-        while (this.opModeIsActive() && kickTimer.seconds() < waitTime) {
+        while (this.opModeIsActive() && kickTimer.seconds() < waitTime) {// && kickTimer.seconds() < waitTime
             //do nothing, just wait
-            telemetry.addData("outtake motor left speed:", outtakemotorleft.getVelocity());
-            telemetry.addData("outtake motor right speed:", outtakemotorright.getVelocity());
-            telemetry.addData("getcurrentpos:", this.getCurrentPos(drive));
-
-            telemetry.update();
+            logInfo();
             //telemetry.addData("waiting to kick: ", kickTimer.time());
         }
+    }
+
+    private void logInfo() {
+        telemetry.addData("outtake motor left speed:", outtakemotorleft.getVelocity());
+        telemetry.addData("outtake motor right speed:", outtakemotorright.getVelocity());
+        telemetry.addData("getcurrentpos:", this.getCurrentPos(drive));
+
+        telemetry.update();
     }
 
     protected Pose2d getCurrentPos(MecanumDrive drive) {

@@ -110,8 +110,8 @@ public final class MecanumDrive {
     public final AccelConstraint defaultAccelConstraint =
             new ProfileAccelConstraint(PARAMS.minProfileAccel, PARAMS.maxProfileAccel);
 
-    public final DcMotorEx leftFront, leftBack, rightBack, rightFront, outtakemotorright, outtakemotorleft, intakemotor, transfermotor;
-    public final Servo kicker;
+    public final DcMotorEx leftFront, leftBack, rightBack, rightFront;
+//    public final Servo kicker;
 
 
     public final VoltageSensor voltageSensor;
@@ -236,14 +236,9 @@ public final class MecanumDrive {
         leftBack = hardwareMap.get(DcMotorEx.class, "backleft");
         rightBack = hardwareMap.get(DcMotorEx.class, "backright");
         rightFront = hardwareMap.get(DcMotorEx.class, "frontright");
-        outtakemotorright = hardwareMap.get(DcMotorEx.class, "outtakemotorright");
-//        outtakeservo = hardwareMap.get(Servo.class, "outtakeservo");
-//        transfermotor = hardwareMap.get(DcMotorEx.class, "transfermotor");
-        outtakemotorleft = hardwareMap.get(DcMotorEx.class,"outtakemotorleft");
-        intakemotor = hardwareMap.get(DcMotorEx.class,"intakemotor");
-        transfermotor = hardwareMap.get(DcMotorEx.class,"transfermotor");
 
-        kicker = hardwareMap.get(Servo.class,"kickservo");
+
+//        kicker = hardwareMap.get(Servo.class,"kickservo");
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -257,9 +252,6 @@ public final class MecanumDrive {
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
         rightBack.setDirection(DcMotorSimple.Direction.FORWARD);
-        outtakemotorleft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-
-        outtakemotorright.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
 
         // TODO: make sure your config has an IMU with this name (can be BNO or BHI)

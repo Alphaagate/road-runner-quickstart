@@ -10,27 +10,26 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Config
-@Autonomous(name = "FULL_AUTO_BLUE_ClOSE_PIXEL", group = "Autonomous")
-public class FullAutoBlueSideClose extends AbstractFullAuto {
+@Autonomous(name = "FULL_AUTO_RED_ClOSE_PIXEL", group = "Autonomous")
+public class FullAutoRedSideCloseOneStack extends AbstractFullAuto {
     @Override
     public Pose2d getInitialPose() {
-        return new Pose2d(-58.3, -45, Math.toRadians(55));
+        return new Pose2d(-58.3, 44.5, Math.toRadians(-55));
     }
     @Override
     protected Action getPathAction() {
 
         return drive.actionBuilder(getInitialPose())
-                .strafeToSplineHeading(new Vector2d(-12, -12), Math.toRadians(47))//to launch spot
+                .strafeToSplineHeading(new Vector2d(-12, 12), Math.toRadians(-42))  //to launch spot
                 .stopAndAdd(this.getLaunchAction())
-                .strafeToSplineHeading(new Vector2d(-12, -24), Math.toRadians(-90))   //change heading
+                .strafeToSplineHeading(new Vector2d(-12, 24), Math.toRadians(90))   //change heading
                 .afterDisp(0, this.getIntakeAction())
-                .strafeToConstantHeading(new Vector2d(-12, -48))                     //to intake
-                .strafeToSplineHeading(new Vector2d(-12, -12), Math.toRadians(47))  //to launch spot
+                .strafeToConstantHeading(new Vector2d(-12, 48))                     //to intake
+                .strafeToSplineHeading(new Vector2d(-12, 12), Math.toRadians(-42))  //to launch spot
                 .stopAndAdd(this.getLaunchAction())
-                .strafeToConstantHeading(new Vector2d(-12, -35))                     //park outside launch
+                .strafeToConstantHeading(new Vector2d(-12, 35))                     //park outside launch
                 .build();
     }
-
 
     @Override
     protected Action getLaunchAction() {
@@ -51,10 +50,7 @@ public class FullAutoBlueSideClose extends AbstractFullAuto {
             return false;
         };
     }
-
     private void setOuttakePower() {
-//        outtakemotorright.setPower(-0.4);
-//        outtakemotorleft.setPower(0.4);
         outtakemotorright.setVelocity(-965);
         outtakemotorleft.setVelocity(965);
     }
