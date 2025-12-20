@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Config
 @Autonomous(name = "FULL_AUTO_BLUE_FAR_PIXEL", group = "Autonomous")
-public class FullAutoBlueSideFarOneStack extends AbstractFullAuto {
+public class FullAutoBlueSideFar1Stack extends AbstractFullAuto {
 
 
     @Override

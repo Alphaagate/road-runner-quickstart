@@ -4,13 +4,14 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Config
-@Autonomous(name = "FULL_AUTO_RED_FAR_PIXEL", group = "Autonomous")
-public class FullAutoRedSideFarTwoStack extends AbstractFullAuto {
+@Autonomous(name = "FULL_AUTO_BLUE_FAR_PIXEL", group = "Autonomous")
+public class FullAutoRedSideFar3Stack extends AbstractFullAuto {
+
+
     @Override
     public Pose2d getInitialPose() {
         return new Pose2d(63, 15, Math.toRadians(0));
@@ -23,18 +24,23 @@ public class FullAutoRedSideFarTwoStack extends AbstractFullAuto {
                 .stopAndAdd(this.getLaunchAction())
                 .strafeToSplineHeading(new Vector2d(36, 24), Math.toRadians(90))
                 .afterDisp(0, this.getIntakeAction())
-                .strafeToConstantHeading(new Vector2d(36, 54), new TranslationalVelConstraint(30.0))  // to intake spot
+                .strafeToConstantHeading(new Vector2d(36, 54))  // to intake spot //, new TranslationalVelConstraint(30.0)
                 .strafeToSplineHeading(new Vector2d(53, 15), Math.toRadians(-22)) //to launch spot
                 .stopAndAdd(this.getLaunchAction())
 
                 .strafeToSplineHeading(new Vector2d(12, 24), Math.toRadians(90))
                 .afterDisp(0, this.getIntakeAction())
-                .strafeToConstantHeading(new Vector2d(12, 54), new TranslationalVelConstraint(30.0))  // to intake spot
+                .strafeToConstantHeading(new Vector2d(12, 54))  // to intake spot //, new TranslationalVelConstraint(30.0)
+                .strafeToSplineHeading(new Vector2d(53, 15), Math.toRadians(-22)) //to launch spot
+                .stopAndAdd(this.getLaunchAction())
+
+                .strafeToSplineHeading(new Vector2d(-12, 24), Math.toRadians(90))
+                .afterDisp(0, this.getIntakeAction())
+                .strafeToConstantHeading(new Vector2d(-12, 48))  // to intake spot //, new TranslationalVelConstraint(30.0)
                 .strafeToSplineHeading(new Vector2d(53, 15), Math.toRadians(-22)) //to launch spot
                 .stopAndAdd(this.getLaunchAction())
                 .strafeToConstantHeading(new Vector2d(36, 30))//park outside launch
                 .build();
-
     }
 
     @Override
@@ -56,7 +62,6 @@ public class FullAutoRedSideFarTwoStack extends AbstractFullAuto {
             return false;
         };
     }
-
     private void setOuttakePower() {
 //        outtakemotorright.setPower(-0.44);
 //        outtakemotorleft.setVelocity(0.44);

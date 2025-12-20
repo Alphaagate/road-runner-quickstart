@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Config
 @Autonomous(name = "FULL_AUTO_RED_ClOSE_PIXEL", group = "Autonomous")
-public class FullAutoRedSideCloseOneStack extends AbstractFullAuto {
+public class FullAutoRedSideClose1Stack extends AbstractFullAuto {
     @Override
     public Pose2d getInitialPose() {
         return new Pose2d(-58.3, 44.5, Math.toRadians(-55));
