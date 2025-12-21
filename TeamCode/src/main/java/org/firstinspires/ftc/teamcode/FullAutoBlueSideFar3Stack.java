@@ -4,7 +4,6 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
@@ -66,7 +65,7 @@ public class FullAutoBlueSideFar3Stack extends AbstractFullAuto {
     private void setOuttakePower() {
 //        outtakemotorright.setPower(-0.44);
 //        outtakemotorleft.setVelocity(0.44);
-        outtakemotorright.setVelocity(-1100);
-        outtakemotorleft.setVelocity(1100);
+        outtakemotor1.setVelocity(-1100);
+        outtakemotor2.setVelocity(1100);
     }
 }

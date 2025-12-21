@@ -20,12 +20,12 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
     protected Action getPathAction() {
 
         return drive.actionBuilder(getInitialPose())
-                .strafeToSplineHeading(new Vector2d(-12, -12), Math.toRadians(47))//to launch spot
+                .strafeToSplineHeading(new Vector2d(-12, -12), Math.toRadians(-90))//to launch spot
                 .stopAndAdd(this.getLaunchAction())
-                .strafeToSplineHeading(new Vector2d(-12, -24), Math.toRadians(-90))   //change heading
+                .strafeToConstantHeading(new Vector2d(-12, -24))   //change heading
                 .afterDisp(0, this.getIntakeAction())
                 .strafeToConstantHeading(new Vector2d(-12, -48))                     //to intake
-                .strafeToSplineHeading(new Vector2d(-12, -12), Math.toRadians(47))  //to launch spot
+                .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot
                 .stopAndAdd(this.getLaunchAction())
                 .strafeToConstantHeading(new Vector2d(-12, -35))                     //park outside launch
                 .build();
@@ -55,8 +55,8 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
     private void setOuttakePower() {
 //        outtakemotorright.setPower(-0.4);
 //        outtakemotorleft.setPower(0.4);
-        outtakemotorright.setVelocity(-965);
-        outtakemotorleft.setVelocity(965);
+        outtakemotor1.setVelocity(-965);
+        outtakemotor2.setVelocity(965);
     }
 
 }
