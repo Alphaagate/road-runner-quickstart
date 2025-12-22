@@ -26,7 +26,7 @@ public class WalkInABox extends LinearOpMode {
         telemetry.addData("Starting WalkInABox", "");
         telemetry.update();
 
-        frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
+        frontLeft = hardwareMap.get(DcMotorEx.class, "frontleft");
         backLeft = hardwareMap.get(DcMotorEx.class, "backleft");
         frontRight = hardwareMap.get(DcMotorEx.class, "frontright");
         backRight = hardwareMap.get(DcMotorEx.class, "backright");
