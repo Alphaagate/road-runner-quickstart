@@ -11,10 +11,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Config
 @Autonomous
 public class WalkInABox extends LinearOpMode {
-    static final double DRIVE_POWER = 1;
-    static final double TURN_POWER  = 1;
-    static final long DRIVE_FORWARD_MS = 1800; // adjust!
-    static final long TURN_90_DEG_MS   = 700;  // adjust!
+    static final double DRIVE_POWER = 0.5;
+    static final double TURN_POWER  = 0.5;
+    static final long DRIVE_FORWARD_MS = 800; // adjust!
+    static final long TURN_90_DEG_MS   = 510;  // adjust!
     private final ElapsedTime driveTimer = new ElapsedTime();
     private DcMotorEx frontLeft, backLeft, frontRight, backRight;
 
@@ -32,8 +32,8 @@ public class WalkInABox extends LinearOpMode {
         backRight = hardwareMap.get(DcMotorEx.class, "backright");
 
         //TODO: adjust direction
-//        frontLeft.setDirection(DcMotor.Direction.REVERSE);
-//        backLeft.setDirection(DcMotor.Direction.REVERSE);
+        frontLeft.setDirection(DcMotorEx.Direction.REVERSE);
+        backLeft.setDirection(DcMotorEx.Direction.REVERSE);
 
         waitForStart();
 
@@ -53,15 +53,15 @@ public class WalkInABox extends LinearOpMode {
 
 
     private void runInSquareOption1() {
-        for (int i = 0; i < 4 && opModeIsActive(); i++) {
+        for (int i = 0; i < 16 && opModeIsActive(); i++) {
 
             driveForward(DRIVE_POWER, DRIVE_FORWARD_MS);
             stopMotors();
-            sleep(250);
+            sleep(1000);
 
             turnRight(TURN_POWER, TURN_90_DEG_MS);
             stopMotors();
-            sleep(250);
+            sleep(1000);
         }
 
         stopMotors();
