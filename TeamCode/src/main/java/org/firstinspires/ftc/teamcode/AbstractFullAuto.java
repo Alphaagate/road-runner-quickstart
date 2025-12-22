@@ -20,25 +20,49 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 
 public abstract class AbstractFullAuto extends LinearOpMode {
-
-    private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
-    FtcDashboard dashboard = FtcDashboard.getInstance();
-    private AprilTagProcessor aprilTag;
-    private VisionPortal visionPortal;
-    protected DcMotorEx intakemotor = null;
-    private ElapsedTime kickTimer = new ElapsedTime();
-    private double kickCycleTime = 3;
-    private Servo kicker;
-    protected DcMotorEx outtakemotorright = null;
-    protected DcMotorEx outtakemotorleft = null;
-    protected DcMotorEx transfermotor = null;
-//    private Servo outtakeservo = null;
     private double home = 0, kick = 0.3;
+    private double kickCycleTime = 3;
+    private static final int TURRET_MOTOR_GEAR_COUNT = 50;
+    private static final int TURRET_GEAR_COUNT = 200;
 
+    private ElapsedTime kickTimer = new ElapsedTime();
+
+    protected FtcDashboard dashboard = FtcDashboard.getInstance();
+
+    // Below are hardware
+    private Servo kicker;
+    //    private Servo outtakeservo = null;
     protected MecanumDrive drive;
+    protected DcMotorEx intakemotor = null;
+    protected DcMotorEx outtakemotor1 = null;
+    protected DcMotorEx outtakemotor2 = null;
+    protected DcMotorEx turretmotor = null;
+
+    protected DcMotorEx transfermotor = null;
+
+
+    // Below are for AprilTag
+    private VisionPortal visionPortal;
+    private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
+    private static final double DESIRED_DISTANCE = 12.0;       //  this is how close the camera should get to the target (inches)
+    private static final int DESIRED_TAG_ID = -1;       // Choose the tag you want to approach or set to -1 for ANY tag.
+    private AprilTagProcessor aprilTag;                 // Used for managing the AprilTag detection process.
+    protected AprilTagDetection desiredTag;        // Used to hold the data for a detected AprilTag
+    protected boolean targetFound = false;    // Set to true when an AprilTag target is detected
+    protected double turretTarget = 0;
+    protected double headingError;
+
+    private static final double NEW_P = 2.5;
+    private static final double NEW_I = 0.1;
+    private static final double NEW_D = 0.2;
+    private static final double NEW_F = 0.5;
 
     @Override
     public void runOpMode() {
+
+
+        turretmotor.setTargetPosition((int) turretTarget);//int type. Set target before setting RunMode.
+        turretmotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
 //        initHardware();
 
@@ -56,7 +80,12 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         kickTimer.reset();
 
         waitForStart();
+        turretmotor.setPower(1);// specifies max available power to motor
+
         visionPortal.close();
+
+        detectAprilTag();
+
 
         // First run
         Action pathAction = getPathAction();
@@ -64,7 +93,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         while(opModeIsActive()) {
 
             TelemetryPacket packet = new TelemetryPacket();
-
+            aimAtTarget();
             if (!pathAction.run(packet)) {
                 break;
             }
@@ -73,6 +102,84 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
         if (isStopRequested()) {
             return;
+        }
+    }
+
+    protected double aimAtTarget() {
+        if (targetFound) {
+            // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
+            double  rangeError      = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
+            headingError = desiredTag.ftcPose.bearing;
+            double  yawError        = desiredTag.ftcPose.yaw;
+            turretmotor.setTargetPosition((int) (headingError*TURRET_GEAR_COUNT/TURRET_MOTOR_GEAR_COUNT*1.49444444444));//ticks multiply?
+        }
+
+        return headingError;
+    }
+
+    private void detectAprilTag() {
+        targetFound = false;
+
+        desiredTag  = null;
+
+        // Step through the list of detected tags and look for a matching tag
+
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+
+        for (AprilTagDetection detection : currentDetections) {
+
+            // Look to see if we have size info on this tag.
+
+            if (detection.metadata != null) {
+
+                //  Check to see if we want to track towards this tag.
+
+                if ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID)) {
+
+                    // Yes, we want to use this tag.
+
+                    targetFound = true;
+
+                    desiredTag = detection;
+
+                    break;  // don't look any further.
+
+                } else {
+
+                    // This tag is in the library, but we do not want to track it right now.
+
+                    telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
+
+                }
+
+            } else {
+
+                // This tag is NOT in the library, so we don't have enough information to track to it.
+
+                telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
+
+            }
+
+        }
+
+        // Tell the driver what we see, and what to do.
+
+        if (targetFound) {
+
+            // telemetry.addData("\n>","HOLD Left-Bumper to Drive to Target\n");
+
+             telemetry.addData("Found", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
+
+             telemetry.addData("Range",  "%5.1f inches", desiredTag.ftcPose.range);
+
+             telemetry.addData("Bearing","%3.0f degrees", desiredTag.ftcPose.bearing);
+
+             telemetry.addData("Yaw","%3.0f degrees", desiredTag.ftcPose.yaw);
+
+        } else {
+
+             telemetry.addData("\n>","Drive using joysticks to find valid target\n");
+
         }
     }
 
@@ -199,8 +306,8 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
 
     protected void kickAuto(int ballNumber) {
-        telemetry.addData("outtake motor left speed:", outtakemotorleft.getVelocity());
-        telemetry.addData("outtake motor right speed:", outtakemotorright.getVelocity());
+        telemetry.addData("outtake motor left speed:", outtakemotor2.getVelocity());
+        telemetry.addData("outtake motor right speed:", outtakemotor1.getVelocity());
 
         kicker.setPosition(kick);
         waitForTime(kickCycleTime*0.25);
@@ -212,8 +319,8 @@ public abstract class AbstractFullAuto extends LinearOpMode {
             waitForTime(kickCycleTime*0.25);
 
         }
-        telemetry.addData("outtake motor left speed:", outtakemotorleft.getVelocity());
-        telemetry.addData("outtake motor right speed:", outtakemotorright.getVelocity());
+        telemetry.addData("outtake motor left speed:", outtakemotor2.getVelocity());
+        telemetry.addData("outtake motor right speed:", outtakemotor1.getVelocity());
 
         telemetry.update();
     }
@@ -229,8 +336,8 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     }
 
     private void logInfo() {
-        telemetry.addData("outtake motor left speed:", outtakemotorleft.getVelocity());
-        telemetry.addData("outtake motor right speed:", outtakemotorright.getVelocity());
+        telemetry.addData("outtake motor left speed:", outtakemotor2.getVelocity());
+        telemetry.addData("outtake motor right speed:", outtakemotor1.getVelocity());
         telemetry.addData("getcurrentpos:", this.getCurrentPos(drive));
 
         telemetry.update();
