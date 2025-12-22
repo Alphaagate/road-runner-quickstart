@@ -62,7 +62,6 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
 
         turretmotor.setTargetPosition((int) turretTarget);//int type. Set target before setting RunMode.
-        turretmotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
 //        initHardware();
 

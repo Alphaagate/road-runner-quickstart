@@ -1,11 +1,7 @@
 package org.firstinspires.ftc.teamcode.mechanisms;
 
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -15,9 +11,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Config
 @Autonomous
 public class WalkInABox extends LinearOpMode {
-    private int power = 1;
-        private ElapsedTime driveTimer = new ElapsedTime();
-
+    static final double DRIVE_POWER = 1;
+    static final double TURN_POWER  = 1;
+    static final long DRIVE_FORWARD_MS = 1800; // adjust!
+    static final long TURN_90_DEG_MS   = 700;  // adjust!
+    private final ElapsedTime driveTimer = new ElapsedTime();
+    private DcMotorEx frontLeft, backLeft, frontRight, backRight;
 
 
     @Override
@@ -27,74 +26,86 @@ public class WalkInABox extends LinearOpMode {
         telemetry.addData("Starting WalkInABox", "");
         telemetry.update();
 
-        DcMotorEx leftFront = hardwareMap.get(DcMotorEx.class, "frontleft");
-        DcMotorEx leftBack = hardwareMap.get(DcMotorEx.class, "backleft");
-        DcMotorEx rightFront = hardwareMap.get(DcMotorEx.class, "frontright");
-        DcMotorEx rightBack = hardwareMap.get(DcMotorEx.class, "frontleft");
+        frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
+        backLeft = hardwareMap.get(DcMotorEx.class, "backleft");
+        frontRight = hardwareMap.get(DcMotorEx.class, "frontright");
+        backRight = hardwareMap.get(DcMotorEx.class, "backright");
 
+        //TODO: adjust direction
+//        frontLeft.setDirection(DcMotor.Direction.REVERSE);
+//        backLeft.setDirection(DcMotor.Direction.REVERSE);
 
         waitForStart();
-
-        // above is the code for first movement, below is the code for the square movement
-        for (int i = 1; i <= 16; i++) {
-            driveTimer.reset();
-            while (driveTimer.seconds() < 1) {
-                leftFront.setPower(power);
-                rightFront.setPower(power);
-                leftBack.setPower(power);
-                rightBack.setPower(power);
-            }
-            while (driveTimer.seconds() > 1 && driveTimer.seconds() < 2) {
-                leftFront.setPower(power);
-                leftBack.setPower(power);
-                leftFront.setPower(-power);
-                rightFront.setPower(-power);
-                driveTimer.reset();
-            }
-        }
 
         if (isStopRequested()) {
             return;
         }
 
+        // Run the square: forward + turn, 4 times
+
+        //Option 1
+        runInSquareOption1();
+
+        //Option 2
+//        runInSquareOption2();
+
     }
 
-    protected void drawRobot(TelemetryPacket packet, Pose2d pose) {
-        Canvas field = packet.fieldOverlay();
 
-        double x = pose.position.x;
-        double y = pose.position.y;
-        double heading = pose.heading.toDouble();
+    private void runInSquareOption1() {
+        for (int i = 0; i < 4 && opModeIsActive(); i++) {
 
-        // === ROBOT DIMENSIONS (adjust to your bot!) ===
-        final double ROBOT_LENGTH = 18; // inches
-        final double ROBOT_WIDTH  = 18;
+            driveForward(DRIVE_POWER, DRIVE_FORWARD_MS);
+            stopMotors();
+            sleep(250);
 
-        double halfL = ROBOT_LENGTH / 2.0;
-        double halfW = ROBOT_WIDTH / 2.0;
+            turnRight(TURN_POWER, TURN_90_DEG_MS);
+            stopMotors();
+            sleep(250);
+        }
 
-        // Draw center
-        field.strokeCircle(x, y, 1);
-
-        // Draw heading arrow
-        double arrowLength = 9;
-        double arrowX = x + arrowLength * Math.cos(heading);
-        double arrowY = y + arrowLength * Math.sin(heading);
-        field.strokeLine(x, y, arrowX, arrowY);
-
-        // Draw rotated rectangle robot body
-        field.strokePolygon(
-                new double[]{x - halfL, x + halfL, x + halfL, x - halfL},
-                new double[]{y - halfW, y - halfW, y + halfW, y + halfW}
-
-        );
-
-        // Draw wheels
-        field.strokeCircle(x + halfL, y + halfW, 1);
-        field.strokeCircle(x + halfL, y - halfW, 1);
-        field.strokeCircle(x - halfL, y + halfW, 1);
-        field.strokeCircle(x - halfL, y - halfW, 1);
+        stopMotors();
     }
 
+    private void runInSquareOption2() {
+        for (int i = 0; i < 4 && opModeIsActive(); i++) {
+            driveTimer.reset();
+            while (driveTimer.milliseconds() < DRIVE_FORWARD_MS) {
+                frontLeft.setPower(DRIVE_POWER);
+                frontRight.setPower(DRIVE_POWER);
+                backLeft.setPower(DRIVE_POWER);
+                backRight.setPower(DRIVE_POWER);
+            }
+
+            double currentMilliSecs = driveTimer.milliseconds();
+            while (driveTimer.milliseconds() < currentMilliSecs + TURN_90_DEG_MS) {
+                frontLeft.setPower(TURN_POWER);
+                backLeft.setPower(TURN_POWER);
+                frontRight.setPower(-TURN_POWER);
+                backRight.setPower(-TURN_POWER);
+            }
+        }
+    }
+
+    private void driveForward(double power, long timeMs) {
+        setMotorPowers(power, power, power, power);
+        sleep(timeMs);
+    }
+
+    private void turnRight(double power, long timeMs) {
+        setMotorPowers(power, -power, power, -power);
+        sleep(timeMs);
+    }
+
+    private void stopMotors() {
+        setMotorPowers(0, 0, 0, 0);
+    }
+
+    private void setMotorPowers(double fl, double fr, double bl, double br) {
+        frontLeft.setPower(fl);
+        frontRight.setPower(fr);
+        backLeft.setPower(bl);
+        backRight.setPower(br);
+    }
 
 }

@@ -4,6 +4,7 @@ import android.util.Size;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -36,7 +37,7 @@ public class AprilTagWebcam extends LinearOpMode {
     protected int turretTarget = 45;
 
 
-    protected DcMotorEx turretmotor = null;
+    protected DcMotorEx turretMotor = null;
     private static final int TURRET_MOTOR_GEAR_COUNT = 50;
     private static final int TURRET_GEAR_COUNT = 200;
 
@@ -44,13 +45,13 @@ public class AprilTagWebcam extends LinearOpMode {
     public void runOpMode() {
 
 
-        turretmotor.setTargetPosition(turretTarget);//int type. Set target before setting RunMode.
-        turretmotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        turretMotor.setTargetPosition(turretTarget);//int type. Set target before setting RunMode.
+        turretMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
 
 
         waitForStart();
-        turretmotor.setPower(1);// specifies max available power to motor
+        turretMotor.setPower(1);// specifies max available power to motor
 
         visionPortal.close();
 
@@ -90,7 +91,6 @@ public class AprilTagWebcam extends LinearOpMode {
 
     public void update() {
         detectedTags = aprilTagProcessor.getDetections();
-
     }
     private void aimAtTarget() {
         if (targetFound) {
@@ -98,10 +98,10 @@ public class AprilTagWebcam extends LinearOpMode {
             double  rangeError      = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
             double  headingError    = desiredTag.ftcPose.bearing;
             double  yawError        = desiredTag.ftcPose.yaw;
-            turretmotor.setTargetPosition((int) (headingError*TURRET_GEAR_COUNT/TURRET_MOTOR_GEAR_COUNT*1.49444444444));//ticks multiply?
+            turretMotor.setTargetPosition((int) (headingError*TURRET_GEAR_COUNT/TURRET_MOTOR_GEAR_COUNT*1.49444444444));//ticks multiply?
 
 //            turretTarget = 45 + headingError;
-            turretmotor.setTargetPosition((int) turretTarget);
+            turretMotor.setTargetPosition(turretTarget);
 
         }
     }
