@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Config
-@Autonomous(name = "FULL_AUTO_BLUE_ClOSE_PIXEL", group = "Autonomous")
+@Autonomous(group = "Autonomous")
 public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
     protected ElapsedTime turretTimer = new ElapsedTime();
 

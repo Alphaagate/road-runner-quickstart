@@ -10,7 +10,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Config
-@Autonomous(name = "FULL_AUTO_BLUE_ClOSE_PIXEL", group = "Autonomous")
+@Autonomous(group = "Autonomous")
 public class FullAutoBlueSideClose3Stack extends AbstractFullAuto {
     @Override
     public Pose2d getInitialPose() {

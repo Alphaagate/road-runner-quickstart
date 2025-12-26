@@ -8,7 +8,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Config
-@Autonomous(name = "FULL_AUTO_BLUE_FAR_PIXEL", group = "Autonomous")
+@Autonomous(group = "Autonomous")
 public class FullAutoBlueSideFar3Stack extends AbstractFullAuto {
 
 
