@@ -33,7 +33,7 @@ public class FlywheelTuning extends LinearOpMode {
         // Get reference to DC motor.
         // Since we are using the Control Hub or Expansion Hub,
         // cast this motor to a DcMotorEx object.
-        outtakeMotor1 = (DcMotorEx)hardwareMap.get(DcMotor.class, "outtakemotor");
+        outtakeMotor1 = (DcMotorEx)hardwareMap.get(DcMotor.class, "turretmotor"); //outtakemotor
 
         // wait for start command
         waitForStart();

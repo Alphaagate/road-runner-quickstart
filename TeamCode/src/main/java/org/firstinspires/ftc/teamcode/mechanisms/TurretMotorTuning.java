@@ -71,13 +71,13 @@ public class TurretMotorTuning extends AbstractAprilTag {
             double rangeError = (this.getDetectedAprilTag().ftcPose.range - DESIRED_DISTANCE);
             double headingError = this.getDetectedAprilTag().ftcPose.bearing;
             double yawError = this.getDetectedAprilTag().ftcPose.yaw;
+            int targetPosition = convertToTicks(headingError) + turretMotor.getCurrentPosition();
 
             telemetry.addLine("HeadingError: " + headingError);
             telemetry.addLine("Moving turret");
-            int targetPosition = convertToTicks(headingError) + turretMotor.getCurrentPosition();
             telemetry.addData("Target motor pos", targetPosition);
 
-            if (Math.abs(headingError) >= 5) {
+            if (Math.abs(headingError) >= 3 && Math.abs(targetPosition) < convertToTicks(70)) {
                 lastTargetPositionToMove = targetPosition;
                 turretMotor.setTargetPosition(targetPosition);
                 turretMotor.setPower(MAX_TURRET_TURN_POWER);
