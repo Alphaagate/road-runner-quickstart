@@ -12,7 +12,7 @@ public class TurretMotorTuning extends AbstractAprilTag {
     protected static final int DESIRED_TAG_ID = 24;       // Choose the tag you want to approach or set to -1 for ANY tag.
     private static final int TURRET_GEAR_COUNT = 200;
     private static final int TURRET_MOTOR_GEAR_COUNT = 50;
-    private static final double MAX_TURRET_TURN_POWER = 0.002;
+    private static final double MAX_TURRET_TURN_POWER = 0.3;
     private DcMotorEx turretMotor;
 
     private double lastTargetPositionToMove = 0.0;
@@ -65,8 +65,10 @@ public class TurretMotorTuning extends AbstractAprilTag {
 
     private void aimAtTarget() {
         telemetry.addData("Current motor pos", turretMotor.getCurrentPosition());
+        telemetry.addData("is busy status: ", turretMotor.isBusy());
 
-        if (isTargetFound() && !turretMotor.isBusy()) {
+
+        if (isTargetFound()) {//&& !turretMotor.isBusy()
             // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
             double rangeError = (this.getDetectedAprilTag().ftcPose.range - DESIRED_DISTANCE);
             double headingError = this.getDetectedAprilTag().ftcPose.bearing;
@@ -77,7 +79,7 @@ public class TurretMotorTuning extends AbstractAprilTag {
             telemetry.addLine("Moving turret");
             telemetry.addData("Target motor pos", targetPosition);
 
-            if (Math.abs(headingError) >= 3 && Math.abs(targetPosition) < convertToTicks(70)) {
+            if (Math.abs(headingError) >= 3) {// && Math.abs(targetPosition) < convertToTicks(70)
                 lastTargetPositionToMove = targetPosition;
                 turretMotor.setTargetPosition(targetPosition);
                 turretMotor.setPower(MAX_TURRET_TURN_POWER);

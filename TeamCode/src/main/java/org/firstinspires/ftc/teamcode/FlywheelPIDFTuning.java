@@ -16,7 +16,10 @@ public class FlywheelPIDFTuning extends OpMode {
     double lowVelocity = 600;
     double curTargetVelocity = highVelocity;
 
-    double[] stepSizes = {10.0, 1.0, 0.1, 0.001, 0.0001};
+    // for 1150 1 motor F = 10.684 P = 12.12
+    // for 6000 1 motor F = 11.656 P = 12.7
+
+    double[] stepSizes = {10.0, 1.0, 0.1, 0.01, 0.001};
 
     int stepIndex = 1;
 
@@ -58,6 +61,7 @@ public class FlywheelPIDFTuning extends OpMode {
         }
 
         //set new PIDF Coefficients
+
         PIDFCoefficients pidfCoefficients = new PIDFCoefficients(NEW_P, 0, 0, NEW_F);
         outtakeMotor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
 
@@ -68,11 +72,11 @@ public class FlywheelPIDFTuning extends OpMode {
         double error = curTargetVelocity - curVelocity;
 
         telemetry.addData("Target Velocity", curTargetVelocity);
-        telemetry.addData("Current Velocity", "%.2f", curTargetVelocity);
+        telemetry.addData("Current Velocity", "%.2f", curVelocity);
         telemetry.addData("Error", "%.2f", error);
         telemetry.addLine("------------------------------");
         telemetry.addData("Tuning P", "%.4f", NEW_P);
-        telemetry.addData("Tuning P", "%.4f", NEW_P);
+        telemetry.addData("Tuning F", "%.4f", NEW_F);
         telemetry.addData("Step size", "%.4f", stepSizes[stepIndex]);
 
 
