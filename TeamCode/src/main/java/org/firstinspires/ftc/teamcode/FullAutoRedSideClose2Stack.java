@@ -51,7 +51,6 @@ public class FullAutoRedSideClose2Stack extends AbstractFullAuto {
 
         return telemetryPacket -> {
             this.setOuttakePower();
-            this.kickBalls();
             return false;
         };
     }

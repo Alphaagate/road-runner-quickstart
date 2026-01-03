@@ -57,7 +57,6 @@ public class FullAutoBlueSideClose3Stack extends AbstractFullAuto {
 
         return telemetryPacket -> {
             this.setOuttakePower();
-            this.kickBalls();
             return false;
         };
     }

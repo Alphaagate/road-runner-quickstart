@@ -12,7 +12,7 @@ public class FlywheelPIDFTuning extends OpMode {
     public static double NEW_P = 0;
     public static double NEW_F = 0;
 
-    double highVelocity = 1100;
+    double highVelocity = 6000;
     double lowVelocity = 600;
     double curTargetVelocity = highVelocity;
 

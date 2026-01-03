@@ -47,7 +47,6 @@ public class FullAutoBlueSideFar1Stack extends AbstractFullAuto {
 
         return telemetryPacket -> {
             this.setOuttakePower();
-            this.kickBalls();
             return false;
         };
     }

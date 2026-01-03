@@ -20,13 +20,7 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
         return new Pose2d(-58.3, -45, Math.toRadians(55));
     }
 
-    @Override
-    protected double aimAtTarget() {
-        headingError = desiredTag.ftcPose.bearing;
-        turretTarget =  45;
 
-        return headingError;
-    }
 
     @Override
     protected Action getPathAction() {
@@ -59,7 +53,6 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
 
         return telemetryPacket -> {
             this.setOuttakePower();
-            this.kickBalls();
             return false;
         };
     }
@@ -69,13 +62,6 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
 //        outtakemotorleft.setPower(0.4);
         outtakemotor1.setVelocity(-965);
         outtakemotor2.setVelocity(965);
-        turretTarget = 45;
-        turretTimer.reset();
-        while (!targetFound && turretTimer.time() < 3) {
-            //do nothing
-        }
-        turretTarget = 45 + headingError;
-        turretmotor.setTargetPosition((int) turretTarget);
 
     }
 

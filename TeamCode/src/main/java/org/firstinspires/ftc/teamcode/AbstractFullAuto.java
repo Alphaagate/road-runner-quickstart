@@ -130,7 +130,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         // https://www.gobilda.com/5203-series-yellow-jacket-planetary-gear-motor-19-2-1-ratio-24mm-length-8mm-rex-shaft-312-rpm-3-3-5v-encoder/?srsltid=AfmBOooipd93693DUvUrrENlLrLOl9bLTH1eXlhTHmXHPDSyLkckPCNS
         // Encoder Resolution:  537.7 pulses per revolution (PPR)
         //   537.7 pulses per revolution (PPR)  / 360 = 1.49361111111 ticks/degree
-        return (int) (degree * 1.49361111111);
+        return (int) (degree * 1.49361111111 * 200 / 50); // incorporates turret.
     }
     protected void drawRobot(TelemetryPacket packet, Pose2d pose) {
         Canvas field = packet.fieldOverlay();
