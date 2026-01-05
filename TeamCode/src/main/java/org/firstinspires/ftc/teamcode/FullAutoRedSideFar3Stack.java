@@ -64,7 +64,7 @@ public class FullAutoRedSideFar3Stack extends AbstractFullAuto {
     private void setOuttakePower() {
 //        outtakemotorright.setPower(-0.44);
 //        outtakemotorleft.setVelocity(0.44);
-        outtakemotor1.setVelocity(-1100);
-        outtakemotor2.setVelocity(1100);
+        outtakemotor1.setVelocity(-highVelocity);
+        outtakemotor2.setVelocity(highVelocity);
     }
 }

@@ -7,7 +7,9 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -54,10 +56,12 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     private DcMotorEx turretMotor;
 
     private double lastTargetPositionToMove = 0.0;
-    private static final double NEW_P = 2.5;
-    private static final double NEW_I = 0.1;
-    private static final double NEW_D = 0.2;
-    private static final double NEW_F = 0.5;
+    private static final double NEW_P_CLOSE = 0;
+    private static final double NEW_F_CLOSE = 0;
+    private static final double NEW_P_FAR = 90;
+    private static final double NEW_F_FAR = 16.72;
+    protected double lowVelocity = 1100;// 1450 for far side
+    protected double highVelocity = 1450;// 1450 for far side
 
     @Override
     public void runOpMode() {
@@ -65,6 +69,9 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
         initAprilTag();
         initHardware();
+        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(NEW_P_FAR, 0, 0, NEW_F_FAR);
+        outtakemotor1.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+        outtakemotor2.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
 
         //TODO: instantiate your MecanumDrive at a particular pose.
         //63 is the edge of tile minus half the length of the robot
@@ -73,20 +80,19 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         drive = new MecanumDrive(hardwareMap, initialPose);
 
         // Wait for the DS start button to be touched.
-
 //        outtakeservo.setPosition(0.475);
 
         waitForStart();
-        turretmotor.setPower(1);// specifies max available power to motor
 
         visionPortal.close();
-
-
 
         // First run
         Action pathAction = getPathAction();
 
         while(opModeIsActive()) {
+            outtakemotor1.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+            outtakemotor2.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+
             this.detectAprilTag();
             this.aimAtTarget();
             telemetry.addData("Last target pos to move", lastTargetPositionToMove);
@@ -103,8 +109,6 @@ public abstract class AbstractFullAuto extends LinearOpMode {
             return;
         }
     }
-
-
 
     private void drawAndLogTelemetry(TelemetryPacket packet) {
         Pose2d pose = getCurrentPos(drive);
@@ -181,7 +185,6 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         packet.put("headingErrorDeg", Math.toDegrees(hError));
     }
 
-
     protected abstract Action getPathAction();
 
     protected abstract Action getLaunchAction();
@@ -196,14 +199,22 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
     public abstract Pose2d getInitialPose();
 
-
-
     private void initHardware() {
         turretmotor = hardwareMap.get(DcMotorEx.class, "turretmotor");
         outtakemotor1 = hardwareMap.get(DcMotorEx.class,"outtakemotor1");
         outtakemotor2 = hardwareMap.get(DcMotorEx.class,"outtakemotor2");
-
         intakemotor = hardwareMap.get(DcMotorEx.class,"intakemotor");
+        resetMotorPosition();
+    }
+
+    private void resetMotorPosition() {
+
+        turretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        turretMotor.setTargetPosition(0);//int type. Set target before setting RunMode.
+        turretMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        turretMotor.setPower(MAX_TURRET_TURN_POWER);
+
+        telemetry.addData("Current position after reset", turretMotor.getCurrentPosition());
 
     }
 
@@ -328,26 +339,6 @@ public abstract class AbstractFullAuto extends LinearOpMode {
             }
 
         }
-
-        // Tell the driver what we see, and what to do.
-
-//        if (targetFound) {
-//
-//            // telemetry.addData("\n>","HOLD Left-Bumper to Drive to Target\n");
-//
-//            telemetry.addData("Found", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
-//
-//            telemetry.addData("Range",  "%5.1f inches", desiredTag.ftcPose.range);
-//
-//            telemetry.addData("Bearing","%3.0f degrees", desiredTag.ftcPose.bearing);
-//
-//            telemetry.addData("Yaw","%3.0f degrees", desiredTag.ftcPose.yaw);
-//
-//        } else {
-//
-//            telemetry.addData("\n>","Drive using joysticks to find valid target\n");
-//
-//        }
     }
 
     protected void displayDetectionTelemetry(AprilTagDetection detectedId) {

@@ -81,7 +81,7 @@ public class TurretMotorTuning extends AbstractAprilTag {
 
             if (Math.abs(headingError) >= 3) {// && Math.abs(targetPosition) < convertToTicks(70)
                 lastTargetPositionToMove = targetPosition;
-                turretMotor.setTargetPosition(targetPosition);
+                turretMotor.setTargetPosition(-targetPosition);
                 turretMotor.setPower(MAX_TURRET_TURN_POWER);
             }
             else {

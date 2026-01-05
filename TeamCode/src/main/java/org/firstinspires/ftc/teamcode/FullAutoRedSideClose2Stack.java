@@ -55,7 +55,7 @@ public class FullAutoRedSideClose2Stack extends AbstractFullAuto {
         };
     }
     private void setOuttakePower() {
-        outtakemotor1.setVelocity(-965);
-        outtakemotor2.setVelocity(965);
+        outtakemotor1.setVelocity(-lowVelocity);
+        outtakemotor2.setVelocity(lowVelocity);
     }
 }

@@ -1,23 +1,30 @@
-package com.example.meepmeeptesting;
+package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.TranslationalVelConstraint;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.noahbres.meepmeep.MeepMeep;
-import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
-import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
+import com.acmerobotics.roadrunner.ftc.Actions;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-public class MeepMeepTesting {
-    public static void main(String[] args) {
-        MeepMeep meepMeep = new MeepMeep(800);
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-        RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
-                // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
-                .build();
+public class PathTester extends LinearOpMode {
+    private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
+    private AprilTagProcessor aprilTag;
+    private VisionPortal visionPortal;
 
-        Action action = myBot.getDrive().actionBuilder(new Pose2d(0, 0, Math.toRadians(180)))
+    @Override
+    public void runOpMode() {
+        //TODO: instantiate your MecanumDrive at a particular pose.
+        Pose2d initialPose = new Pose2d(0, 0, Math.toRadians(180));
+        MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
+
+
+        waitForStart();
+        TrajectoryActionBuilder tab2 = drive.actionBuilder(new Pose2d(0, 0, Math.toRadians(180)))
+
                 .strafeToConstantHeading(new Vector2d(-24, 0))
                 .turn(Math.toRadians(-90))
                 .strafeToConstantHeading(new Vector2d(-24, 24))
@@ -43,15 +50,9 @@ public class MeepMeepTesting {
                 .strafeToConstantHeading(new Vector2d(24, -24))
                 .turn(Math.toRadians(-90))
                 .strafeToConstantHeading(new Vector2d(-24, -24))
-                .turn(Math.toRadians(-90))
-                .build();
-
-        myBot.runAction(action);
-
-        meepMeep.setBackground(MeepMeep.Background.FIELD_DECODE_OFFICIAL)
-                .setDarkMode(true)
-                .setBackgroundAlpha(0.95f)
-                .addEntity(myBot)
-                .start();
+                .turn(Math.toRadians(-90));
+        Action trajectoryActionChosen2 = tab2.build();
+        Actions.runBlocking(trajectoryActionChosen2);
     }
+
 }

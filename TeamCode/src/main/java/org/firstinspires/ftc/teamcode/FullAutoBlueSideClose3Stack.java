@@ -64,8 +64,8 @@ public class FullAutoBlueSideClose3Stack extends AbstractFullAuto {
     private void setOuttakePower() {
 //        outtakemotorright.setPower(-0.4);
 //        outtakemotorleft.setPower(0.4);
-        outtakemotor1.setVelocity(-965);
-        outtakemotor2.setVelocity(965);
+        outtakemotor1.setVelocity(-lowVelocity);
+        outtakemotor2.setVelocity(lowVelocity);
     }
 
 }
