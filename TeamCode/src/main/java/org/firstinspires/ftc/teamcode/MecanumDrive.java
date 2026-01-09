@@ -62,15 +62,25 @@ public final class MecanumDrive {
         public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
                 RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
 
-        // drive model parameters
-        public double inPerTick = 0.00202169106033484258186795830262;
-        public double lateralInPerTick = 0.0015264497536855066;
-        public double trackWidthTicks = 5939.857615090768;
+        // Dead wheel spec: 32mm diameter, 2000 ticks/rotation
 
+        // drive model parameters
+        // 32mm /25.4 = 1.2598 in
+        // wheel circumference:  3.1415925 * 1.2598 = 3.956 in
+        // inches per ticket : 3.956/2000 tick/rev =
+        public double inPerTick = 0.001978;
+        public double lateralInPerTick = inPerTick;
+
+        // wheel circumference: 32mm * 3.1415925 = 100.53mm
+        // rotations for the distance of 240mm = 240mm distance /100.53 = 2.387
+        // rotations to ticks : 2.387 * 2000
+        public double trackWidthTicks = 4774;
+
+        //2000/ Distance from wheel to center * diameter of wheel *pi  = ticks from wheel to center
         // feedforward parameters (in tick units)
-        public double kS = 1.5491723158147783;
-        public double kV = 0.0002544508944670205;
-        public double kA = 0.00005;
+        public double kS = 1.1804727865062672;
+        public double kV = 0.00026634706441469255;
+        public double kA = 0.000065;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 50;
@@ -83,7 +93,7 @@ public final class MecanumDrive {
 
         // path controller gains
         public double axialGain = 5.0;
-        public double lateralGain = 1.0;
+        public double lateralGain = 2.0;
         public double headingGain = 2.0; // shared with turn
 
         public double axialVelGain = 0.2;
