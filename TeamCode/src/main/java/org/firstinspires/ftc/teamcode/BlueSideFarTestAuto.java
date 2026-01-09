@@ -137,7 +137,31 @@ public class BlueSideFarTestAuto extends LinearOpMode {
                     .strafeToConstantHeading(new Vector2d(24, -24))
                     .turn(Math.toRadians(-90))
                     .strafeToConstantHeading(new Vector2d(-24, -24))
-                    .turn(Math.toRadians(-90));
+                    .turn(Math.toRadians(-90))
+                    .strafeToConstantHeading(new Vector2d(-24, 24))
+                    .turn(Math.toRadians(-90))
+                    .strafeToConstantHeading(new Vector2d(24, 24))
+                    .turn(Math.toRadians(-90))
+                    .strafeToConstantHeading(new Vector2d(24, -24))
+                    .turn(Math.toRadians(-90))
+                    .strafeToConstantHeading(new Vector2d(-24, -24))
+                    .turn(Math.toRadians(-90))
+                    .strafeToConstantHeading(new Vector2d(-24, 24))
+                    .turn(Math.toRadians(-90))
+                    .strafeToConstantHeading(new Vector2d(24, 24))
+                    .turn(Math.toRadians(-90))
+                    .strafeToConstantHeading(new Vector2d(24, -24))
+                    .turn(Math.toRadians(-90))
+                    .strafeToConstantHeading(new Vector2d(-24, -24))
+                    .turn(Math.toRadians(-90))
+                    .strafeToConstantHeading(new Vector2d(-24, 24))
+                    .turn(Math.toRadians(-90))
+                    .strafeToConstantHeading(new Vector2d(24, 24))
+                    .turn(Math.toRadians(-90))
+                    .strafeToConstantHeading(new Vector2d(24, -24))
+                    .turn(Math.toRadians(-90))
+                    .strafeToConstantHeading(new Vector2d(-24, -24));
+
             Action trajectoryActionChosen2 = tab2.build();
             Actions.runBlocking(trajectoryActionChosen2);
 

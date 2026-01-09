@@ -69,7 +69,7 @@ public final class MecanumDrive {
         // wheel circumference:  3.1415925 * 1.2598 = 3.956 in
         // inches per ticket : 3.956/2000 tick/rev =
         public double inPerTick = 0.001978;
-        public double lateralInPerTick = inPerTick;
+        public double lateralInPerTick = 0.0014235055956982447;
 
         // wheel circumference: 32mm * 3.1415925 = 100.53mm
         // rotations for the distance of 240mm = 240mm distance /100.53 = 2.387
@@ -78,8 +78,8 @@ public final class MecanumDrive {
 
         //2000/ Distance from wheel to center * diameter of wheel *pi  = ticks from wheel to center
         // feedforward parameters (in tick units)
-        public double kS = 1.1804727865062672;
-        public double kV = 0.00026634706441469255;
+        public double kS = 1.207732709825891;
+        public double kV = 0.00026963702622476344;
         public double kA = 0.000065;
 
         // path profile parameters (in inches)
