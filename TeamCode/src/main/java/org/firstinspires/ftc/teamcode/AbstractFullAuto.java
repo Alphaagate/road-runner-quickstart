@@ -33,15 +33,14 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
     // Below are hardware
     private Servo kicker;
-    //    private Servo outtakeservo = null;
     protected MecanumDrive drive;
-    protected DcMotorEx intakemotor = null;
-    protected DcMotorEx outtakemotor1 = null;
-    protected DcMotorEx outtakemotor2 = null;
-    protected DcMotorEx turretmotor = null;
+    //    private Servo outtakeservo = null;
 
-//    protected DcMotorEx transfermotor = null;
-
+    protected DcMotorEx intakeMotor = null;
+    protected DcMotorEx outtakeMotor1 = null;
+    protected DcMotorEx outtakeMotor2 = null;
+    protected DcMotorEx turretMotor = null;
+    protected Servo hoodServo = null;
 
     // Below are for AprilTag
     protected static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
@@ -53,8 +52,6 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     private static final double DESIRED_DISTANCE = 12.0;       //  this is how close the camera should get to the target (inches)
     protected static final int DESIRED_TAG_ID = 24;       // Choose the tag you want to approach or set to -1 for ANY tag.
     private static final double MAX_TURRET_TURN_POWER = 0.3;
-    private DcMotorEx turretMotor;
-
     private double lastTargetPositionToMove = 0.0;
     private static final double NEW_P_CLOSE = 0;
     private static final double NEW_F_CLOSE = 0;
@@ -62,6 +59,8 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     private static final double NEW_F_FAR = 16.72;
     protected double lowVelocity = 1100;// 1450 for far side
     protected double highVelocity = 1450;// 1450 for far side
+    // 84 = Tower height 99 - Robot height 35 + Goal height 20
+    public static final double TARGET_HEIGHT = 84d;
 
     @Override
     public void runOpMode() {
@@ -70,8 +69,8 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         initAprilTag();
         initHardware();
         PIDFCoefficients pidfCoefficients = new PIDFCoefficients(NEW_P_FAR, 0, 0, NEW_F_FAR);
-        outtakemotor1.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
-        outtakemotor2.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+        outtakeMotor1.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+        outtakeMotor2.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
 
         //TODO: instantiate your MecanumDrive at a particular pose.
         //63 is the edge of tile minus half the length of the robot
@@ -88,13 +87,18 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
         // First run
         Action pathAction = getPathAction();
-
+        if (isStopRequested()) {
+            return;
+        }
         while(opModeIsActive()) {
-            outtakemotor1.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
-            outtakemotor2.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+            outtakeMotor1.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+            outtakeMotor2.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
 
             this.detectAprilTag();
             this.aimAtTarget();
+            this.moveServoAngle();
+            this.logInfo();
+
             telemetry.addData("Last target pos to move", lastTargetPositionToMove);
             telemetry.update();
 
@@ -103,10 +107,6 @@ public abstract class AbstractFullAuto extends LinearOpMode {
                 break;
             }
             drawAndLogTelemetry(packet);
-        }
-
-        if (isStopRequested()) {
-            return;
         }
     }
 
@@ -191,7 +191,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
     protected Action getIntakeAction() {
         return telemetryPacket -> {
-            intakemotor.setPower(0.9);
+            intakeMotor.setPower(0.9);
 
             return false;
         };
@@ -200,72 +200,11 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     public abstract Pose2d getInitialPose();
 
     private void initHardware() {
-        turretmotor = hardwareMap.get(DcMotorEx.class, "turretmotor");
-        outtakemotor1 = hardwareMap.get(DcMotorEx.class,"outtakemotor1");
-        outtakemotor2 = hardwareMap.get(DcMotorEx.class,"outtakemotor2");
-        intakemotor = hardwareMap.get(DcMotorEx.class,"intakemotor");
+        turretMotor = hardwareMap.get(DcMotorEx.class, "turretmotor");
+        outtakeMotor1 = hardwareMap.get(DcMotorEx.class,"outtakemotor1");
+        outtakeMotor2 = hardwareMap.get(DcMotorEx.class,"outtakemotor2");
+        intakeMotor = hardwareMap.get(DcMotorEx.class,"intakemotor");
         resetMotorPosition();
-    }
-
-    private void resetMotorPosition() {
-
-        turretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        turretMotor.setTargetPosition(0);//int type. Set target before setting RunMode.
-        turretMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        turretMotor.setPower(MAX_TURRET_TURN_POWER);
-
-        telemetry.addData("Current position after reset", turretMotor.getCurrentPosition());
-
-    }
-
-    private void logInfo() {
-        telemetry.addData("outtake motor left speed:", outtakemotor2.getVelocity());
-        telemetry.addData("outtake motor right speed:", outtakemotor1.getVelocity());
-        telemetry.addData("getcurrentpos:", this.getCurrentPos(drive));
-
-        telemetry.update();
-    }
-    protected void detectAprilTag() {
-        telemetry.addData("Inside opModeIsActive loop", "");
-
-        this.doAprilDetection();
-
-        this.displayDetectionTelemetry(detectedAprilTag);
-        this.logTelemetryToDashBoard(detectedAprilTag);
-
-    }
-    private void aimAtTarget() {
-        telemetry.addData("Current motor pos", turretMotor.getCurrentPosition());
-        telemetry.addData("is busy status: ", turretMotor.isBusy());
-
-
-        if (isTargetFound()) {//&& !turretMotor.isBusy()
-            // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
-            double rangeError = (this.getDetectedAprilTag().ftcPose.range - DESIRED_DISTANCE);
-            double headingError = this.getDetectedAprilTag().ftcPose.bearing;
-            double yawError = this.getDetectedAprilTag().ftcPose.yaw;
-            int targetPosition = convertToTicks(headingError) + turretMotor.getCurrentPosition();
-
-            telemetry.addLine("HeadingError: " + headingError);
-            telemetry.addLine("Moving turret");
-            telemetry.addData("Target motor pos", targetPosition);
-
-            if (Math.abs(headingError) >= 3) {// && Math.abs(targetPosition) < convertToTicks(70)
-                lastTargetPositionToMove = targetPosition;
-                turretMotor.setTargetPosition(targetPosition);
-                turretMotor.setPower(MAX_TURRET_TURN_POWER);
-            }
-            else {
-                telemetry.addLine("Target aimed, no need to move, stop the motor");
-                turretMotor.setPower(0);
-            }
-
-        } else {
-            telemetry.addLine("Target not found or turretMotor is busy");
-        }
-    }
-    protected Pose2d getCurrentPos(MecanumDrive drive) {
-        return drive.localizer.getPose();
     }
     protected void initAprilTag() {
 
@@ -297,8 +236,69 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         }
     }
 
+    private void resetMotorPosition() {
+
+        turretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        turretMotor.setTargetPosition(0);//int type. Set target before setting RunMode.
+        turretMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        turretMotor.setPower(MAX_TURRET_TURN_POWER);
+
+        telemetry.addData("Current position after reset", turretMotor.getCurrentPosition());
+
+    }
+
+    private void logInfo() {
+        telemetry.addData("outtake motor left speed:", outtakeMotor2.getVelocity());
+        telemetry.addData("outtake motor right speed:", outtakeMotor1.getVelocity());
+        telemetry.addData("getcurrentpos:", this.getCurrentPos(drive));
+
+        telemetry.update();
+    }
+    protected void detectAprilTag() {
+        telemetry.addData("Inside opModeIsActive loop", "");
+
+        this.doAprilDetection();
+
+        this.displayDetectionTelemetry(detectedAprilTag);
+        this.logTelemetryToDashBoard(detectedAprilTag);
+
+    }
     protected int getDesiredTagID() {
         return DESIRED_TAG_ID;
+    }
+
+    private void aimAtTarget() {
+        telemetry.addData("Current motor pos", turretMotor.getCurrentPosition());
+        telemetry.addData("is busy status: ", turretMotor.isBusy());
+
+
+
+
+        if (isTargetFound()) {//&& !turretMotor.isBusy()
+            // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
+            double rangeError = (this.getDetectedAprilTag().ftcPose.range - DESIRED_DISTANCE);
+            double headingError = this.getDetectedAprilTag().ftcPose.bearing;
+            double yawError = this.getDetectedAprilTag().ftcPose.yaw;
+            int targetPosition = convertToTicks(headingError) + turretMotor.getCurrentPosition();
+
+            telemetry.addLine("HeadingError: " + headingError);
+            telemetry.addLine("Moving turret");
+            telemetry.addData("Target motor pos", targetPosition);
+
+            if (Math.abs(headingError) >= 3) {// && Math.abs(targetPosition) < convertToTicks(70)
+                lastTargetPositionToMove = targetPosition;
+                turretMotor.setTargetPosition(targetPosition);
+                turretMotor.setPower(MAX_TURRET_TURN_POWER);
+            }
+            else {
+                telemetry.addLine("Target aimed, no need to move, stop the motor");
+                turretMotor.setPower(0);
+            }
+
+        } else {
+            telemetry.addLine("Target not found or turretMotor is busy");
+
+        }
     }
     private void doAprilDetection() {
         targetFound = false;
@@ -340,6 +340,51 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
         }
     }
+
+    protected Pose2d getCurrentPos(MecanumDrive drive) {
+        return drive.localizer.getPose();
+    }
+    private double calculateHoodDegreeToChange() {
+        double degreeBasedOnStartPosition = this.calculateHoodDegreeBasedOnStartedPosition();
+        double hoodServoPos = hoodServo.getPosition();
+        double servoPosition = hoodServoPos / 180;
+
+        double hoodToChange;
+        hoodToChange = degreeBasedOnStartPosition - servoPosition;
+        return hoodToChange;
+    }
+    private double calculateHoodDegreeBasedOnStartedPosition() {
+        double closestRange = Math.sqrt(60d * 60d + TARGET_HEIGHT * TARGET_HEIGHT);
+        double furthestRange = Math.sqrt(290d * 290d + TARGET_HEIGHT * TARGET_HEIGHT);
+        double range = this.getDetectedAprilTag().ftcPose.range;
+        if (range <closestRange){
+            range = closestRange;
+        }
+        if (range > furthestRange){
+            range = furthestRange;
+        }
+
+        double theta = Math.asin(TARGET_HEIGHT / range);
+
+        double thetaMax = Math.asin(TARGET_HEIGHT/closestRange);
+        double thetaMin = Math.asin(TARGET_HEIGHT/furthestRange);
+        double thetaProportion = (thetaMax - theta) / (thetaMax - thetaMin);
+        double hoodChangeDegree = thetaProportion * 154.2857;   // 154.2857 = 360/ 14 * 6
+        if (hoodChangeDegree < 0) {
+            hoodChangeDegree = 0;
+        }
+        if (hoodChangeDegree > 154.2857) {
+            hoodChangeDegree = 154.2857;
+        }
+        return hoodChangeDegree;
+    }
+
+    private void moveServoAngle() {
+        hoodServo.getPosition();
+        double servoPosition = calculateHoodDegreeToChange() / 180;
+        hoodServo.setPosition(servoPosition);
+    }
+
 
     protected void displayDetectionTelemetry(AprilTagDetection detectedId) {
         if (detectedId == null) {

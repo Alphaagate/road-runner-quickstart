@@ -82,7 +82,7 @@ public class HoodTester extends AbstractAprilTag {
 
     private void moveServoAngle() {
         hoodServo.getPosition();
-        double servoPosition = calculateHoodDegreeBasedOnStartedPosition() / 180;
+        double servoPosition = calculateHoodDegreeToChange() / 180;
         hoodServo.setPosition(servoPosition);
     }
 
