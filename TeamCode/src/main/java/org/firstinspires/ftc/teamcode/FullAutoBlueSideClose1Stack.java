@@ -25,27 +25,37 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
     private double lastTargetPositionToMove = 0.0;
     @Override
     public Pose2d getInitialPose() {
-        return new Pose2d(-58.3, -45, Math.toRadians(55));
+        return new Pose2d(-58.3, -45, Math.toRadians(235));
     }
 
+    @Override
+    protected int getDesiredTagID() {
+        return DESIRED_TAG_ID_BLUE;
+    }
 
 
     @Override
     protected Action getPathAction() {
 
         return drive.actionBuilder(getInitialPose())
-                .strafeToSplineHeading(new Vector2d(-12, -12), Math.toRadians(-90))//to launch spot
-                .stopAndAdd(this.getLaunchAction())
-                .strafeToConstantHeading(new Vector2d(-12, -24))   //change heading
-                .afterDisp(0, this.getIntakeAction())
+                .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot
+                .afterDisp(0, this.getTurretAction())
+//                .stopAndAdd(this.getLaunchAction())
+                .strafeToSplineHeading(new Vector2d(-12, -24), Math.toRadians(90))   //change heading
+//                .afterDisp(0, this.getIntakeAction())
                 .strafeToConstantHeading(new Vector2d(-12, -48))                     //to intake
                 .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot
-                .stopAndAdd(this.getLaunchAction())
+//                .stopAndAdd(this.getLaunchAction())
                 .strafeToConstantHeading(new Vector2d(-12, -35))                     //park outside launch
                 .build();
     }
-
-
+    @Override
+    protected Action getTurretAction() {
+        return telemetryPacket -> {
+            this.turretMotor.setTargetPosition(convertToTicks(55));
+            return false;
+        };
+    }
     @Override
     protected Action getLaunchAction() {
 
@@ -60,6 +70,7 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
 //        return launchAction;
 
         return telemetryPacket -> {
+
             this.setOuttakePower();
             return false;
         };

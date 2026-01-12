@@ -12,31 +12,43 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 @Autonomous(group = "Autonomous")
 public class FullAutoRedSideFar2Stack extends AbstractFullAuto {
     @Override
+    protected int getDesiredTagID() {
+        return DESIRED_TAG_ID_RED;
+    }
+
+    @Override
     public Pose2d getInitialPose() {
-        return new Pose2d(63, 15, Math.toRadians(0));
+        return new Pose2d(63, 15, Math.toRadians(180));
     }
     @Override
     protected Action getPathAction() {
         return drive.actionBuilder(getInitialPose())
                 .setTangent(Math.toRadians(180))
-                .strafeToSplineHeading(new Vector2d(53, 15), Math.toRadians(-22)) //to launch spot
+                .strafeToConstantHeading(new Vector2d(53, 15)) //to launch spot
                 .stopAndAdd(this.getLaunchAction())
                 .strafeToSplineHeading(new Vector2d(36, 24), Math.toRadians(90))
                 .afterDisp(0, this.getIntakeAction())
                 .strafeToConstantHeading(new Vector2d(36, 54), new TranslationalVelConstraint(30.0))  // to intake spot
-                .strafeToSplineHeading(new Vector2d(53, 15), Math.toRadians(-22)) //to launch spot
+                .strafeToConstantHeading(new Vector2d(53, 15)) //to launch spot
                 .stopAndAdd(this.getLaunchAction())
 
                 .strafeToSplineHeading(new Vector2d(12, 24), Math.toRadians(90))
                 .afterDisp(0, this.getIntakeAction())
                 .strafeToConstantHeading(new Vector2d(12, 54), new TranslationalVelConstraint(30.0))  // to intake spot
-                .strafeToSplineHeading(new Vector2d(53, 15), Math.toRadians(-22)) //to launch spot
+                .strafeToConstantHeading(new Vector2d(53, 15)) //to launch spot
                 .stopAndAdd(this.getLaunchAction())
                 .strafeToConstantHeading(new Vector2d(36, 30))//park outside launch
                 .build();
 
     }
 
+    @Override
+    protected Action getTurretAction() {
+        return telemetryPacket -> {
+            this.turretMotor.setTargetPosition(convertToTicks(25));
+            return false;
+        };
+    }
     @Override
     protected Action getLaunchAction() {
 

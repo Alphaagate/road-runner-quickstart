@@ -46,8 +46,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     protected DcMotorEx outtakeMotor2 = null;
     protected DcMotorEx turretMotor = null;
     protected Servo hoodServo = null;
-
-
+    private Servo blockServo;
 
 
     // Below are for AprilTag
@@ -58,7 +57,9 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     private AprilTagDetection detectedAprilTag;        // Used to hold the data for a detected AprilTag
 
     private static final double DESIRED_DISTANCE = 12.0;       //  this is how close the camera should get to the target (inches)
-    protected static final int DESIRED_TAG_ID = 24;       // Choose the tag you want to approach or set to -1 for ANY tag.
+    protected static final int DESIRED_TAG_ID_RED = 24;       // Choose the tag you want to approach or set to -1 for ANY tag.
+    protected static final int DESIRED_TAG_ID_BLUE = 20 ;       // Choose the tag you want to approach or set to -1 for ANY tag.
+
     private static final double MAX_TURRET_TURN_POWER = 0.3;
     private double lastTargetPositionToMove = 0.0;
     private static final double NEW_P_CLOSE = 0;
@@ -73,7 +74,6 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-
 
         initAprilTag();
         initHardware();
@@ -105,7 +105,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
             colorSensor();
             this.detectAprilTag();
             this.aimAtTarget();
-//            this.moveServoAngle();
+            this.moveServoAngle();
             this.logInfo();
 
             telemetry.addData("Last target pos to move", lastTargetPositionToMove);
@@ -153,7 +153,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         }
     }
 
-    private int convertToTicks(double degree) {
+    protected int convertToTicks(double degree) {
         // https://www.gobilda.com/5203-series-yellow-jacket-planetary-gear-motor-19-2-1-ratio-24mm-length-8mm-rex-shaft-312-rpm-3-3-5v-encoder/?srsltid=AfmBOooipd93693DUvUrrENlLrLOl9bLTH1eXlhTHmXHPDSyLkckPCNS
         // Encoder Resolution:  537.7 pulses per revolution (PPR)
         //   537.7 pulses per revolution (PPR)  / 360 = 1.49361111111 ticks/degree
@@ -211,6 +211,8 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     protected abstract Action getPathAction();
 
     protected abstract Action getLaunchAction();
+    protected abstract Action getTurretAction();
+
 
     protected Action getIntakeAction() {
         return telemetryPacket -> {
@@ -227,11 +229,11 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         outtakeMotor1 = hardwareMap.get(DcMotorEx.class,"outtakemotor1");
         outtakeMotor2 = hardwareMap.get(DcMotorEx.class,"outtakemotor2");
         intakeMotor = hardwareMap.get(DcMotorEx.class,"intakemotor");
-
         colorSensor = hardwareMap.get(NormalizedColorSensor.class, "colorsensor");
+        hoodServo = hardwareMap.get(Servo.class, "hoodservo");
+        blockServo = hardwareMap.get(Servo.class, "blockservo");
 
-
-
+        blockServo.setPosition(0);//0 is down, 0.55 is up
 
         resetMotorPosition();
     }
@@ -294,9 +296,8 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         this.logTelemetryToDashBoard(detectedAprilTag);
 
     }
-    protected int getDesiredTagID() {
-        return DESIRED_TAG_ID;
-    }
+
+    protected abstract int getDesiredTagID();
 
     private void aimAtTarget() {
         telemetry.addData("Current motor pos", turretMotor.getCurrentPosition());
@@ -328,6 +329,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
         } else {
             telemetry.addLine("Target not found or turretMotor is busy");
+
 
         }
     }
@@ -371,7 +373,6 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
         }
     }
-
     protected Pose2d getCurrentPos(MecanumDrive drive) {
         return drive.localizer.getPose();
     }

@@ -13,6 +13,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 @Autonomous(group = "Autonomous")
 public class FullAutoRedSideClose1Stack extends AbstractFullAuto {
     @Override
+    protected int getDesiredTagID() {
+        return DESIRED_TAG_ID_RED;
+    }
+
+    @Override
     public Pose2d getInitialPose() {
         return new Pose2d(-58.3, 44.5, Math.toRadians(-235));
     }
@@ -31,6 +36,13 @@ public class FullAutoRedSideClose1Stack extends AbstractFullAuto {
                 .build();
     }
 
+    @Override
+    protected Action getTurretAction() {
+        return telemetryPacket -> {
+            this.turretMotor.setTargetPosition(convertToTicks(55));
+            return false;
+        };
+    }
     @Override
     protected Action getLaunchAction() {
 
