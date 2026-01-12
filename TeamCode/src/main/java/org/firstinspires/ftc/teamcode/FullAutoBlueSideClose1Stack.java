@@ -6,9 +6,11 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Config
@@ -39,23 +41,57 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
 
         return drive.actionBuilder(getInitialPose())
                 .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot
-                .afterDisp(0, this.getTurretAction())
-//                .stopAndAdd(this.getLaunchAction())
+                .afterDisp(0, telemetryPacket -> {
+                    blockServo.setPosition(0.55);
+                    return false;
+                })
+                .stopAndAdd(new SequentialAction(
+                        this.getAimAction(),
+                        this.getLaunchAction()
+                ))
                 .strafeToSplineHeading(new Vector2d(-12, -24), Math.toRadians(90))   //change heading
-//                .afterDisp(0, this.getIntakeAction())
+                .afterDisp(0, new SequentialAction(
+                        telemetryPacket -> {
+                            outtakeMotor1.setVelocity(0);
+                            outtakeMotor2.setVelocity(0);
+                            this.resetBlocker();
+                            return false;
+                        }, this.getIntakeAction()
+
+                ))
                 .strafeToConstantHeading(new Vector2d(-12, -48))                     //to intake
                 .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot
-//                .stopAndAdd(this.getLaunchAction())
+                .afterDisp(0, telemetryPacket -> {
+                    blockServo.setPosition(0.55);
+                    return false;
+                })
+                .stopAndAdd(new SequentialAction(
+                        this.getAimAction(),
+                        this.getLaunchAction()
+                ))
                 .strafeToConstantHeading(new Vector2d(-12, -35))                     //park outside launch
                 .build();
     }
     @Override
-    protected Action getTurretAction() {
+    protected PIDFCoefficients getPidfCoefficients() {
+        return new PIDFCoefficients(NEW_P_CLOSE, 0, 0, NEW_F_CLOSE);
+    }
+
+    @Override
+    protected Action getAimAction() {
         return telemetryPacket -> {
-            this.turretMotor.setTargetPosition(convertToTicks(55));
+            if (useAprilTag) {
+                this.aimAtTarget();
+
+            } else {
+                this.moveTurret(convertToTicks(55));
+                //TODO: change pos
+                this.moveHoodServo(0.5);
+            }
             return false;
         };
     }
+
     @Override
     protected Action getLaunchAction() {
 
@@ -71,12 +107,16 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
 
         return telemetryPacket -> {
 
-            this.setOuttakePower();
+            this.setOuttakeSpeed();
+            this.sleep(300);
+
+            this.intakeMotor.setPower(0.9);
+            this.sleep(500);
             return false;
         };
     }
 
-    private void setOuttakePower() {
+    private void setOuttakeSpeed() {
         outtakeMotor1.setVelocity(-lowVelocity);
         outtakeMotor2.setVelocity(lowVelocity);
 

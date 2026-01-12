@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 @Config
 @Autonomous(group = "Autonomous")
@@ -40,9 +41,13 @@ public class FullAutoBlueSideFar2Stack extends AbstractFullAuto {
                 .strafeToConstantHeading(new Vector2d(36, -30))//park outside launch
                 .build();
     }
+    @Override
+    protected PIDFCoefficients getPidfCoefficients() {
+        return new PIDFCoefficients(NEW_P_FAR, 0, 0, NEW_F_FAR);
+    }
 
     @Override
-    protected Action getTurretAction() {
+    protected Action getAimAction() {
         return telemetryPacket -> {
             this.turretMotor.setTargetPosition(convertToTicks(-25));
             return false;
