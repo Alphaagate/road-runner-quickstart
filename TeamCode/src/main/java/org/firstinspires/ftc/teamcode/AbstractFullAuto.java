@@ -105,7 +105,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
             colorSensor();
             this.detectAprilTag();
             this.aimAtTarget();
-            this.moveServoAngle();
+//            this.moveServoAngle();
             this.logInfo();
 
             telemetry.addData("Last target pos to move", lastTargetPositionToMove);
@@ -229,6 +229,9 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         intakeMotor = hardwareMap.get(DcMotorEx.class,"intakemotor");
 
         colorSensor = hardwareMap.get(NormalizedColorSensor.class, "colorsensor");
+
+
+
 
         resetMotorPosition();
     }

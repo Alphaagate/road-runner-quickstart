@@ -14,19 +14,19 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 public class FullAutoRedSideClose1Stack extends AbstractFullAuto {
     @Override
     public Pose2d getInitialPose() {
-        return new Pose2d(-58.3, 44.5, Math.toRadians(-55));
+        return new Pose2d(-58.3, 44.5, Math.toRadians(-235));
     }
     @Override
     protected Action getPathAction() {
 
         return drive.actionBuilder(getInitialPose())
-                .strafeToSplineHeading(new Vector2d(-12, 12), Math.toRadians(-42))  //to launch spot
-                .stopAndAdd(this.getLaunchAction())
+                .strafeToConstantHeading(new Vector2d(-12, 12))  //to launch spot
+//                .stopAndAdd(this.getLaunchAction())
                 .strafeToSplineHeading(new Vector2d(-12, 24), Math.toRadians(90))   //change heading
-                .afterDisp(0, this.getIntakeAction())
+//                .afterDisp(0, this.getIntakeAction())
                 .strafeToConstantHeading(new Vector2d(-12, 48))                     //to intake
-                .strafeToSplineHeading(new Vector2d(-12, 12), Math.toRadians(-42))  //to launch spot
-                .stopAndAdd(this.getLaunchAction())
+                .strafeToConstantHeading(new Vector2d(-12, 12))  //to launch spot
+//                .stopAndAdd(this.getLaunchAction())
                 .strafeToConstantHeading(new Vector2d(-12, 35))                     //park outside launch
                 .build();
     }

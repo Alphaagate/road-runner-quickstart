@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 public class FullAutoBlueSideClose2Stack extends AbstractFullAuto {
     @Override
     public Pose2d getInitialPose() {
-        return new Pose2d(-58.3, -45, Math.toRadians(55));
+        return new Pose2d(-58.3, -45, Math.toRadians(-145));
     }
     @Override
     protected Action getPathAction() {
