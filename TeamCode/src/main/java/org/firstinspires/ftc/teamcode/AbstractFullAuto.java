@@ -9,12 +9,16 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.mechanisms.TestBenchColourSensing;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -35,12 +39,16 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     private Servo kicker;
     protected MecanumDrive drive;
     //    private Servo outtakeservo = null;
+    protected NormalizedColorSensor colorSensor;
 
     protected DcMotorEx intakeMotor = null;
     protected DcMotorEx outtakeMotor1 = null;
     protected DcMotorEx outtakeMotor2 = null;
     protected DcMotorEx turretMotor = null;
     protected Servo hoodServo = null;
+
+
+
 
     // Below are for AprilTag
     protected static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
@@ -57,6 +65,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     private static final double NEW_F_CLOSE = 0;
     private static final double NEW_P_FAR = 90;
     private static final double NEW_F_FAR = 16.72;
+    private int ballCount;
     protected double lowVelocity = 1100;// 1450 for far side
     protected double highVelocity = 1450;// 1450 for far side
     // 84 = Tower height 99 - Robot height 35 + Goal height 20
@@ -93,7 +102,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         while(opModeIsActive()) {
             outtakeMotor1.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
             outtakeMotor2.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
-
+            colorSensor();
             this.detectAprilTag();
             this.aimAtTarget();
             this.moveServoAngle();
@@ -130,6 +139,20 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         // Send packet to dashboard
         dashboard.sendTelemetryPacket(packet);
     }
+    protected void colorSensor() {
+
+        if (((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM)<3){
+            ballCount += 1;
+        }
+        if (ballCount ==1) {
+            //rgblight
+        } else if (ballCount == 2) {
+            
+        } else if (ballCount == 3) {
+            //reset
+        }
+    }
+
     private int convertToTicks(double degree) {
         // https://www.gobilda.com/5203-series-yellow-jacket-planetary-gear-motor-19-2-1-ratio-24mm-length-8mm-rex-shaft-312-rpm-3-3-5v-encoder/?srsltid=AfmBOooipd93693DUvUrrENlLrLOl9bLTH1eXlhTHmXHPDSyLkckPCNS
         // Encoder Resolution:  537.7 pulses per revolution (PPR)
@@ -204,8 +227,13 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         outtakeMotor1 = hardwareMap.get(DcMotorEx.class,"outtakemotor1");
         outtakeMotor2 = hardwareMap.get(DcMotorEx.class,"outtakemotor2");
         intakeMotor = hardwareMap.get(DcMotorEx.class,"intakemotor");
+
+        colorSensor = hardwareMap.get(NormalizedColorSensor.class, "colorsensor");
+
         resetMotorPosition();
     }
+
+
     protected void initAprilTag() {
 
 //        aprilTagProcessor = new AprilTagProcessor.Builder()
@@ -413,6 +441,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
             packet.put("detectedId.ftcPose.range:", detectedId.ftcPose.range);
             packet.put("detectedId.ftcPose.bearing:", detectedId.ftcPose.bearing);
             packet.put("detectedId.ftcPose.elevation:", detectedId.ftcPose.elevation);
+
 
         }
         // Send packet to dashboard
