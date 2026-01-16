@@ -41,10 +41,11 @@ public class FullAutoBlueSideClose2Stack extends AbstractFullAuto {
                 .strafeToConstantHeading(new Vector2d(-12, -35))                     //park outside launch
                 .build();
     }
+
     @Override
-    protected Action getAimAction() {
+    protected Action getAimAction(double degree) {
         return telemetryPacket -> {
-            this.turretMotor.setTargetPosition(convertToTicks(-55));
+            this.turretMotor.setTargetPosition(convertToTicks(degree));
             return false;
         };
     }

@@ -44,7 +44,7 @@ public class FullAutoRedSideFarLoadingZone extends AbstractFullAuto {
     }
 
     @Override
-    protected Action getAimAction() {
+    protected Action getAimAction(double degree) {
         return telemetryPacket -> {
             this.turretMotor.setTargetPosition(convertToTicks(25));
             return false;

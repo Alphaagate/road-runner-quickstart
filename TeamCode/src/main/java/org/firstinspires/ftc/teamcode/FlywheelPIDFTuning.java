@@ -1,20 +1,20 @@
 package org.firstinspires.ftc.teamcode;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 @TeleOp
 public class FlywheelPIDFTuning extends OpMode {
-    private DcMotorEx outtakeMotor;
+    private DcMotorEx outtakeMotor1;
+    private DcMotorEx outtakeMotor2;
+
+    private DcMotorEx intakeMotor;
+
     public static double NEW_P = 0;
     public static double NEW_F = 0;
 
-    double highVelocity = 1500;
-    double lowVelocity = 600;
+    double highVelocity = 1600; // 1700 farside?
+    double lowVelocity = 1250; // 1300 close side?
     double curTargetVelocity = highVelocity;
 
     // for 1150 1 motor F = 10.684 P = 12.12
@@ -28,18 +28,28 @@ public class FlywheelPIDFTuning extends OpMode {
 
     @Override
     public void init() {
-        outtakeMotor = hardwareMap.get(DcMotorEx.class, "outtakemotor1");
-        outtakeMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        outtakeMotor1 = hardwareMap.get(DcMotorEx.class, "outtakemotor1");
+        outtakeMotor2 = hardwareMap.get(DcMotorEx.class, "outtakemotor2");
+        intakeMotor = hardwareMap.get(DcMotorEx.class, "intakemotor");
+
+        outtakeMotor1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        outtakeMotor2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+
         PIDFCoefficients pidfCoefficients = new PIDFCoefficients(NEW_P, 0, 0, NEW_F);
-        outtakeMotor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
-        outtakeMotor.setDirection(DcMotorEx.Direction.REVERSE);
+        outtakeMotor1.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+        outtakeMotor1.setDirection(DcMotorEx.Direction.REVERSE);
+        outtakeMotor2.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+//        outtakeMotor1.setDirection(DcMotorEx.Direction.REVERSE);
 
         telemetry.addData("Init status", "initialized");
     }
 
     @Override
     public void loop() {
-        outtakeMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        outtakeMotor1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        if (gamepad1.right_bumper) {
+            intakeMotor.setPower(1);
+        }
         if (gamepad1.yWasPressed()) {
             if (curTargetVelocity == highVelocity) {
                 curTargetVelocity = lowVelocity;
@@ -68,12 +78,15 @@ public class FlywheelPIDFTuning extends OpMode {
         //set new PIDF Coefficients
 
         PIDFCoefficients pidfCoefficients = new PIDFCoefficients(NEW_P, 0, 0, NEW_F);
-        outtakeMotor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+        outtakeMotor1.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+        outtakeMotor2.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
 
         //set velocity
-        outtakeMotor.setVelocity(curTargetVelocity);
+        outtakeMotor1.setVelocity(curTargetVelocity);
+        outtakeMotor2.setVelocity(curTargetVelocity);
 
-        double curVelocity = outtakeMotor.getVelocity();
+
+        double curVelocity = outtakeMotor1.getVelocity();
         double error = curTargetVelocity - curVelocity;
 
         telemetry.addData("Target Velocity", curTargetVelocity);

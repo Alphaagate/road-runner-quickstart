@@ -63,17 +63,17 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
     private static final double MAX_TURRET_TURN_POWER = 0.3;
     private double lastTargetPositionToMove = 0.0;
-    protected static final double NEW_P_CLOSE = 45;
-    protected static final double NEW_F_CLOSE = 8; //TODO: NEED TO TUNE P AND F FOR CLOSE SIDE
+    protected static final double NEW_P_CLOSE = 80;
+    protected static final double NEW_F_CLOSE = 15.3; //TODO: NEED TO TUNE P AND F FOR CLOSE SIDE
     protected static final double NEW_P_FAR = 90;
-    protected static final double NEW_F_FAR = 16.72;
+    protected static final double NEW_F_FAR = 14.3;
     private int ballCount;
     protected double lowVelocity = 1100;// 1450 for far side
     protected double highVelocity = 1450;// 1450 for far side
     // 84 = Tower height 99 - Robot height 35 + Goal height 20
     public static final double TARGET_HEIGHT = 84d;
 
-    protected boolean useAprilTag = false;
+    protected boolean useAprilTag = true;
 
     @Override
     public void runOpMode() {
@@ -92,6 +92,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
         // Wait for the DS start button to be touched.
 //        outtakeservo.setPosition(0.475);
+        this.resetBlocker();
 
         waitForStart();
 
@@ -108,6 +109,10 @@ public abstract class AbstractFullAuto extends LinearOpMode {
             colorSensor();
             this.detectAprilTag();
             this.logInfo();
+            telemetry.addData("hoodpos", hoodServo.getPosition());
+            telemetry.addData("turretpos", turretMotor.getCurrentPosition());
+            telemetry.addData("turrettargetpos", turretMotor.getTargetPosition());
+
 
             telemetry.addData("Last target pos to move", lastTargetPositionToMove);
             telemetry.update();
@@ -157,7 +162,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     }
 
     protected void resetBlocker() {
-        blockServo.setPosition(0);
+        blockServo.setPosition(0.6);
     }
 
     protected int convertToTicks(double degree) {
@@ -218,7 +223,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     protected abstract Action getPathAction();
 
     protected abstract Action getLaunchAction();
-    protected abstract Action getAimAction();
+    protected abstract Action getAimAction(double degree);
 
 
     protected Action getIntakeAction() {
@@ -240,7 +245,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         hoodServo = hardwareMap.get(Servo.class, "hoodservo");
         blockServo = hardwareMap.get(Servo.class, "blockservo");
 
-        blockServo.setPosition(0);//0 is down, 0.55 is up
+        blockServo.setPosition(0.5);//0.5 is down, 1 is up
 
         resetMotorPosition();
     }
@@ -320,6 +325,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
             telemetry.addLine("HeadingError: " + headingError);
             telemetry.addLine("Moving turret");
             telemetry.addData("Target motor pos", targetPosition);
+
 
             //move hood servo
             double servoPosition = calculateHoodDegreeToChange() / 180;

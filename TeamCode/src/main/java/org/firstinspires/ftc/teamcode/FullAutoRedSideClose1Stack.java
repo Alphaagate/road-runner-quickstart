@@ -38,12 +38,13 @@ public class FullAutoRedSideClose1Stack extends AbstractFullAuto {
     }
 
     @Override
-    protected Action getAimAction() {
+    protected Action getAimAction(double degree) {
         return telemetryPacket -> {
             this.turretMotor.setTargetPosition(convertToTicks(55));
             return false;
         };
     }
+
 
     @Override
     protected PIDFCoefficients getPidfCoefficients() {

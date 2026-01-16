@@ -47,7 +47,7 @@ public class FullAutoRedSideFar2Stack extends AbstractFullAuto {
         return new PIDFCoefficients(NEW_P_FAR, 0, 0, NEW_F_FAR);
     }
     @Override
-    protected Action getAimAction() {
+    protected Action getAimAction(double degree) {
         return telemetryPacket -> {
             this.turretMotor.setTargetPosition(convertToTicks(25));
             return false;

@@ -40,33 +40,44 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
     protected Action getPathAction() {
 
         return drive.actionBuilder(getInitialPose())
-                .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot
                 .afterDisp(0, telemetryPacket -> {
-                    blockServo.setPosition(0.55);
+                    this.setOuttakeSpeed();
                     return false;
                 })
+                .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot
+
                 .stopAndAdd(new SequentialAction(
-                        this.getAimAction(),
+
+                        this.getAimAction(0),
                         this.getLaunchAction()
                 ))
-                .strafeToSplineHeading(new Vector2d(-12, -24), Math.toRadians(90))   //change heading
+                .afterDisp(0, telemetryPacket -> {
+                    this.resetBlocker();
+                    return false;
+                })
+                .strafeToSplineHeading(new Vector2d(-12, -24), Math.toRadians(-90))   //change heading
                 .afterDisp(0, new SequentialAction(
                         telemetryPacket -> {
                             outtakeMotor1.setVelocity(0);
                             outtakeMotor2.setVelocity(0);
-                            this.resetBlocker();
                             return false;
                         }, this.getIntakeAction()
 
                 ))
-                .strafeToConstantHeading(new Vector2d(-12, -48))                     //to intake
-                .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot
+                //TODO: adjust second run and turret
+                .strafeToConstantHeading(new Vector2d(-12, -48))//to intake
                 .afterDisp(0, telemetryPacket -> {
-                    blockServo.setPosition(0.55);
+                    this.setOuttakeSpeed();
+                    this.getAimAction(-45);
+                    return false;
+                })
+                .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot
+
+                .afterDisp(0, telemetryPacket -> {
+                    blockServo.setPosition(1);
                     return false;
                 })
                 .stopAndAdd(new SequentialAction(
-                        this.getAimAction(),
                         this.getLaunchAction()
                 ))
                 .strafeToConstantHeading(new Vector2d(-12, -35))                     //park outside launch
@@ -78,19 +89,24 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
     }
 
     @Override
-    protected Action getAimAction() {
+    protected Action getAimAction(double degree) {
         return telemetryPacket -> {
+
             if (useAprilTag) {
+                this.detectAprilTag();
+                this.moveTurret(convertToTicks(degree));
                 this.aimAtTarget();
 
             } else {
-                this.moveTurret(convertToTicks(55));
+                this.moveTurret(convertToTicks(degree));
                 //TODO: change pos
                 this.moveHoodServo(0.5);
             }
             return false;
         };
     }
+
+
 
     @Override
     protected Action getLaunchAction() {
@@ -107,11 +123,15 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
 
         return telemetryPacket -> {
 
-            this.setOuttakeSpeed();
-            this.sleep(300);
-
+//            this.setOuttakeSpeed();
+//            this.sleep(700);
+            blockServo.setPosition(1);
+            this.sleep(500);
             this.intakeMotor.setPower(0.9);
             this.sleep(500);
+            this.intakeMotor.setPower(0);
+            this.sleep(2000);
+
             return false;
         };
     }
