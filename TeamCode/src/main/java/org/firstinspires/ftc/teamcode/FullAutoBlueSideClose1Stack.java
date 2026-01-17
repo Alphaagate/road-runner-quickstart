@@ -5,6 +5,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -40,10 +41,10 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
     protected Action getPathAction() {
 
         return drive.actionBuilder(getInitialPose())
-                .afterDisp(0, telemetryPacket -> {
+                .afterDisp(0, new ParallelAction(telemetryPacket -> {
                     this.setOuttakeSpeed();
                     return false;
-                })
+                }, this.getAimAction(0)))
                 .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot
 
                 .stopAndAdd(new SequentialAction(
@@ -90,8 +91,8 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
         return telemetryPacket -> {
 
             if (useAprilTag) {
-                this.detectAprilTag();
                 this.moveTurret(convertToTicks(degree));
+                this.detectAprilTag();
                 this.aimAtTarget();
 
             } else {
@@ -99,7 +100,7 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
                 //TODO: change pos
                 this.moveHoodServo(0.5);
             }
-            return false;
+            return true;
         };
     }
 
