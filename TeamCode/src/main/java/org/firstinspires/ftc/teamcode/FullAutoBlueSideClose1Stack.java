@@ -48,18 +48,17 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
 
                 .stopAndAdd(new SequentialAction(
 
-                        this.getAimAction(0),
+//                        this.getAimAction(0),
                         this.getLaunchAction()
                 ))
                 .afterDisp(0, telemetryPacket -> {
-                    this.resetBlocker();
+                    this.reverseOuttake();
                     return false;
                 })
                 .strafeToSplineHeading(new Vector2d(-12, -24), Math.toRadians(-90))   //change heading
                 .afterDisp(0, new SequentialAction(
                         telemetryPacket -> {
-                            outtakeMotor1.setVelocity(0);
-                            outtakeMotor2.setVelocity(0);
+                            this.reverseOuttake();
                             return false;
                         }, this.getIntakeAction()
 
@@ -67,17 +66,15 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
                 //TODO: adjust second run and turret
                 .strafeToConstantHeading(new Vector2d(-12, -48))//to intake
                 .afterDisp(0, telemetryPacket -> {
+                    intakeMotor.setVelocity(0);
                     this.setOuttakeSpeed();
-                    this.getAimAction(-45);
                     return false;
                 })
                 .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot
 
-                .afterDisp(0, telemetryPacket -> {
-                    blockServo.setPosition(1);
-                    return false;
-                })
+
                 .stopAndAdd(new SequentialAction(
+                        this.getAimAction(-35),
                         this.getLaunchAction()
                 ))
                 .strafeToConstantHeading(new Vector2d(-12, -35))                     //park outside launch
@@ -123,14 +120,15 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
 
         return telemetryPacket -> {
 
-//            this.setOuttakeSpeed();
 //            this.sleep(700);
-            blockServo.setPosition(1);
-            this.sleep(500);
-            this.intakeMotor.setPower(0.9);
-            this.sleep(500);
+            //blockservo not using yet yet
+//            blockServo.setPosition(1);
+            this.sleep(250);
+            this.intakeMotor.setPower(1);
+            this.sleep(1000);
             this.intakeMotor.setPower(0);
-            this.sleep(2000);
+            //wait for autoaim
+//            this.sleep(2000);
 
             return false;
         };

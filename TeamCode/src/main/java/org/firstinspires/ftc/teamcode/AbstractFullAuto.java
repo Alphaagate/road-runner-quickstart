@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 
-import androidx.annotation.NonNull;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -68,8 +66,8 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     protected static final double NEW_P_FAR = 90;
     protected static final double NEW_F_FAR = 14.3;
     private int ballCount;
-    protected double lowVelocity = 1100;// 1450 for far side
-    protected double highVelocity = 1450;// 1450 for far side
+    protected double lowVelocity = 1250;// 1450 for far side
+    protected double highVelocity = 1700;// 1450 for far side
     // 84 = Tower height 99 - Robot height 35 + Goal height 20
     public static final double TARGET_HEIGHT = 84d;
 
@@ -92,7 +90,6 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
         // Wait for the DS start button to be touched.
 //        outtakeservo.setPosition(0.475);
-        this.resetBlocker();
 
         waitForStart();
 
@@ -161,8 +158,10 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         }
     }
 
-    protected void resetBlocker() {
-        blockServo.setPosition(0.6);
+    protected void reverseOuttake() {
+        outtakeMotor1.setVelocity(800);
+        outtakeMotor2.setVelocity(-800);
+
     }
 
     protected int convertToTicks(double degree) {
@@ -228,7 +227,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
     protected Action getIntakeAction() {
         return telemetryPacket -> {
-            intakeMotor.setPower(0.9);
+            intakeMotor.setPower(1);
 
             return false;
         };
@@ -245,7 +244,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         hoodServo = hardwareMap.get(Servo.class, "hoodservo");
         blockServo = hardwareMap.get(Servo.class, "blockservo");
 
-        blockServo.setPosition(0.5);//0.5 is down, 1 is up
+//        blockServo.setPosition(0.5);//0.5 is down, 1 is up
 
         resetMotorPosition();
     }
