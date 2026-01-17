@@ -74,7 +74,7 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
 
 
                 .stopAndAdd(new SequentialAction(
-                        this.getAimAction(-35),
+                        this.getAimAction(-30),
                         this.getLaunchAction()
                 ))
                 .strafeToConstantHeading(new Vector2d(-12, -35))                     //park outside launch
@@ -123,7 +123,7 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
 //            this.sleep(700);
             //blockservo not using yet yet
 //            blockServo.setPosition(1);
-            this.sleep(250);
+            this.sleep(500);
             this.intakeMotor.setPower(1);
             this.sleep(1000);
             this.intakeMotor.setPower(0);
