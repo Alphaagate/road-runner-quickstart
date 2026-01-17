@@ -61,7 +61,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
     private static final double MAX_TURRET_TURN_POWER = 0.3;
     private double lastTargetPositionToMove = 0.0;
-    protected static final double NEW_P_CLOSE = 80;
+    protected static final double NEW_P_CLOSE = 20;
     protected static final double NEW_F_CLOSE = 15.3; //TODO: NEED TO TUNE P AND F FOR CLOSE SIDE
     protected static final double NEW_P_FAR = 90;
     protected static final double NEW_F_FAR = 14.3;
@@ -159,8 +159,8 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     }
 
     protected void reverseOuttake() {
-        outtakeMotor1.setVelocity(800);
-        outtakeMotor2.setVelocity(-800);
+        outtakeMotor1.setVelocity(900);
+        outtakeMotor2.setVelocity(-900);
 
     }
 
