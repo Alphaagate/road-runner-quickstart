@@ -14,15 +14,19 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public abstract class AbstractFullAuto extends LinearOpMode {
 //    private double home = 0, kick = 0.3;
@@ -71,7 +75,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     // 84 = Tower height 99 - Robot height 35 + Goal height 20
     public static final double TARGET_HEIGHT = 84d;
 
-    protected boolean useAprilTag = true;
+    protected boolean useAprilTag = false;
 
     @Override
     public void runOpMode() {
@@ -93,7 +97,6 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
         waitForStart();
 
-        visionPortal.close();
 
         // First run
         Action pathAction = getPathAction();
@@ -116,12 +119,15 @@ public abstract class AbstractFullAuto extends LinearOpMode {
             telemetry.update();
 
             TelemetryPacket packet = new TelemetryPacket();
-//            if (!pathAction.run(packet)) {
-//                break;
-//            }
+            if (!pathAction.run(packet)) {
+                break;
+            }
             drawAndLogTelemetry(packet);
+
         }
+        stopVisionPortal();
     }
+
 
     protected abstract PIDFCoefficients getPidfCoefficients();
 
@@ -274,7 +280,9 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         // Create the vision portal the easy way.
         if (USE_WEBCAM) {
             visionPortal = VisionPortal.easyCreateWithDefaults(
-                    hardwareMap.get(WebcamName.class, "Webcam 1"), aprilTagProcessor);
+            hardwareMap.get(WebcamName.class, "Webcam 1"), aprilTagProcessor);
+            this.setManualExposure(1,100);  // Use low exposure time to reduce motion blur
+
         } else {
             visionPortal = VisionPortal.easyCreateWithDefaults(
                     BuiltinCameraDirection.BACK, aprilTagProcessor);
@@ -308,11 +316,43 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         this.logTelemetryToDashBoard(detectedAprilTag);
 
     }
+    private void setManualExposure(int exposureMS, int gain) {
+        // Wait for the camera to be open, then use the controls
+        if (visionPortal == null) {
+            return;
+        }
+        // Make sure camera is streaming before we try to set the exposure controls
+        if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+            telemetry.addData("Camera", "Waiting");
+            telemetry.update();
+            while (!isStopRequested() && (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
+                sleep(20);
+            }
+            telemetry.addData("Camera", "Ready");
+            telemetry.update();
+        }
+
+        // Set camera controls unless we are stopping.
+        if (!isStopRequested())
+        {
+            ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
+            if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
+                exposureControl.setMode(ExposureControl.Mode.Manual);
+                sleep(50);
+            }
+            exposureControl.setExposure((long)exposureMS, TimeUnit.MILLISECONDS);
+            sleep(20);
+            GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
+            gainControl.setGain(gain);
+            sleep(20);
+        }
+    }
 
     protected abstract int getDesiredTagID();
 
     protected void aimAtTarget() {
-        telemetry.addData("Current motor pos", turretMotor.getCurrentPosition());
+        int currentPosition = turretMotor.getCurrentPosition();
+        telemetry.addData("Current motor pos", currentPosition);
         telemetry.addData("is busy status: ", turretMotor.isBusy());
 
         if (isTargetFound()) {//&& !turretMotor.isBusy()
@@ -320,16 +360,15 @@ public abstract class AbstractFullAuto extends LinearOpMode {
             double rangeError = (this.getDetectedAprilTag().ftcPose.range - DESIRED_DISTANCE);
             double headingError = this.getDetectedAprilTag().ftcPose.bearing;
             double yawError = this.getDetectedAprilTag().ftcPose.yaw;
-            int targetPosition = convertToTicks(headingError) + turretMotor.getCurrentPosition();
+
+            int deltaPosition = convertToTicks(headingError);
+            //cap the delta to maximum 2 clicks
+            deltaPosition = Range.clip(deltaPosition, 0, 2);
+            int targetPosition = deltaPosition + currentPosition;
 
             telemetry.addLine("HeadingError: " + headingError);
             telemetry.addLine("Moving turret");
             telemetry.addData("Target motor pos", targetPosition);
-
-
-            //move hood servo
-            double servoPosition = calculateHoodDegreeToChange() / 180;
-            this.moveHoodServo(servoPosition);
 
             //move turret
             if (Math.abs(headingError) >= 3) {// && Math.abs(targetPosition) < convertToTicks(70)
@@ -341,6 +380,9 @@ public abstract class AbstractFullAuto extends LinearOpMode {
                 turretMotor.setPower(0);
             }
 
+            //move hood servo
+            double servoPosition = calculateHoodDegreeToChange() / 180;
+            this.moveHoodServo(servoPosition);
         } else {
             telemetry.addLine("Target not found or turretMotor is busy");
 

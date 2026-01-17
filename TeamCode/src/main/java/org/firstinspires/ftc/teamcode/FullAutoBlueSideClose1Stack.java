@@ -43,12 +43,11 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
         return drive.actionBuilder(getInitialPose())
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                     this.setOuttakeSpeed();
+
                     return false;
-                }, this.getAimAction(-5)))
+                },this.getAimAction(-5)))
                 .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot
-
                 .stopAndAdd(new SequentialAction(
-
                         this.getAimAction(0),
                         this.getLaunchAction()
                 ))
@@ -65,7 +64,7 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
 
                 ))
                 //TODO: adjust second run and turret
-                .strafeToConstantHeading(new Vector2d(-12, -48))//to intake
+                .strafeToConstantHeading(new Vector2d(-12, -54))//to intake
                 .afterDisp(0, telemetryPacket -> {
                     intakeMotor.setVelocity(0);
                     this.setOuttakeSpeed();
@@ -91,10 +90,11 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
         return telemetryPacket -> {
 
             if (useAprilTag) {
-//                this.moveTurret(convertToTicks(degree));
-
-                    this.detectAprilTag();
-                    this.aimAtTarget();
+                if (degree != 0){
+                    this.moveTurret(convertToTicks(degree));
+                }
+                this.detectAprilTag();
+                this.aimAtTarget();
             } else {
                 this.moveTurret(convertToTicks(degree));
                 //TODO: change pos
@@ -136,6 +136,7 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
     }
 
     private void setOuttakeSpeed() {
+        this.sleep(100);
         outtakeMotor1.setVelocity(-lowVelocity);
         outtakeMotor2.setVelocity(lowVelocity);
 
