@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Config
 @Autonomous(group = "Autonomous")
-public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
+public class AutoAimTest extends AbstractFullAuto {
     protected ElapsedTime turretTimer = new ElapsedTime();
     private static final double DESIRED_DISTANCE = 12.0;       //  this is how close the camera should get to the target (inches)
     protected static final int DESIRED_TAG_ID = 24;       // Choose the tag you want to approach or set to -1 for ANY tag.
@@ -41,44 +41,7 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
     protected Action getPathAction() {
 
         return drive.actionBuilder(getInitialPose())
-                .afterDisp(0, new ParallelAction(telemetryPacket -> {
-                    this.setOuttakeSpeed();
-                    return false;
-                }, this.getAimAction(-5)))
-                .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot
-
-                .stopAndAdd(new SequentialAction(
-
-                        this.getAimAction(0),
-                        this.getLaunchAction()
-                ))
-                .afterDisp(0, telemetryPacket -> {
-                    this.reverseOuttake();
-                    return false;
-                })
-                .strafeToSplineHeading(new Vector2d(-12, -24), Math.toRadians(-90))   //change heading
-                .afterDisp(0, new SequentialAction(
-                        telemetryPacket -> {
-                            this.reverseOuttake();
-                            return false;
-                        }, this.getIntakeAction()
-
-                ))
-                //TODO: adjust second run and turret
-                .strafeToConstantHeading(new Vector2d(-12, -48))//to intake
-                .afterDisp(0, telemetryPacket -> {
-                    intakeMotor.setVelocity(0);
-                    this.setOuttakeSpeed();
-                    return false;
-                })
-                .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot
-
-
-                .stopAndAdd(new SequentialAction(
-                        this.getAimAction(-30),
-                        this.getLaunchAction()
-                ))
-                .strafeToConstantHeading(new Vector2d(-12, -35))                     //park outside launch
+                .stopAndAdd(this.getAimAction(0))
                 .build();
     }
     @Override
@@ -91,10 +54,15 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
         return telemetryPacket -> {
 
             if (useAprilTag) {
+                for (int i = 0; i< 50 ; i++ ) {
 //                this.moveTurret(convertToTicks(degree));
-
+                    telemetry.addData("Count: ", i);
                     this.detectAprilTag();
                     this.aimAtTarget();
+                    telemetry.update();
+                    sleep(500);
+                }
+
             } else {
                 this.moveTurret(convertToTicks(degree));
                 //TODO: change pos

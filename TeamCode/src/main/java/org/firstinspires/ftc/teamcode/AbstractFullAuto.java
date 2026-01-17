@@ -61,7 +61,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
     private static final double MAX_TURRET_TURN_POWER = 0.3;
     private double lastTargetPositionToMove = 0.0;
-    protected static final double NEW_P_CLOSE = 20;
+    protected static final double NEW_P_CLOSE = 40;
     protected static final double NEW_F_CLOSE = 15.3; //TODO: NEED TO TUNE P AND F FOR CLOSE SIDE
     protected static final double NEW_P_FAR = 90;
     protected static final double NEW_F_FAR = 14.3;
@@ -106,6 +106,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
             colorSensor();
             this.detectAprilTag();
             this.logInfo();
+            telemetry.addData("apriltagstatus", this.useAprilTag);
             telemetry.addData("hoodpos", hoodServo.getPosition());
             telemetry.addData("turretpos", turretMotor.getCurrentPosition());
             telemetry.addData("turrettargetpos", turretMotor.getTargetPosition());
@@ -115,9 +116,9 @@ public abstract class AbstractFullAuto extends LinearOpMode {
             telemetry.update();
 
             TelemetryPacket packet = new TelemetryPacket();
-            if (!pathAction.run(packet)) {
-                break;
-            }
+//            if (!pathAction.run(packet)) {
+//                break;
+//            }
             drawAndLogTelemetry(packet);
         }
     }
@@ -398,6 +399,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     }
     private double calculateHoodDegreeToChange() {
         double degreeBasedOnStartPosition = this.calculateHoodDegreeBasedOnStartedPosition();
+        //TODO: getPosition doesn't work
         double hoodServoPos = hoodServo.getPosition();
         double servoPosition = hoodServoPos / 180;
 
@@ -432,7 +434,6 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     }
 
     protected void moveHoodServo(double targetPosition) {
-        hoodServo.getPosition();
         hoodServo.setPosition(targetPosition);
     }
 
