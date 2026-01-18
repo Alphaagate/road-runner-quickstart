@@ -32,12 +32,12 @@ public class FullAutoBlueSideFar1Stack extends AbstractFullAuto {
                         return false;
                         },
                         //Prepare the turret before doing intake, so it can reduce the aiming time
-                        this.getAimAction(42d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE))
+                        this.getAimAction(42d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
                 )
                 .strafeToConstantHeading(new Vector2d(53, -15)) //to launch spot
                 .stopAndAdd(new SequentialAction(
                         //Further adjust the aiming before launching
-                        this.getAimAction(null, null),
+                        this.getAimAction(null, null, true),
                         this.getLaunchAction()
                 ))
                 // TODO: Can we delete following?
@@ -58,12 +58,12 @@ public class FullAutoBlueSideFar1Stack extends AbstractFullAuto {
                             return false;
                         },
                         //Prepare the turret before doing intake, so it can reduce the aiming time
-                        this.getAimAction(-40d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE))
+                        this.getAimAction(-40d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
                 )
                 .strafeToConstantHeading(new Vector2d(53, -15)) //to launch spot
                 .stopAndAdd(new SequentialAction(
                         //Further adjust the aiming before launching
-                        this.getAimAction(null, null),
+                        this.getAimAction(null, null, true),
                         this.getLaunchAction()
                 ))
                 .strafeToConstantHeading(new Vector2d(36, -30))//park outside launch

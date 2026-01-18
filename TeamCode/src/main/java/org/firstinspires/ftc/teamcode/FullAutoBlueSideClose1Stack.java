@@ -32,11 +32,11 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
         return drive.actionBuilder(getInitialPose()).afterDisp(0, new ParallelAction(telemetryPacket -> {
                     this.setOuttakeSpeed();
                     return false;
-                }, this.getAimAction(-5d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE))) // set the initial turret degree and hood position
+                }, this.getAimAction(-5d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))) // set the initial turret degree and hood position
                 .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot
                 .stopAndAdd(new SequentialAction(
                         // adjust by using AprilTag again
-                        this.getAimAction(null, null),
+                        this.getAimAction(null, null, true),
                         this.getLaunchAction()
                 ))
                 .afterDisp(0, telemetryPacket -> {
@@ -60,7 +60,7 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
                 })
                 .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot
                 .stopAndAdd(new SequentialAction(
-                        this.getAimAction(-30d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE),
+                        this.getAimAction(-30d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, true),
                         this.getLaunchAction()
                 ))
                 .strafeToConstantHeading(new Vector2d(-12, -35))   //park outside launch

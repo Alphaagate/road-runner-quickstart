@@ -14,7 +14,6 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -262,11 +261,11 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         outtakeMotor2.setVelocity(lowVelocity);
     }
 
-    protected Action getAimAction(Double turretInitialTargetDegree, Double hoodInitialTargetPosition) {
+    protected Action getAimAction(Double turretInitialTargetDegree, Double hoodInitialTargetPosition, boolean runAprilTagAim) {
         return telemetryPacket -> {
 
+            //First move the turret and hood to a ballpark target position/angle
             if (turretInitialTargetDegree != null) {
-                //1st: move to a ballpark angle
                 this.moveTurret(convertToTicks(turretInitialTargetDegree));
             }
 
@@ -274,7 +273,8 @@ public abstract class AbstractFullAuto extends LinearOpMode {
                 this.moveHoodServo(hoodInitialTargetPosition);
             }
 
-            if (useAprilTag) {
+            if (this.useAprilTag && runAprilTagAim) {
+                //Further adjust the turret and hood angles by AprilTag detection and calculation
                 this.detectAprilTag();
                 this.aimAtTarget();  //aimAtTarget will move both turret and hood
             }
@@ -413,15 +413,15 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
             int deltaPosition = convertToTicks(headingError);
             //cap the delta to maximum 2 clicks
-            deltaPosition = Range.clip(deltaPosition, 0, 2);
+//            deltaPosition = Range.clip(deltaPosition, 0, 2);
             int targetPosition = deltaPosition + currentPosition;
 
             telemetry.addLine("HeadingError: " + headingError);
             telemetry.addLine("Moving turret");
             telemetry.addData("Target motor pos", targetPosition);
 
-            //move turret
-            if (Math.abs(headingError) >= 3) {// && Math.abs(targetPosition) < convertToTicks(70)
+            //move turret if the heading error > 3 degree
+            if (Math.abs(headingError) > 3) {// && Math.abs(targetPosition) < convertToTicks(70)
                 this.moveTurret(targetPosition);
             }
             else {
