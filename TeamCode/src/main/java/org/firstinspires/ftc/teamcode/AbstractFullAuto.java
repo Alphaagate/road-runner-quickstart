@@ -69,13 +69,17 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     protected static final double NEW_F_CLOSE = 15.3; //TODO: NEED TO TUNE P AND F FOR CLOSE SIDE
     protected static final double NEW_P_FAR = 90;
     protected static final double NEW_F_FAR = 14.3;
+
+    protected static final double HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE = 0.1;
+    protected static final double HOOD_INITIAL_TARGET_POSITION_FAR_SIDE = 0.1;
+
     private int ballCount;
     protected double lowVelocity = 1250;// 1450 for far side
     protected double highVelocity = 1700;// 1450 for far side
     // 84 = Tower height 99 - Robot height 35 + Goal height 20
     public static final double TARGET_HEIGHT = 84d;
 
-    protected boolean useAprilTag = false;
+    protected boolean useAprilTag = true;
 
     @Override
     public void runOpMode() {
@@ -97,16 +101,15 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
         waitForStart();
 
-
-        // First run
         Action pathAction = getPathAction();
+
         if (isStopRequested()) {
             return;
         }
         while(opModeIsActive()) {
             outtakeMotor1.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
             outtakeMotor2.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
-            colorSensor();
+            this.colorSensor();
             this.detectAprilTag();
             this.logInfo();
             telemetry.addData("apriltagstatus", this.useAprilTag);
@@ -114,8 +117,6 @@ public abstract class AbstractFullAuto extends LinearOpMode {
             telemetry.addData("turretpos", turretMotor.getCurrentPosition());
             telemetry.addData("turrettargetpos", turretMotor.getTargetPosition());
 
-
-            telemetry.addData("Last target pos to move", lastTargetPositionToMove);
             telemetry.update();
 
             TelemetryPacket packet = new TelemetryPacket();
@@ -168,7 +169,6 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     protected void reverseOuttake() {
         outtakeMotor1.setVelocity(900);
         outtakeMotor2.setVelocity(-900);
-
     }
 
     protected int convertToTicks(double degree) {
@@ -228,9 +228,59 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
     protected abstract Action getPathAction();
 
-    protected abstract Action getLaunchAction();
-    protected abstract Action getAimAction(double degree);
+    protected Action getLaunchAction() {
 
+//        Action launchAction = new Action() {
+//            @Override
+//            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+//                this.setOuttakePowerForClose();
+//                this.kickBalls();
+//                return false;
+//            }
+//        };
+//        return launchAction;
+
+        return telemetryPacket -> {
+
+//            this.sleep(700);
+            //blockservo not using yet yet
+//            blockServo.setPosition(1);
+            this.sleep(500);
+            this.intakeMotor.setPower(1);
+            this.sleep(1000);
+            this.intakeMotor.setPower(0);
+            //wait for autoaim
+//            this.sleep(2000);
+
+            return false;
+        };
+    }
+
+    protected void setOuttakeSpeed() {
+        this.sleep(100);
+        outtakeMotor1.setVelocity(-lowVelocity);
+        outtakeMotor2.setVelocity(lowVelocity);
+    }
+
+    protected Action getAimAction(Double turretInitialTargetDegree, Double hoodInitialTargetPosition) {
+        return telemetryPacket -> {
+
+            if (turretInitialTargetDegree != null) {
+                //1st: move to a ballpark angle
+                this.moveTurret(convertToTicks(turretInitialTargetDegree));
+            }
+
+            if (hoodInitialTargetPosition != null) {
+                this.moveHoodServo(hoodInitialTargetPosition);
+            }
+
+            if (useAprilTag) {
+                this.detectAprilTag();
+                this.aimAtTarget();  //aimAtTarget will move both turret and hood
+            }
+            return false;
+        };
+    }
 
     protected Action getIntakeAction() {
         return telemetryPacket -> {
@@ -372,7 +422,6 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
             //move turret
             if (Math.abs(headingError) >= 3) {// && Math.abs(targetPosition) < convertToTicks(70)
-                lastTargetPositionToMove = targetPosition;
                 this.moveTurret(targetPosition);
             }
             else {

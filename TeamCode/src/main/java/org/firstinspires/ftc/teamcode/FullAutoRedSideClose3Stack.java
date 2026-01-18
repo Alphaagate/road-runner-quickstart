@@ -53,37 +53,4 @@ public class FullAutoRedSideClose3Stack extends AbstractFullAuto {
         return new PIDFCoefficients(NEW_P_CLOSE, 0, 0, NEW_F_CLOSE);
     }
 
-    @Override
-    protected Action getAimAction(double degree) {
-        return telemetryPacket -> {
-            this.turretMotor.setTargetPosition(convertToTicks(55));
-            return false;
-        };
-    }
-    @Override
-    protected Action getLaunchAction() {
-
-//        Action launchAction = new Action() {
-//            @Override
-//            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-//                this.setOuttakePowerForClose();
-//                this.kickBalls();
-//                return false;
-//            }
-//        };
-//        return launchAction;
-
-        return telemetryPacket -> {
-            this.setOuttakePower();
-            return false;
-        };
-    }
-
-    private void setOuttakePower() {
-//        outtakemotorright.setPower(-0.4);
-//        outtakemotorleft.setPower(0.4);
-        outtakeMotor1.setVelocity(-lowVelocity);
-        outtakeMotor2.setVelocity(lowVelocity);
-    }
-
 }
