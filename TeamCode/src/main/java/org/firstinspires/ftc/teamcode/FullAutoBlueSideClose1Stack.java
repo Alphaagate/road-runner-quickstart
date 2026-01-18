@@ -39,10 +39,12 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
                         this.getAimAction(null, null, true),
                         this.getLaunchAction()
                 ))
-                .afterDisp(0, telemetryPacket -> {
-                    this.reverseOuttake();
-                    return false;
-                })
+                //Note: I think following is problematic as the stopAndAdd already stop the trajectory segment,
+                //      so afterDisp has no last segment to attach to.
+//                .afterDisp(0, telemetryPacket -> {
+//                    this.reverseOuttake();
+//                    return false;
+//                })
                 .strafeToSplineHeading(new Vector2d(-12, -24), Math.toRadians(-90))   //change heading
                 .afterDisp(0, new SequentialAction(
                         telemetryPacket -> {

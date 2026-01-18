@@ -168,6 +168,8 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     protected void reverseOuttake() {
         outtakeMotor1.setVelocity(900);
         outtakeMotor2.setVelocity(-900);
+        //ensure the outtake has some time to spin up
+        sleep(100);
     }
 
     protected int convertToTicks(double degree) {
@@ -264,16 +266,24 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     protected Action getAimAction(Double turretInitialTargetDegree, Double hoodInitialTargetPosition, boolean runAprilTagAim) {
         return telemetryPacket -> {
 
+            boolean needToWaitForTurretOrHoodServo = false;
+
             //First move the turret and hood to a ballpark target position/angle
             if (turretInitialTargetDegree != null) {
                 this.moveTurret(convertToTicks(turretInitialTargetDegree));
+                needToWaitForTurretOrHoodServo = true;
             }
 
             if (hoodInitialTargetPosition != null) {
                 this.moveHoodServo(hoodInitialTargetPosition);
+                needToWaitForTurretOrHoodServo = true;
             }
 
             if (this.useAprilTag && runAprilTagAim) {
+                if (needToWaitForTurretOrHoodServo) {
+                    // Give the turret and hoodSevo some time run to the initial target position before we detect april tag
+                    sleep(300);
+                }
                 //Further adjust the turret and hood angles by AprilTag detection and calculation
                 this.detectAprilTag();
                 this.aimAtTarget();  //aimAtTarget will move both turret and hood
