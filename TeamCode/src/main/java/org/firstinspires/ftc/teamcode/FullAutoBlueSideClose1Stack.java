@@ -29,11 +29,12 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
     @Override
     protected Action getPathAction() {
 
-        return drive.actionBuilder(getInitialPose()).afterDisp(0, new ParallelAction(telemetryPacket -> {
+        return drive.actionBuilder(getInitialPose())
+                .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot
+                .afterDisp(0, new ParallelAction(telemetryPacket -> {
                     this.setOuttakeSpeed();
                     return false;
                 }, this.getAimAction(-5d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))) // set the initial turret degree and hood position
-                .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot
                 .stopAndAdd(new SequentialAction(
                         // adjust by using AprilTag again
                         this.getAimAction(null, null, true),
@@ -53,14 +54,16 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
                         }, this.getIntakeAction()
 
                 ))
-                //TODO: adjust second run and turret
-                .strafeToConstantHeading(new Vector2d(-12, -54))//to intake
-                .afterDisp(0, telemetryPacket -> {
-                    intakeMotor.setVelocity(0);
-                    this.setOuttakeSpeed();
-                    return false;
-                })
+                .strafeToConstantHeading(new Vector2d(-12, -54))  //to intake
                 .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot
+                .afterDisp(0, new ParallelAction(telemetryPacket -> {
+                            intakeMotor.setVelocity(0);
+                            this.setOuttakeSpeed();
+                            return false;
+                        },
+                        //Prepare the turret before doing intake, so it can reduce the aiming time
+                        this.getAimAction(-40d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
+                )
                 .stopAndAdd(new SequentialAction(
                         this.getAimAction(-30d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, true),
                         this.getLaunchAction()

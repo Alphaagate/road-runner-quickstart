@@ -27,24 +27,19 @@ public class FullAutoBlueSideFar1Stack extends AbstractFullAuto {
     protected Action getPathAction() {
         return drive.actionBuilder(getInitialPose())
                 .setTangent(Math.toRadians(180))
+                .strafeToConstantHeading(new Vector2d(53, -15)) //to launch spot
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
-                        this.setOuttakeSpeed();
-                        return false;
+                            this.setOuttakeSpeed();
+                            return false;
                         },
                         //Prepare the turret before doing intake, so it can reduce the aiming time
                         this.getAimAction(42d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
                 )
-                .strafeToConstantHeading(new Vector2d(53, -15)) //to launch spot
                 .stopAndAdd(new SequentialAction(
                         //Further adjust the aiming before launching
                         this.getAimAction(null, null, true),
                         this.getLaunchAction()
                 ))
-                // TODO: Can we delete following?
-//                .afterDisp(0, telemetryPacket -> {
-//                    this.reverseOuttake();
-//                    return false;
-//                })
                 .strafeToSplineHeading(new Vector2d(36, -24), Math.toRadians(-90))
                 .afterDisp(0, new SequentialAction(telemetryPacket -> {
                         this.reverseOuttake();
@@ -52,6 +47,7 @@ public class FullAutoBlueSideFar1Stack extends AbstractFullAuto {
                     }, this.getIntakeAction())
                 )
                 .strafeToConstantHeading(new Vector2d(36, -54), new TranslationalVelConstraint(30.0))  // to intake spot
+                .strafeToConstantHeading(new Vector2d(53, -15)) //to launch spot
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                             intakeMotor.setVelocity(0);
                             this.setOuttakeSpeed();
@@ -60,7 +56,6 @@ public class FullAutoBlueSideFar1Stack extends AbstractFullAuto {
                         //Prepare the turret before doing intake, so it can reduce the aiming time
                         this.getAimAction(-40d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
                 )
-                .strafeToConstantHeading(new Vector2d(53, -15)) //to launch spot
                 .stopAndAdd(new SequentialAction(
                         //Further adjust the aiming before launching
                         this.getAimAction(null, null, true),
