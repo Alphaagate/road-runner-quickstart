@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -69,8 +70,15 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     protected static final double NEW_P_FAR = 90;
     protected static final double NEW_F_FAR = 14.3;
 
-    protected static final double HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE = 0.1;
-    protected static final double HOOD_INITIAL_TARGET_POSITION_FAR_SIDE = 0.1;
+    // Hood Constants
+    protected static final double HOOD_MIN_POSITION = 0.18;   // lowest angle
+    protected static final double HOOD_MAX_POSITION = 0.62;   // highest angle
+    protected static final double HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE = 0.55;
+    protected static final double HOOD_INITIAL_TARGET_POSITION_FAR_SIDE = 0.60;
+
+    // Linear model (range → hood)
+    private static final double HOOD_K = 0.007;   // position per inch
+    private static final double HOOD_B = 0.12;    // base position
 
     private int ballCount;
     protected double lowVelocity = 1250;// 1450 for far side
@@ -440,7 +448,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
             }
 
             //move hood servo
-            double servoPosition = calculateHoodDegreeToChange() / 180;
+            double servoPosition = this.calculateHoodPositionByAprilTagRange(this.getDetectedAprilTag().ftcPose.range);
             this.moveHoodServo(servoPosition);
         } else {
             telemetry.addLine("Target not found or turretMotor is busy");
@@ -498,44 +506,20 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     protected Pose2d getCurrentPos(MecanumDrive drive) {
         return drive.localizer.getPose();
     }
-    private double calculateHoodDegreeToChange() {
-        double degreeBasedOnStartPosition = this.calculateHoodDegreeBasedOnStartedPosition();
-        //TODO: getPosition doesn't work
-        double hoodServoPos = hoodServo.getPosition();
-        double servoPosition = hoodServoPos / 180;
 
-        double hoodToChange;
-        hoodToChange = degreeBasedOnStartPosition - servoPosition;
-        return hoodToChange;
+    // Calculate the hood sevo position by liner model. We can't really calculate the position via geometry based on the
+    // current position as the sevo doesn't have real current position returned from hardware.
+    private double calculateHoodPositionByAprilTagRange(double range) {
+        return HOOD_K * range + HOOD_B;
     }
-    private double calculateHoodDegreeBasedOnStartedPosition() {
-        double closestRange = Math.sqrt(60d * 60d + TARGET_HEIGHT * TARGET_HEIGHT);
-        double furthestRange = Math.sqrt(290d * 290d + TARGET_HEIGHT * TARGET_HEIGHT);
-        double range = this.getDetectedAprilTag().ftcPose.range;
-        if (range <closestRange){
-            range = closestRange;
-        }
-        if (range > furthestRange){
-            range = furthestRange;
-        }
 
-        double theta = Math.asin(TARGET_HEIGHT / range);
-
-        double thetaMax = Math.asin(TARGET_HEIGHT/closestRange);
-        double thetaMin = Math.asin(TARGET_HEIGHT/furthestRange);
-        double thetaProportion = (thetaMax - theta) / (thetaMax - thetaMin);
-        double hoodChangeDegree = thetaProportion * 154.2857;   // 154.2857 = 360/ 14 * 6
-        if (hoodChangeDegree < 0) {
-            hoodChangeDegree = 0;
-        }
-        if (hoodChangeDegree > 154.2857) {
-            hoodChangeDegree = 154.2857;
-        }
-        return hoodChangeDegree;
-    }
 
     protected void moveHoodServo(double targetPosition) {
-        hoodServo.setPosition(targetPosition);
+        telemetry.addData("HoodServo", "Trying to set position %d", targetPosition);
+
+        double thePosition = Range.clip(targetPosition, HOOD_MIN_POSITION, HOOD_MAX_POSITION);
+        telemetry.addData("HoodServo", "Setting position %d", thePosition);
+        hoodServo.setPosition(thePosition);
     }
 
 
