@@ -265,10 +265,10 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         };
     }
 
-    protected void setOuttakeSpeed() {
+    protected void setOuttakeSpeed(double outtakeSpeed) {
         this.sleep(100);
-        outtakeMotor1.setVelocity(-lowVelocity);
-        outtakeMotor2.setVelocity(lowVelocity);
+        outtakeMotor1.setVelocity(-1 * outtakeSpeed);
+        outtakeMotor2.setVelocity(outtakeSpeed);
     }
 
     protected Action getAimAction(Double turretInitialTargetDegree, Double hoodInitialTargetPosition, boolean runAprilTagAim) {

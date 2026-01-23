@@ -29,7 +29,7 @@ public class FullAutoBlueSideFar1Stack extends AbstractFullAuto {
                 .setTangent(Math.toRadians(180))
                 .strafeToConstantHeading(new Vector2d(53, -15)) //to launch spot
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
-                            this.setOuttakeSpeed();
+                            this.setOuttakeSpeed(highVelocity);
                             return false;
                         },
                         //Prepare the turret before doing intake, so it can reduce the aiming time
@@ -50,7 +50,7 @@ public class FullAutoBlueSideFar1Stack extends AbstractFullAuto {
                 .strafeToConstantHeading(new Vector2d(53, -15)) //to launch spot
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                             intakeMotor.setVelocity(0);
-                            this.setOuttakeSpeed();
+                            this.setOuttakeSpeed(highVelocity);
                             return false;
                         },
                         //Prepare the turret before doing intake, so it can reduce the aiming time

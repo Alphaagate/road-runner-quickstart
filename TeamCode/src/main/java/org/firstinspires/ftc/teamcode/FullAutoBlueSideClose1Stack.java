@@ -32,7 +32,7 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
         return drive.actionBuilder(getInitialPose())
                 .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
-                    this.setOuttakeSpeed();
+                    this.setOuttakeSpeed(lowVelocity);
                     return false;
                 }, this.getAimAction(-5d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))) // set the initial turret degree and hood position
                 .stopAndAdd(new SequentialAction(
@@ -58,7 +58,7 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
                 .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                             intakeMotor.setVelocity(0);
-                            this.setOuttakeSpeed();
+                            this.setOuttakeSpeed(lowVelocity);
                             return false;
                         },
                         //Prepare the turret before doing intake, so it can reduce the aiming time
