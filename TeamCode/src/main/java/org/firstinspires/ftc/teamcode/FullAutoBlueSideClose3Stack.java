@@ -5,7 +5,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -26,23 +28,89 @@ public class FullAutoBlueSideClose3Stack extends AbstractFullAuto {
     protected Action getPathAction() {
 
         return drive.actionBuilder(getInitialPose())
+                .afterDisp(0, new ParallelAction(telemetryPacket -> {
+                            intakeMotor.setVelocity(0);
+                            this.setOuttakeSpeed(lowVelocity);
+                            return false;
+                        },
+                                //Prepare the turret before doing intake, so it can reduce the aiming time
+                                this.getAimAction(-5d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
+                )
                 .strafeToConstantHeading(new Vector2d(-12, -12))//to launch spot
-                .stopAndAdd(this.getLaunchAction())
+                .stopAndAdd(new SequentialAction(
+                        // adjust by using AprilTag again
+                        this.getAimAction(null, null, true),
+                        this.getLaunchAction()
+                ))
                 .strafeToSplineHeading(new Vector2d(-12, -24), Math.toRadians(-90))   //change heading
-                .afterDisp(0, this.getIntakeAction())
+                .afterDisp(0, new SequentialAction(
+                        telemetryPacket -> {
+                            this.reverseOuttake();
+                            return false;
+                        }, this.getIntakeAction()
+
+                ))
                 .strafeToConstantHeading(new Vector2d(-12, -48))                     //to intake
+                .afterDisp(0, new ParallelAction(telemetryPacket -> {
+                            intakeMotor.setVelocity(0);
+                            this.setOuttakeSpeed(lowVelocity);
+                            return false;
+                        },
+                                //Prepare the turret before doing intake, so it can reduce the aiming time
+                                this.getAimAction(-5d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
+                )
                 .strafeToConstantHeading(new Vector2d(-12, -12))//to launch spot
-                .stopAndAdd(this.getLaunchAction())
+                .stopAndAdd(new SequentialAction(
+                        // adjust by using AprilTag again
+                        this.getAimAction(null, null, true),
+                        this.getLaunchAction()
+                ))
                 .strafeToSplineHeading(new Vector2d(12, -24), Math.toRadians(-90))  //to launch spot
-                .afterDisp(0, this.getIntakeAction())
+                .afterDisp(0, new SequentialAction(
+                        telemetryPacket -> {
+                            this.reverseOuttake();
+                            return false;
+                        }, this.getIntakeAction()
+
+                ))
                 .strafeToConstantHeading(new Vector2d(12, -48))                     //intake
+                .afterDisp(0, new ParallelAction(telemetryPacket -> {
+                            intakeMotor.setVelocity(0);
+                            this.setOuttakeSpeed(lowVelocity);
+                            return false;
+                        },
+                                //Prepare the turret before doing intake, so it can reduce the aiming time
+                                this.getAimAction(-5d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
+                )
                 .strafeToConstantHeading(new Vector2d(-12, -12))//to launch spot
-                .stopAndAdd(this.getLaunchAction())
+                .stopAndAdd(new SequentialAction(
+                        // adjust by using AprilTag again
+                        this.getAimAction(null, null, true),
+                        this.getLaunchAction()
+                ))
                 .strafeToSplineHeading(new Vector2d(36, -24), Math.toRadians(-90))  //to launch spot
-                .afterDisp(0, this.getIntakeAction())
+                .afterDisp(0, new SequentialAction(
+                        telemetryPacket -> {
+                            this.reverseOuttake();
+                            return false;
+                        }, this.getIntakeAction()
+
+                ))
                 .strafeToConstantHeading(new Vector2d(36, -48))                     //intake
+                .afterDisp(0, new ParallelAction(telemetryPacket -> {
+                            intakeMotor.setVelocity(0);
+                            this.setOuttakeSpeed(lowVelocity);
+                            return false;
+                        },
+                                //Prepare the turret before doing intake, so it can reduce the aiming time
+                                this.getAimAction(-5d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
+                )
                 .strafeToConstantHeading(new Vector2d(-12, -12))//to launch spot
-                .stopAndAdd(this.getLaunchAction())
+                .stopAndAdd(new SequentialAction(
+                        // adjust by using AprilTag again
+                        this.getAimAction(null, null, true),
+                        this.getLaunchAction()
+                ))
                 .strafeToConstantHeading(new Vector2d(-12, -35))                     //park outside launch
                 .build();
     }

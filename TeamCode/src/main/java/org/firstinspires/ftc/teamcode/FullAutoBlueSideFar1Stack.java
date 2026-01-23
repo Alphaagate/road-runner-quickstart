@@ -51,6 +51,7 @@ public class FullAutoBlueSideFar1Stack extends AbstractFullAuto {
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                             intakeMotor.setVelocity(0);
                             this.setOuttakeSpeed(highVelocity);
+
                             return false;
                         },
                                 //Prepare the turret before doing intake, so it can reduce the aiming time
