@@ -6,6 +6,8 @@ import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -87,6 +89,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     public static final double TARGET_HEIGHT = 84d;
 
     protected boolean useAprilTag = true;
+    protected boolean shouldOpenGate = false;
 
     @Override
     public void runOpMode() {
@@ -130,6 +133,25 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
         }
         stopVisionPortal();
+    }
+
+    protected TrajectoryActionBuilder strafeToOpenGate(TrajectoryActionBuilder actionBuilder, FieldSide fieldSide) {
+
+        if (!shouldOpenGate) {
+            //just return the actionBuilder since we don't need open gate
+            return actionBuilder;
+        }
+
+        Vector2d gatePosition = null;
+        switch (fieldSide) {
+            case BLUE:
+                gatePosition = new Vector2d(0, -63);
+                break;
+            case RED:
+                gatePosition = new Vector2d(0, 63);
+                break;
+        };
+        return actionBuilder.strafeToConstantHeading(gatePosition);   //to open gate
     }
 
 
