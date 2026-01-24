@@ -38,10 +38,10 @@ public class FullAutoRedSideClose2Stack extends AbstractFullAuto {
                 )
                 .strafeToConstantHeading(new Vector2d(-12, 12))//to launch spot
                 .stopAndAdd(new SequentialAction(
-                        this.getAimAction(-30d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, true),
+                        this.getAimAction(-5d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, true),
                         this.getLaunchAction()
                 ))
-                .strafeToSplineHeading(new Vector2d(-12, 24), Math.toRadians(-90))   //change heading
+                .strafeToSplineHeading(new Vector2d(-12, 24), Math.toRadians(90))   //change heading
                 .afterDisp(0, new SequentialAction(
                         telemetryPacket -> {
                             this.reverseOuttake();
@@ -64,7 +64,7 @@ public class FullAutoRedSideClose2Stack extends AbstractFullAuto {
                         this.getLaunchAction()
                 ))
 
-                .strafeToSplineHeading(new Vector2d(12, 24), Math.toRadians(-90))  //to launch spot
+                .strafeToSplineHeading(new Vector2d(12, 24), Math.toRadians(90))  //to launch spot
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                             intakeMotor.setVelocity(0);
                             this.setOuttakeSpeed(lowVelocity);

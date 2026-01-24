@@ -32,13 +32,13 @@ public class FullAutoBlueSideFar2Stack extends AbstractFullAuto {
                             return false;
                         },
                                 //Prepare the turret before doing intake, so it can reduce the aiming time
-                                this.getAimAction(15d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
+                                this.getAimAction(20d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
                 )
                 .strafeToConstantHeading(new Vector2d(53, -15)) //to launch spot
 
                 .stopAndAdd(new SequentialAction(
                         //Further adjust the aiming before launching
-                        this.getAimAction(null, null, false),
+                        this.getAimAction(null, null, true),
                         this.getLaunchAction()
                 ))
                 .strafeToSplineHeading(new Vector2d(36, -24), Math.toRadians(-90))

@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -48,6 +49,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     protected DcMotorEx turretMotor = null;
     protected Servo hoodServo = null;
     protected Servo blockServo;
+    protected GoBildaPinpointDriver driver;
 
 
     // Below are for AprilTag
@@ -105,8 +107,10 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 //        outtakeservo.setPosition(0.475);
 
         telemetry.update();
-
         waitForStart();
+        //TODO: check if we need to move to init
+        //TODO: robot must be stationary!! and init when stationary
+        driver.recalibrateIMU();
 
         Action pathAction = getPathAction();
 
@@ -293,8 +297,13 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         intakeMotor = hardwareMap.get(DcMotorEx.class,"intakemotor");
         hoodServo = hardwareMap.get(Servo.class, "hoodservo");
         blockServo = hardwareMap.get(Servo.class, "blockservo");
+        driver = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
+        //TODO: remember to check if this assumes start pos is 0,0
+
+        driver.resetPosAndIMU();
 
         blockServo.setPosition(1);//0.5 is down, 1 is up
+
 
         resetMotorPosition();
     }
@@ -415,7 +424,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
             //move turret if the heading error > 3 degree
             if (Math.abs(headingError) > 3) {// && Math.abs(targetPosition) < convertToTicks(70)
-                int offsetPosition = 5;
+                int offsetPosition = 10;
                 this.moveTurret(targetPosition + offsetPosition);
             }
             else {

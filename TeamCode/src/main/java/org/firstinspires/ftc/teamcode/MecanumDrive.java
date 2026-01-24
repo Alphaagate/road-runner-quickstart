@@ -67,7 +67,7 @@ public final class MecanumDrive {
         // drive model parameters
         // 32mm /25.4 = 1.2598 in
         // wheel circumference:  3.1415925 * 1.2598 = 3.956 in
-        // inches per ticket : 3.956/2000 tick/rev =
+        // inches per tick : 3.956/2000 tick/rev =
         public double inPerTick = 0.001978;
         public double lateralInPerTick = 0.0014235055956982447;
 
@@ -258,7 +258,7 @@ public final class MecanumDrive {
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        localizer = new ThreeDeadWheelLocalizer(hardwareMap, PARAMS.inPerTick, pose);
+        localizer = new PinpointLocalizer(hardwareMap, PARAMS.inPerTick, pose);
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
     }
