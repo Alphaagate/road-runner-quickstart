@@ -64,7 +64,6 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
                                 this.getAimAction(-40d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
                 )
                 .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot
-
                 .stopAndAdd(new SequentialAction(
                         this.getAimAction(null, null, true),
                         this.getLaunchAction()

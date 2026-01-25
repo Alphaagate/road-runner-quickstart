@@ -145,13 +145,15 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         Vector2d gatePosition = null;
         switch (fieldSide) {
             case BLUE:
-                gatePosition = new Vector2d(0, -63);
+                gatePosition = new Vector2d(0, -52);
                 break;
             case RED:
                 gatePosition = new Vector2d(0, 63);
                 break;
         };
-        return actionBuilder.strafeToConstantHeading(gatePosition);   //to open gate
+
+        return actionBuilder.setTangent(0)
+                .splineToConstantHeading(gatePosition, Math.toRadians(-90)); //to open gate
     }
 
 

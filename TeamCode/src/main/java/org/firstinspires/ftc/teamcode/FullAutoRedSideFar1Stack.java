@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -25,7 +26,7 @@ public class FullAutoRedSideFar1Stack extends AbstractFullAuto {
     }
     @Override
     protected Action getPathAction() {
-        return drive.actionBuilder(getInitialPose())
+        TrajectoryActionBuilder actionBuilder =  drive.actionBuilder(getInitialPose())
                 .setTangent(Math.toRadians(180))
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                             this.setOuttakeSpeed(highVelocity);
@@ -64,9 +65,10 @@ public class FullAutoRedSideFar1Stack extends AbstractFullAuto {
                 .afterDisp(0, new SequentialAction(telemetryPacket -> {
                             this.reverseOuttake();
                             return false;
-                        })
-                )
-                .strafeToConstantHeading(new Vector2d(36, 30))//park outside launch
+                        }
+                ));
+        return strafeToOpenGate(actionBuilder, FieldSide.RED) //open the gate
+                .strafeToConstantHeading(new Vector2d(-12, 35))   //park outside launch
                 .build();
 
     }
