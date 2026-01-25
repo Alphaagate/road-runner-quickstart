@@ -69,7 +69,7 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
                         this.getLaunchAction()
                 ));
 
-        return strafeToOpenGate(actionBuilder, FieldSide.BLUE) //open the gate
+        return this.strafeToOpenGate(actionBuilder, FieldSide.BLUE)      //open the gate if shouldOpenGate == true
                 .strafeToConstantHeading(new Vector2d(-12, -35))   //park outside launch
                 .build();
     }

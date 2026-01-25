@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -27,7 +28,7 @@ public class FullAutoRedSideClose1Stack extends AbstractFullAuto {
     @Override
     protected Action getPathAction() {
 
-        return drive.actionBuilder(getInitialPose())
+        TrajectoryActionBuilder actionBuilder = drive.actionBuilder(getInitialPose())
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                             intakeMotor.setVelocity(0);
                             this.setOuttakeSpeed(lowVelocity);
@@ -63,8 +64,10 @@ public class FullAutoRedSideClose1Stack extends AbstractFullAuto {
                 .stopAndAdd(new SequentialAction(
                         this.getAimAction(-30d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, true),
                         this.getLaunchAction()
-                ))
-                .strafeToConstantHeading(new Vector2d(-12, 35))                     //park outside launch
+                ));
+
+        return this.strafeToOpenGate(actionBuilder, FieldSide.RED)      //open the gate if shouldOpenGate == true
+                .strafeToConstantHeading(new Vector2d(-12, 35))   //park outside launch
                 .build();
     }
 
