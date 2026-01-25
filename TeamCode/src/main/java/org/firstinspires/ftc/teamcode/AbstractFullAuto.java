@@ -383,6 +383,8 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         telemetry.addData("turretpos", turretMotor.getCurrentPosition());
         telemetry.addData("turrettargetpos", turretMotor.getTargetPosition());
 
+        telemetry.addData("estimated pos:", driver.getPosition());
+
         telemetry.update();
     }
     protected void detectAprilTag() {
