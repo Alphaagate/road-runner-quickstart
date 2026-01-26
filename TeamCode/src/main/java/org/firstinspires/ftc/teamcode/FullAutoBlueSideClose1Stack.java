@@ -31,7 +31,6 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
     protected Action getPathAction() {
 
         TrajectoryActionBuilder actionBuilder =  drive.actionBuilder(getInitialPose())
-                .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                             intakeMotor.setVelocity(0);
                             this.setOuttakeSpeed(lowVelocity);
@@ -41,6 +40,7 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
                                 this.getAimAction(-5d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
                 )
                 .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot
+
                 .stopAndAdd(new SequentialAction(
                         // adjust by using AprilTag again
                         this.getAimAction(null, null, true),

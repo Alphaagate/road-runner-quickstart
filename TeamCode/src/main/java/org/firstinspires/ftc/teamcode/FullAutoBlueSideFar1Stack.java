@@ -47,7 +47,7 @@ public class FullAutoBlueSideFar1Stack extends AbstractFullAuto {
                         return false;
                     }, this.getIntakeAction())
                 )
-                .strafeToConstantHeading(new Vector2d(36, -64), new TranslationalVelConstraint(30.0))  // to intake spot
+                .strafeToConstantHeading(new Vector2d(36, -58), new TranslationalVelConstraint(30.0))  // to intake spot
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                             intakeMotor.setVelocity(0);
                             this.setOuttakeSpeed(highVelocity);
@@ -64,12 +64,12 @@ public class FullAutoBlueSideFar1Stack extends AbstractFullAuto {
                         this.getAimAction(null, null, true),
                         this.getLaunchAction()
                 ))
+                .strafeToConstantHeading(new Vector2d(36, -30))//park outside launch
                 .afterDisp(0, new SequentialAction(telemetryPacket -> {
                             this.reverseOuttake();
                             return false;
                         })
                 )
-                .strafeToConstantHeading(new Vector2d(36, -30))//park outside launch
                 .build();
     }
     @Override

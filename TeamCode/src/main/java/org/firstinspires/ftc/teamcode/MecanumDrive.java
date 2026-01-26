@@ -68,19 +68,19 @@ public final class MecanumDrive {
         // 32mm /25.4 = 1.2598 in
         // wheel circumference:  3.1415925 * 1.2598 = 3.956 in
         // inches per tick : 3.956/2000 tick/rev =
-        public double inPerTick = 0.001978;
-        public double lateralInPerTick = 0.0014235055956982447;
+        public double inPerTick = 0.00197595916;
+        public double lateralInPerTick = 0.0013451810522016674;
 
         // wheel circumference: 32mm * 3.1415925 = 100.53mm
         // rotations for the distance of 240mm = 240mm distance /100.53 = 2.387
         // rotations to ticks : 2.387 * 2000
-        public double trackWidthTicks = 4774;
+        public double trackWidthTicks = 6348.472862487187;//4774 for 3 deadwheel
 
         //2000/ Distance from wheel to center * diameter of wheel *pi  = ticks from wheel to center
         // feedforward parameters (in tick units)
-        public double kS = 1.207732709825891;
-        public double kV = 0.00026963702622476344;
-        public double kA = 0.000065;
+        public double kS = 1.3946592823052093;
+        public double kV = 0.00026280965575186505;
+        public double kA = 0.0000745;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 62.5;
@@ -92,12 +92,12 @@ public final class MecanumDrive {
         public double maxAngAccel = Math.PI;
 
         // path controller gains
-        public double axialGain = 5.0;
-        public double lateralGain = 2.0;
+        public double axialGain = 10;
+        public double lateralGain = 1.5;
         public double headingGain = 2.0; // shared with turn
 
-        public double axialVelGain = 0.2;
-        public double lateralVelGain = 0.0;
+        public double axialVelGain = 0;
+        public double lateralVelGain = 0.66;
         public double headingVelGain = 0.0; // shared with turn
     }
 
