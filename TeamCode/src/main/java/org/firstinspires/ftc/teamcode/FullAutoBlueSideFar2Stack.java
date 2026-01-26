@@ -32,10 +32,9 @@ public class FullAutoBlueSideFar2Stack extends AbstractFullAuto {
                             return false;
                         },
                                 //Prepare the turret before doing intake, so it can reduce the aiming time
-                                this.getAimAction(20d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
+                                this.getAimAction(15d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
                 )
                 .strafeToConstantHeading(new Vector2d(53, -15)) //to launch spot
-
                 .stopAndAdd(new SequentialAction(
                         //Further adjust the aiming before launching
                         this.getAimAction(null, null, true),
@@ -47,7 +46,7 @@ public class FullAutoBlueSideFar2Stack extends AbstractFullAuto {
                             return false;
                         }, this.getIntakeAction())
                 )
-                .strafeToConstantHeading(new Vector2d(36, -64), new TranslationalVelConstraint(30.0))  // to intake spot
+                .strafeToConstantHeading(new Vector2d(36, -58), new TranslationalVelConstraint(30.0))  // to intake 1st stack spot
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                             intakeMotor.setVelocity(0);
                             this.setOuttakeSpeed(highVelocity);
@@ -58,25 +57,18 @@ public class FullAutoBlueSideFar2Stack extends AbstractFullAuto {
                                 this.getAimAction(-53d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
                 )
                 .strafeToConstantHeading(new Vector2d(53, -15)) //to launch spot
-
                 .stopAndAdd(new SequentialAction(
                         //Further adjust the aiming before launching
                         this.getAimAction(null, null, true),
                         this.getLaunchAction()
                 ))
-                .afterDisp(0, new SequentialAction(telemetryPacket -> {
-                            this.reverseOuttake();
-                            return false;
-                        })
-                )
-
                 .strafeToSplineHeading(new Vector2d(12, -24), Math.toRadians(-90))
                 .afterDisp(0, new SequentialAction(telemetryPacket -> {
                             this.reverseOuttake();
                             return false;
                         }, this.getIntakeAction())
                 )
-                .strafeToConstantHeading(new Vector2d(12, -64), new TranslationalVelConstraint(30.0))  // to intake spot
+                .strafeToConstantHeading(new Vector2d(12, -58), new TranslationalVelConstraint(30.0))  // to intake 2nd stack spot
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                             intakeMotor.setVelocity(0);
                             this.setOuttakeSpeed(highVelocity);

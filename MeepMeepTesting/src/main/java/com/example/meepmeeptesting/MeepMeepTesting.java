@@ -20,93 +20,51 @@ public class MeepMeepTesting {
                 .build();
 
         Action action = myBot.getDrive().actionBuilder(new Pose2d(63, -15, Math.toRadians(180)))
+                .setTangent(Math.toRadians(180))
 //                .afterDisp(0, new ParallelAction(telemetryPacket -> {
-//                            intakeMotor.setVelocity(0);
-//                            this.setOuttakeSpeed(lowVelocity);
+//                            this.setOuttakeSpeed(highVelocity);
 //                            return false;
 //                        },
 //                                //Prepare the turret before doing intake, so it can reduce the aiming time
-//                                this.getAimAction(-5d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
+//                                this.getAimAction(15d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
 //                )
-                .strafeToConstantHeading(new Vector2d(-12, -12))//to launch spot
+//                .strafeToConstantHeading(new Vector2d(53, -15)) //to launch spot
+
 //                .stopAndAdd(new SequentialAction(
-//                        // adjust by using AprilTag again
-//                        this.getAimAction(null, null, true),
+//                        //Further adjust the aiming before launching
+//                        this.getAimAction(null, null, false),
 //                        this.getLaunchAction()
 //                ))
-                .strafeToSplineHeading(new Vector2d(-12, -24), Math.toRadians(-90))   //change heading
-//                .afterDisp(0, new SequentialAction(
-//                        telemetryPacket -> {
+                .splineTo(new Vector2d(36, -24), Math.toRadians(-90))
+//                .afterDisp(0, new SequentialAction(telemetryPacket -> {
 //                            this.reverseOuttake();
 //                            return false;
-//                        }, this.getIntakeAction()
-//
-//                ))
-                .strafeToConstantHeading(new Vector2d(-12, -48))                     //to intake
+//                        }, this.getIntakeAction())
+//                )
+                .splineTo(new Vector2d(36, -58), Math.toRadians(-90))  // to intake spot
 //                .afterDisp(0, new ParallelAction(telemetryPacket -> {
 //                            intakeMotor.setVelocity(0);
-//                            this.setOuttakeSpeed(lowVelocity);
+//                            this.setOuttakeSpeed(highVelocity);
+//
 //                            return false;
 //                        },
 //                                //Prepare the turret before doing intake, so it can reduce the aiming time
-//                                this.getAimAction(-5d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
+//                                this.getAimAction(-53d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
 //                )
-                .strafeToConstantHeading(new Vector2d(-12, -12))//to launch spot
+                .strafeToConstantHeading(new Vector2d(53, -15)) //to launch spot
+
 //                .stopAndAdd(new SequentialAction(
-//                        // adjust by using AprilTag again
+//                        //Further adjust the aiming before launching
 //                        this.getAimAction(null, null, true),
 //                        this.getLaunchAction()
 //                ))
-                .strafeToSplineHeading(new Vector2d(12, -24), Math.toRadians(-90))  //to launch spot
-//                .afterDisp(0, new SequentialAction(
-//                        telemetryPacket -> {
+                .strafeToConstantHeading(new Vector2d(36, -30))//park outside launch
+//                .afterDisp(0, new SequentialAction(telemetryPacket -> {
 //                            this.reverseOuttake();
 //                            return false;
-//                        }, this.getIntakeAction()
-//
-//                ))
-                .strafeToConstantHeading(new Vector2d(12, -48))                     //intake
-//                .afterDisp(0, new ParallelAction(telemetryPacket -> {
-//                            intakeMotor.setVelocity(0);
-//                            this.setOuttakeSpeed(lowVelocity);
-//                            return false;
-//                        },
-//                                //Prepare the turret before doing intake, so it can reduce the aiming time
-//                                this.getAimAction(-5d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
+//                        })
 //                )
-                .strafeToConstantHeading(new Vector2d(-12, -12))//to launch spot
-//                .stopAndAdd(new SequentialAction(
-//                        // adjust by using AprilTag again
-//                        this.getAimAction(null, null, true),
-//                        this.getLaunchAction()
-//                ))
-                .strafeToSplineHeading(new Vector2d(36, -24), Math.toRadians(-90))  //to launch spot
-//                .afterDisp(0, new SequentialAction(
-//                        telemetryPacket -> {
-//                            this.reverseOuttake();
-//                            return false;
-//                        }, this.getIntakeAction()
-//
-//                ))
-                .strafeToConstantHeading(new Vector2d(36, -48))                     //intake
-//                .afterDisp(0, new ParallelAction(telemetryPacket -> {
-//                            intakeMotor.setVelocity(0);
-//                            this.setOuttakeSpeed(lowVelocity);
-//                            return false;
-//                        },
-//                                //Prepare the turret before doing intake, so it can reduce the aiming time
-//                                this.getAimAction(-5d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
-//                )
-                .strafeToConstantHeading(new Vector2d(-12, -12))//to launch spot
-//                .stopAndAdd(new SequentialAction(
-//                        // adjust by using AprilTag again
-//                        this.getAimAction(null, null, true),
-//                        this.getLaunchAction()
-//                ))
-                .strafeToConstantHeading(new Vector2d(-12, -35))                     //park outside launch
                 .build();
-
-
 
     myBot.runAction(action);
 

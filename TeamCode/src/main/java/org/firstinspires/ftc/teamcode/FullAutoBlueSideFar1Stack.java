@@ -38,7 +38,7 @@ public class FullAutoBlueSideFar1Stack extends AbstractFullAuto {
 
                 .stopAndAdd(new SequentialAction(
                         //Further adjust the aiming before launching
-                        this.getAimAction(null, null, false),
+                        this.getAimAction(null, null, true),
                         this.getLaunchAction()
                 ))
                 .strafeToSplineHeading(new Vector2d(36, -24), Math.toRadians(-90))

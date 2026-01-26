@@ -62,7 +62,7 @@ public class FullAutoBlueSideClose2Stack extends AbstractFullAuto {
                 .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot 2nd
 
                 .stopAndAdd(new SequentialAction(
-                        this.getAimAction(-30d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, true),
+                        this.getAimAction(null, null, true),
                         this.getLaunchAction()
                 ))
                 .strafeToSplineHeading(new Vector2d(15, -24), Math.toRadians(-90))  //turn before intake
