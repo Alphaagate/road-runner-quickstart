@@ -65,40 +65,39 @@ public final class MecanumDrive {
         // Dead wheel spec: 32mm diameter, 2000 ticks/rotation
 
         // drive model parameters
-        // 32mm /25.4 = 1.25984252 in
-        // wheel circumference:  3.14159265 * 1.25984252 = 3.957912 in
-        // inches per tick : 3.957912/2000 tick/rev = 0.001978956 inches/tick
-        // ticks per inch:   2000/3.957912 = 505.316944894177 ticks/inch
-        public double inPerTick = 0.001978956;
-        public double lateralInPerTick = 0.0013451810522016674;
+        // 32mm /25.4 = 1.2598 in
+        // wheel circumference:  3.1415925 * 1.2598 = 3.956 in
+        // inches per ticket : 3.956/2000 tick/rev =
+        public double inPerTick = 0.001978;
+        public double lateralInPerTick = 0.0014235055956982447;
 
         // wheel circumference: 32mm * 3.1415925 = 100.53mm
         // rotations for the distance of 240mm = 240mm distance /100.53 = 2.387
         // rotations to ticks : 2.387 * 2000
-        public double trackWidthTicks = 4774;//4774 for 3 deadwheel tuned 2 deadwheel: 6348.472862487187
+        public double trackWidthTicks = 4774;
 
         //2000/ Distance from wheel to center * diameter of wheel *pi  = ticks from wheel to center
         // feedforward parameters (in tick units)
-        public double kS = 1.3946592823052093;
-        public double kV = 0.00026280965575186505;
-        public double kA = 0.0000745;
+        public double kS = 1.207732709825891;
+        public double kV = 0.00026963702622476344;
+        public double kA = 0.000065;
 
         // path profile parameters (in inches)
-        public double maxWheelVel = 50;
-        public double minProfileAccel = -30;
-        public double maxProfileAccel = 50;
+        public double maxWheelVel = 62.5;
+        public double minProfileAccel = -37.5;
+        public double maxProfileAccel = 62.5;
 
         // turn profile parameters (in radians)
         public double maxAngVel = Math.PI; // shared with path
         public double maxAngAccel = Math.PI;
 
         // path controller gains
-        public double axialGain = 10;
-        public double lateralGain = 1.5;
+        public double axialGain = 5.0;
+        public double lateralGain = 2.0;
         public double headingGain = 2.0; // shared with turn
 
-        public double axialVelGain = 0;
-        public double lateralVelGain = 0.66;
+        public double axialVelGain = 0.2;
+        public double lateralVelGain = 0.0;
         public double headingVelGain = 0.0; // shared with turn
     }
 
@@ -259,7 +258,7 @@ public final class MecanumDrive {
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        localizer = new PinpointLocalizer(hardwareMap, PARAMS.inPerTick, pose);
+        localizer = new ThreeDeadWheelLocalizer(hardwareMap, PARAMS.inPerTick, pose);
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
     }

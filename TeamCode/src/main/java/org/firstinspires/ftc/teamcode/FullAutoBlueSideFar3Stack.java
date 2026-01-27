@@ -43,7 +43,7 @@ public class FullAutoBlueSideFar3Stack extends AbstractFullAuto {
                 ))
                 .strafeToSplineHeading(new Vector2d(36, -24), Math.toRadians(-90))
                 .afterDisp(0, new SequentialAction(telemetryPacket -> {
-                            this.reverseOuttake();
+                            this.blockDown();
                             return false;
                         }, this.getIntakeAction())
                 )
@@ -65,14 +65,14 @@ public class FullAutoBlueSideFar3Stack extends AbstractFullAuto {
                         this.getLaunchAction()
                 ))
                 .afterDisp(0, new SequentialAction(telemetryPacket -> {
-                            this.reverseOuttake();
+                            this.blockDown();
                             return false;
                         })
                 )
 
                 .strafeToSplineHeading(new Vector2d(12, -24), Math.toRadians(-90))
                 .afterDisp(0, new SequentialAction(telemetryPacket -> {
-                            this.reverseOuttake();
+                            this.blockDown();
                             return false;
                         }, this.getIntakeAction())
                 )
@@ -94,14 +94,14 @@ public class FullAutoBlueSideFar3Stack extends AbstractFullAuto {
                         this.getLaunchAction()
                 ))
                 .afterDisp(0, new SequentialAction(telemetryPacket -> {
-                            this.reverseOuttake();
+                            this.blockDown();
                             return false;
                         })
                 )
 
                 .strafeToSplineHeading(new Vector2d(-12, -24), Math.toRadians(-90))
                 .afterDisp(0, new SequentialAction(telemetryPacket -> {
-                            this.reverseOuttake();
+                            this.blockDown();
                             return false;
                         }, this.getIntakeAction())
                 )
@@ -123,7 +123,7 @@ public class FullAutoBlueSideFar3Stack extends AbstractFullAuto {
                 ))
                 .strafeToConstantHeading(new Vector2d(36, -30))//park outside launch
                 .afterDisp(0, new SequentialAction(telemetryPacket -> {
-                            this.reverseOuttake();
+                            this.blockDown();
                             return false;
                         })
                 )

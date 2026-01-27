@@ -34,6 +34,7 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
         TrajectoryActionBuilder actionBuilder =  drive.actionBuilder(getInitialPose())
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                             intakeMotor.setVelocity(0);
+                            this.blockDown();
                             this.setOuttakeSpeed(lowVelocity);
                             return false;
                         },
@@ -50,7 +51,7 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
                 .strafeToSplineHeading(new Vector2d(-12, -24), Math.toRadians(-90))   //change heading
                 .afterDisp(0, new SequentialAction(
                         telemetryPacket -> {
-                            this.reverseOuttake();
+                            this.blockDown();
                             return false;
                         }, this.getIntakeAction()
 

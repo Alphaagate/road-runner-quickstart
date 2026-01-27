@@ -46,7 +46,7 @@ public class FullAutoBlueSideClose3Stack extends AbstractFullAuto {
                 .strafeToSplineHeading(new Vector2d(-12, -24), Math.toRadians(-90))   //turn for intake
                 .afterDisp(0, new SequentialAction(
                         telemetryPacket -> {
-                            this.reverseOuttake();
+                            this.blockDown();
                             return false;
                         }, this.getIntakeAction()
 
@@ -69,7 +69,7 @@ public class FullAutoBlueSideClose3Stack extends AbstractFullAuto {
                 .strafeToSplineHeading(new Vector2d(12, -24), Math.toRadians(-90))  //turn for intake
                 .afterDisp(0, new SequentialAction(
                         telemetryPacket -> {
-                            this.reverseOuttake();
+                            this.blockDown();
                             return false;
                         }, this.getIntakeAction()
 
@@ -92,7 +92,7 @@ public class FullAutoBlueSideClose3Stack extends AbstractFullAuto {
                 .strafeToSplineHeading(new Vector2d(36, -24), Math.toRadians(-90))  //turn for intake
                 .afterDisp(0, new SequentialAction(
                         telemetryPacket -> {
-                            this.reverseOuttake();
+                            this.blockDown();
                             return false;
                         }, this.getIntakeAction()
 

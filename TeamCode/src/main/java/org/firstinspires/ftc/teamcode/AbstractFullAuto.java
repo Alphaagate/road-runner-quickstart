@@ -51,7 +51,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     protected DcMotorEx turretMotor = null;
     protected Servo hoodServo = null;
     protected Servo blockServo;
-    protected GoBildaPinpointDriver driver;
+//    protected GoBildaPinpointDriver driver;
 
 
     // Below are for AprilTag
@@ -73,14 +73,16 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     protected static final double NEW_F_FAR = 14.3;
 
     // Hood Constants
-    protected static final double HOOD_MIN_POSITION = 0.18;   // lowest angle
-    protected static final double HOOD_MAX_POSITION = 0.62;   // highest angle
+    protected static final double HOOD_MIN_POSITION = 0.1;   // lowest angle
+    protected static final double HOOD_MAX_POSITION = 0.7;   // highest angle
     protected static final double HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE = 0.55;
     protected static final double HOOD_INITIAL_TARGET_POSITION_FAR_SIDE = HOOD_MAX_POSITION;
 
     // Linear model (range → hood)
     private static final double HOOD_K = 0.007;   // position per inch
     private static final double HOOD_B = 0.12;    // base position
+
+    //TODO: blockservo 0.5 = down (blocking) blockservo 1 = up (unblocking)
 
     private int ballCount;
     protected double lowVelocity = 1250d;// 1450 for far side
@@ -113,7 +115,6 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         waitForStart();
         //TODO: check if we need to move to init
         //TODO: robot must be stationary!! and init when stationary
-        driver.recalibrateIMU();
 
         Action pathAction = getPathAction();
 
@@ -181,9 +182,17 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         dashboard.sendTelemetryPacket(packet);
     }
 
-    protected void reverseOuttake() {
-        outtakeMotor1.setVelocity(1200);
-        outtakeMotor2.setVelocity(-1200);
+    protected void blockDown() {
+        blockServo.setPosition(0.5);
+        //ensure the outtake has some time to spin up
+//        sleep(100);
+    }
+//    protected void stopOuttake() {
+//        outtakeMotor1.setVelocity(0);
+//        outtakeMotor2.setVelocity(0);
+//    }
+    protected void blockUp() {
+        blockServo.setPosition(1);
         //ensure the outtake has some time to spin up
 //        sleep(100);
     }
@@ -258,12 +267,11 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 //        return launchAction;
 
         return telemetryPacket -> {
-
-            this.sleep(350);
+//            this.sleep(350);
             this.intakeMotor.setPower(1);
-            this.sleep(2000);
+            this.sleep(1500);
 //            this.intakeMotor.setPower(0);
-
+            this.blockDown();
             return false;
         };
     }
@@ -321,10 +329,10 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         intakeMotor = hardwareMap.get(DcMotorEx.class,"intakemotor");
         hoodServo = hardwareMap.get(Servo.class, "hoodservo");
         blockServo = hardwareMap.get(Servo.class, "blockservo");
-        driver = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
+//        driver = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
         //TODO: remember to check if this assumes start pos is 0,0
 
-        driver.resetPosAndIMU();
+//        driver.resetPosAndIMU();
 
         blockServo.setPosition(1);//0.5 is down, 1 is up
 
@@ -385,7 +393,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         telemetry.addData("turretpos", turretMotor.getCurrentPosition());
         telemetry.addData("turrettargetpos", turretMotor.getTargetPosition());
 
-        telemetry.addData("estimated pos:", driver.getPosition());
+//        telemetry.addData("estimated pos:", driver.getPosition());
 
         telemetry.update();
     }

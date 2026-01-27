@@ -46,7 +46,7 @@ public class FullAutoBlueSideFar2Stack extends AbstractFullAuto {
                 ))
                 .strafeToSplineHeading(new Vector2d(36+ xOffset, -24), Math.toRadians(-90))
                 .afterDisp(0, new SequentialAction(telemetryPacket -> {
-                            this.reverseOuttake();
+                            this.blockDown();
                             return false;
                         }, this.getIntakeAction())
                 )
@@ -68,7 +68,7 @@ public class FullAutoBlueSideFar2Stack extends AbstractFullAuto {
                 ))
                 .strafeToSplineHeading(new Vector2d(12 + xOffset, -24), Math.toRadians(-90))
                 .afterDisp(0, new SequentialAction(telemetryPacket -> {
-                            this.reverseOuttake();
+                            this.blockDown();
                             return false;
                         }, this.getIntakeAction())
                 )
@@ -90,7 +90,7 @@ public class FullAutoBlueSideFar2Stack extends AbstractFullAuto {
                         this.getLaunchAction()
                 ))
                 .afterDisp(0, new SequentialAction(telemetryPacket -> {
-                            this.reverseOuttake();
+                            this.blockDown();
                             return false;
                         })
                 )
