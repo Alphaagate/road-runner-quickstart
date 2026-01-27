@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -49,7 +50,7 @@ public class FullAutoRedSideClose2Stack extends AbstractFullAuto {
                         }, this.getIntakeAction()
 
                 ))
-                .strafeToConstantHeading(new Vector2d(-12, 54))                     //to intake
+                .strafeToConstantHeading(new Vector2d(-12, 54), new TranslationalVelConstraint(50))                     //to intake
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                             intakeMotor.setVelocity(0);
                             this.setOuttakeSpeed(lowVelocity);
@@ -73,7 +74,7 @@ public class FullAutoRedSideClose2Stack extends AbstractFullAuto {
                         }, this.getIntakeAction()
 
                 ))
-                .strafeToConstantHeading(new Vector2d(15, 54))                     //intake
+                .strafeToConstantHeading(new Vector2d(15, 54), new TranslationalVelConstraint(50))                     //intake
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                             intakeMotor.setVelocity(0);
                             this.setOuttakeSpeed(lowVelocity);

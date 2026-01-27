@@ -182,10 +182,10 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     }
 
     protected void reverseOuttake() {
-        outtakeMotor1.setVelocity(900);
-        outtakeMotor2.setVelocity(-900);
+        outtakeMotor1.setVelocity(1200);
+        outtakeMotor2.setVelocity(-1200);
         //ensure the outtake has some time to spin up
-        sleep(100);
+//        sleep(100);
     }
 
     protected int convertToTicks(double degree) {
@@ -269,10 +269,9 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     }
 
     protected void setOuttakeSpeed(double outtakeSpeed) {
+        this.sleep(200);  //let the outtake to ramp up speed
         outtakeMotor1.setVelocity(-1 * outtakeSpeed);
         outtakeMotor2.setVelocity(outtakeSpeed);
-
-        this.sleep(200);
     }
 
     protected Action getAimAction(Double turretInitialTargetDegree, Double hoodInitialTargetPosition, boolean runAprilTagAim) {
@@ -296,7 +295,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
                     // Give the turret and hoodSevo some time run to the initial target position before we detect april tag
                     sleep(300);
                 }
-                sleep(500);
+                sleep(300);
                 //Further adjust the turret and hood angles by AprilTag detection and calculation
                 this.detectAprilTag();
                 this.aimAtTarget();  //aimAtTarget will move both turret and hood
@@ -462,6 +461,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
             //move hood servo
             double servoPosition = this.calculateHoodPositionByAprilTagRange(this.getDetectedAprilTag().ftcPose.range);
             this.moveHoodServo(servoPosition);
+            sleep(300);
         } else {
             telemetry.addLine("Target not found or turretMotor is busy");
 

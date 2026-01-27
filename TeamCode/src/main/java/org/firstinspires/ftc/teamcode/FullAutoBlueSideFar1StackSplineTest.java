@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 public class FullAutoBlueSideFar1StackSplineTest extends AbstractFullAuto {
     @Override
     protected int getDesiredTagID() {
-        return DESIRED_TAG_ID_BLUE;
+        return DESIRED_TAG_ID_RED;
     }
 
     @Override
@@ -25,54 +25,25 @@ public class FullAutoBlueSideFar1StackSplineTest extends AbstractFullAuto {
     }
     @Override
     protected Action getPathAction() {
+
+        double xOffset = 5;
+        double yOffset = 8;
+        double degreeOffset = 10;
         return drive.actionBuilder(getInitialPose())
                 .setTangent(Math.toRadians(180))
-                .afterDisp(0, new ParallelAction(telemetryPacket -> {
-                            this.setOuttakeSpeed(highVelocity);
-                            return false;
-                        },
-                                //Prepare the turret before doing intake, so it can reduce the aiming time
-                                this.getAimAction(15d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
-                )
-                .stopAndAdd(new SequentialAction(
-                        //Further adjust the aiming before launching
-                        this.getAimAction(null, null, false),
-                        this.getLaunchAction()
-                ))
-                .splineTo(new Vector2d(36, -24), Math.toRadians(-90))
 
-
-
-                .afterDisp(0, new SequentialAction(telemetryPacket -> {
-                        this.reverseOuttake();
-                        return false;
-                    }, this.getIntakeAction())
-                )
-                .splineTo(new Vector2d(36, -58), Math.toRadians(-90))  // to intake spot
-                .afterDisp(0, new ParallelAction(telemetryPacket -> {
-                            intakeMotor.setVelocity(0);
-                            this.setOuttakeSpeed(highVelocity);
-
-                            return false;
-                        },
-                                //Prepare the turret before doing intake, so it can reduce the aiming time
-                                this.getAimAction(-53d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
-                )
                 .strafeToConstantHeading(new Vector2d(53, -15)) //to launch spot
 
-                .stopAndAdd(new SequentialAction(
-                        //Further adjust the aiming before launching
-                        this.getAimAction(null, null, true),
-                        this.getLaunchAction()
-                ))
-                .strafeToConstantHeading(new Vector2d(36, -30))//park outside launch
-                .afterDisp(0, new SequentialAction(telemetryPacket -> {
-                            this.reverseOuttake();
-                            return false;
-                        })
-                )
+                .strafeToSplineHeading(new Vector2d(36 + xOffset, -24), Math.toRadians(-90 + degreeOffset))
+
+                .strafeToConstantHeading(new Vector2d(36 + xOffset, -58 + yOffset), new TranslationalVelConstraint(30.0))  // to intake spot
+
+                .strafeToConstantHeading(new Vector2d(53, -15 + yOffset)) //to launch spot
+
                 .build();
+
     }
+
     @Override
     protected PIDFCoefficients getPidfCoefficients() {
         return new PIDFCoefficients(NEW_P_FAR, 0, 0, NEW_F_FAR);

@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -51,12 +52,17 @@ public class FullAutoRedSideClose1Stack extends AbstractFullAuto {
                         }, this.getIntakeAction()
 
                 ))
-                .strafeToConstantHeading(new Vector2d(-12, 54))                     //to intake
-                .afterDisp(0, new ParallelAction(telemetryPacket -> {
+                .strafeToConstantHeading(new Vector2d(-12, 55), new TranslationalVelConstraint(15))                     //to intake
+                .afterDisp(0, new ParallelAction(
+                        new SequentialAction(telemetryPacket -> {
                             intakeMotor.setVelocity(0);
-                            this.setOuttakeSpeed(lowVelocity);
+                            sleep(300);
                             return false;
                         },
+                        telemetryPacket -> {
+                            this.setOuttakeSpeed(lowVelocity);
+                            return false;
+                        }),
                                 //Prepare the turret before doing intake, so it can reduce the aiming time
                                 this.getAimAction(40d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
                 )
