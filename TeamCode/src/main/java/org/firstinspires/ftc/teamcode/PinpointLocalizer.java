@@ -16,8 +16,19 @@ import java.util.Objects;
 @Config
 public final class PinpointLocalizer implements Localizer {
     public static class Params {
-        public double parYTicks = -1045.0073312047548; // y position of the parallel encoder (in tick units) new theoretical 1352.81701628
-        public double perpXTicks = -3092.5502642538127; // x position of the perpendicular encoder (in tick units) //theoretical 3680.458059 exclude intake?
+
+        // Dead wheel spec: 32mm diameter, 2000 ticks/rotation
+
+        // drive model parameters
+        // 32mm /25.4 = 1.25984252 in
+        // wheel circumference:  3.14159265 * 1.25984252 = 3.957912 in
+        // inches per tick : 3.957912/2000 tick/rev = 0.001978956 inches/tick
+        // ticks per inch:   2000/3.957912 = 505.316944894177 ticks/inch
+
+        // parYTicks =  505.316944894177 * 50mm /25.4 = 994.718395460978
+        // perpXTicks = 505.316944894177 * 185mm /25.4 = 3680.45806320561988
+        public double parYTicks = -994.718395460978; // y position of the parallel encoder (in tick units) new theoretical 1352.81701628
+        public double perpXTicks = -3680.45806320561988; // x position of the perpendicular encoder (in tick units) //theoretical 3680.458059 exclude intake?
     }
 
     public static Params PARAMS = new Params();

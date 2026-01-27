@@ -25,7 +25,7 @@ public class FullAutoBlueSideFar1Stack extends AbstractFullAuto {
     }
     @Override
     protected Action getPathAction() {
-        double xOffset = 5;
+        double xOffset = 0;
         double yOffset = 0;
         double degreeOffset = 0;
 
@@ -50,7 +50,7 @@ public class FullAutoBlueSideFar1Stack extends AbstractFullAuto {
                             return false;
                         }, this.getIntakeAction())
                 )
-                .strafeToConstantHeading(new Vector2d(36 + xOffset, -58 + 1), new TranslationalVelConstraint(60))  // to intake spot
+                .strafeToConstantHeading(new Vector2d(36 + xOffset, -58), new TranslationalVelConstraint(60))  // to intake spot
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                             intakeMotor.setVelocity(0);
                             this.setOuttakeSpeed(highVelocity);

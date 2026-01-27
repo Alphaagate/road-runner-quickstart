@@ -65,16 +65,17 @@ public final class MecanumDrive {
         // Dead wheel spec: 32mm diameter, 2000 ticks/rotation
 
         // drive model parameters
-        // 32mm /25.4 = 1.2598 in
-        // wheel circumference:  3.1415925 * 1.2598 = 3.956 in
-        // inches per tick : 3.956/2000 tick/rev =
-        public double inPerTick = 0.00197595916;
+        // 32mm /25.4 = 1.25984252 in
+        // wheel circumference:  3.14159265 * 1.25984252 = 3.957912 in
+        // inches per tick : 3.957912/2000 tick/rev = 0.001978956 inches/tick
+        // ticks per inch:   2000/3.957912 = 505.316944894177 ticks/inch
+        public double inPerTick = 0.001978956;
         public double lateralInPerTick = 0.0013451810522016674;
 
         // wheel circumference: 32mm * 3.1415925 = 100.53mm
         // rotations for the distance of 240mm = 240mm distance /100.53 = 2.387
         // rotations to ticks : 2.387 * 2000
-        public double trackWidthTicks = 6348.472862487187;//4774 for 3 deadwheel
+        public double trackWidthTicks = 4774;//4774 for 3 deadwheel tuned 2 deadwheel: 6348.472862487187
 
         //2000/ Distance from wheel to center * diameter of wheel *pi  = ticks from wheel to center
         // feedforward parameters (in tick units)
