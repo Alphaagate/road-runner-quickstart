@@ -446,24 +446,24 @@ public abstract class AbstractFullAuto extends LinearOpMode {
             double headingError = this.getDetectedAprilTag().ftcPose.bearing;
             double yawError = this.getDetectedAprilTag().ftcPose.yaw;
 
-            int deltaPosition = convertToTicks(headingError);
-            //cap the delta to maximum 2 clicks
-//            deltaPosition = Range.clip(deltaPosition, 0, 2);
+            telemetry.addData("HeadingError: ", headingError);
+
+            double offsetDegree = 3d;
+            double headingErrorAfterOffset = headingError + offsetDegree;
+            headingErrorAfterOffset = Range.clip(headingErrorAfterOffset, -40, 40);
+
+            int deltaPosition = convertToTicks(headingErrorAfterOffset);
             int targetPosition = deltaPosition + currentPosition;
 
-            telemetry.addData("HeadingError: ", headingError);
             telemetry.addData("Target motor pos", targetPosition);
 
-            //move turret if the heading error > 1.5 degree
-            int offsetPosition = 0;
-            if (range >= 85 && Math.abs(headingError) > 1) { // For far side
-                offsetPosition = 18;
-                this.moveTurret(targetPosition + offsetPosition);
-
+            //For far side, move turret if the headingErrorAfterOffset > 1 degree
+            if (range >= 85 && Math.abs(headingErrorAfterOffset) > 1) { // For far side
+                this.moveTurret(targetPosition);
             }
-            else if (range > 0 && range < 85 && Math.abs(headingError) > 2) { // For close side
-                offsetPosition = 10;
-                this.moveTurret(targetPosition + offsetPosition);
+            //For close side, move turret if the headingErrorAfterOffset > 2 degree
+            else if (range > 0 && range < 85 && Math.abs(headingErrorAfterOffset) > 2) { // For close side
+                this.moveTurret(targetPosition);
             }
             else {
                 telemetry.addLine("Target aimed, no need to move, stop the motor");
