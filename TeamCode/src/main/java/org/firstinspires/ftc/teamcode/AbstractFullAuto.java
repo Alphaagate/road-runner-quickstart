@@ -122,7 +122,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         while(opModeIsActive()) {
             outtakeMotor1.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
             outtakeMotor2.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
-            this.detectAprilTag();
+//            this.detectAprilTag();   // no need to detect here, we will detect april tag when robot is at lunch spot
 //            this.logInfo();
 
             TelemetryPacket packet = new TelemetryPacket();
@@ -451,17 +451,17 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 //            deltaPosition = Range.clip(deltaPosition, 0, 2);
             int targetPosition = deltaPosition + currentPosition;
 
-            telemetry.addLine("HeadingError: " + headingError);
+            telemetry.addData("HeadingError: ", headingError);
             telemetry.addData("Target motor pos", targetPosition);
 
             //move turret if the heading error > 1.5 degree
             int offsetPosition = 0;
-            if (range >= 90 && Math.abs(headingError) > 1) { // For far side
+            if (range >= 85 && Math.abs(headingError) > 1) { // For far side
                 offsetPosition = 18;
                 this.moveTurret(targetPosition + offsetPosition);
 
             }
-            if (range > 0 && range < 100 && Math.abs(headingError) > 2) { // For close side
+            else if (range > 0 && range < 85 && Math.abs(headingError) > 2) { // For close side
                 offsetPosition = 10;
                 this.moveTurret(targetPosition + offsetPosition);
             }
