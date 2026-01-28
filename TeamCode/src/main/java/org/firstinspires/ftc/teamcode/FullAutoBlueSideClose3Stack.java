@@ -51,7 +51,7 @@ public class FullAutoBlueSideClose3Stack extends AbstractFullAuto {
                         }, this.getIntakeAction()
 
                 ))
-                .strafeToConstantHeading(new Vector2d(-12, -48), new TranslationalVelConstraint(30))                     //to intake
+                .strafeToConstantHeading(new Vector2d(-12, -48), new TranslationalVelConstraint(20))                     //to intake
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                             intakeMotor.setVelocity(0);
                             this.setOuttakeSpeed(lowVelocity);
@@ -74,7 +74,7 @@ public class FullAutoBlueSideClose3Stack extends AbstractFullAuto {
                         }, this.getIntakeAction()
 
                 ))
-                .strafeToConstantHeading(new Vector2d(12, -48), new TranslationalVelConstraint(30))                     //intake
+                .strafeToConstantHeading(new Vector2d(12, -48), new TranslationalVelConstraint(20))                     //intake
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                             intakeMotor.setVelocity(0);
                             this.setOuttakeSpeed(lowVelocity);
@@ -97,7 +97,7 @@ public class FullAutoBlueSideClose3Stack extends AbstractFullAuto {
                         }, this.getIntakeAction()
 
                 ))
-                .strafeToConstantHeading(new Vector2d(36, -48), new TranslationalVelConstraint(30))                     //intake
+                .strafeToConstantHeading(new Vector2d(36, -48), new TranslationalVelConstraint(20))                     //intake
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                             intakeMotor.setVelocity(0);
                             this.setOuttakeSpeed(lowVelocity);

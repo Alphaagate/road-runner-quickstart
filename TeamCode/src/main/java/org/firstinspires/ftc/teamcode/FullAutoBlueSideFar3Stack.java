@@ -39,11 +39,16 @@ public class FullAutoBlueSideFar3Stack extends AbstractFullAuto {
                 .stopAndAdd(new SequentialAction(
                         //Further adjust the aiming before launching
                         this.getAimAction(null, null, true),
-                        this.getLaunchAction()
+                        this.getLaunchAction(),
+                        telemetryPacket -> {
+                            this.sleep(300);
+                            this.blockDown();
+                            return false;
+                        }
                 ))
                 .strafeToSplineHeading(new Vector2d(36, -24), Math.toRadians(-90))
                 .afterDisp(0, new SequentialAction(telemetryPacket -> {
-                            this.blockDown();
+                            this.setOuttakeSpeed(0);
                             return false;
                         }, this.getIntakeAction())
                 )
@@ -51,7 +56,7 @@ public class FullAutoBlueSideFar3Stack extends AbstractFullAuto {
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                             intakeMotor.setVelocity(0);
                             this.setOuttakeSpeed(highVelocity);
-
+                            blockUp();
                             return false;
                         },
                                 //Prepare the turret before doing intake, so it can reduce the aiming time
@@ -62,17 +67,17 @@ public class FullAutoBlueSideFar3Stack extends AbstractFullAuto {
                 .stopAndAdd(new SequentialAction(
                         //Further adjust the aiming before launching
                         this.getAimAction(null, null, true),
-                        this.getLaunchAction()
-                ))
-                .afterDisp(0, new SequentialAction(telemetryPacket -> {
+                        this.getLaunchAction(),
+                        telemetryPacket -> {
+                            this.sleep(300);
                             this.blockDown();
                             return false;
-                        })
-                )
+                        }
+                ))
 
                 .strafeToSplineHeading(new Vector2d(12, -24), Math.toRadians(-90))
                 .afterDisp(0, new SequentialAction(telemetryPacket -> {
-                            this.blockDown();
+                            this.setOuttakeSpeed(0);
                             return false;
                         }, this.getIntakeAction())
                 )
@@ -80,7 +85,7 @@ public class FullAutoBlueSideFar3Stack extends AbstractFullAuto {
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                             intakeMotor.setVelocity(0);
                             this.setOuttakeSpeed(highVelocity);
-
+                            blockUp();
                             return false;
                         },
                                 //Prepare the turret before doing intake, so it can reduce the aiming time
@@ -91,25 +96,25 @@ public class FullAutoBlueSideFar3Stack extends AbstractFullAuto {
                 .stopAndAdd(new SequentialAction(
                         //Further adjust the aiming before launching
                         this.getAimAction(null, null, true),
-                        this.getLaunchAction()
-                ))
-                .afterDisp(0, new SequentialAction(telemetryPacket -> {
+                        this.getLaunchAction(),
+                        telemetryPacket -> {
+                            this.sleep(300);
                             this.blockDown();
                             return false;
-                        })
-                )
+                        }
+                ))
 
-                .strafeToSplineHeading(new Vector2d(-12, -24), Math.toRadians(-90))
+                .strafeToSplineHeading(new Vector2d(-14, -24), Math.toRadians(-90))
                 .afterDisp(0, new SequentialAction(telemetryPacket -> {
-                            this.blockDown();
+                            this.setOuttakeSpeed(0);
                             return false;
                         }, this.getIntakeAction())
                 )
-                .strafeToConstantHeading(new Vector2d(-12, -48))  // to intake 3rd stack spot //, new TranslationalVelConstraint(30.0)
+                .strafeToConstantHeading(new Vector2d(-14, -48), new TranslationalVelConstraint(30.0))  // to intake 3rd stack spot //, new TranslationalVelConstraint(30.0)
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                             intakeMotor.setVelocity(0);
                             this.setOuttakeSpeed(highVelocity);
-
+                            blockUp();
                             return false;
                         },
                                 //Prepare the turret before doing intake, so it can reduce the aiming time
@@ -122,11 +127,6 @@ public class FullAutoBlueSideFar3Stack extends AbstractFullAuto {
                         this.getLaunchAction()
                 ))
                 .strafeToConstantHeading(new Vector2d(36, -30))//park outside launch
-                .afterDisp(0, new SequentialAction(telemetryPacket -> {
-                            this.blockDown();
-                            return false;
-                        })
-                )
                 .build();
     }
     @Override

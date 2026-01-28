@@ -34,7 +34,6 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
         TrajectoryActionBuilder actionBuilder =  drive.actionBuilder(getInitialPose())
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                             intakeMotor.setVelocity(0);
-                            this.blockDown();
                             this.setOuttakeSpeed(lowVelocity);
                             return false;
                         },
@@ -46,20 +45,27 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
                 .stopAndAdd(new SequentialAction(
                         // adjust by using AprilTag again
                         this.getAimAction(null, null, true),
-                        this.getLaunchAction()
-                ))
-                .strafeToSplineHeading(new Vector2d(-12, -24), Math.toRadians(-90))   //change heading
-                .afterDisp(0, new SequentialAction(
+                        this.getLaunchAction(),
                         telemetryPacket -> {
+                            this.sleep(300);
                             this.blockDown();
                             return false;
-                        }, this.getIntakeAction()
-
+                        }
                 ))
-                .strafeToConstantHeading(new Vector2d(-12, -54), new TranslationalVelConstraint(30))  //to intake
+                .strafeToSplineHeading(new Vector2d(-12, -24), Math.toRadians(-85))   //change heading
+                .afterDisp(0, new SequentialAction(telemetryPacket -> {
+                            this.intakeMotor.setPower(1);
+                            this.setOuttakeSpeed(0);
+                            return false;
+                        })
+                )
+                .strafeToConstantHeading(new Vector2d(-12, -54), new TranslationalVelConstraint(15))  //to intake
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                             intakeMotor.setVelocity(0);
                             this.setOuttakeSpeed(lowVelocity);
+                            this.sleep(200);
+                            this.blockUp();
+
                             return false;
                         },
                                 //Prepare the turret before doing intake, so it can reduce the aiming time
@@ -68,7 +74,12 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
                 .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot
                 .stopAndAdd(new SequentialAction(
                         this.getAimAction(null, null, true),
-                        this.getLaunchAction()
+                        this.getLaunchAction(),
+                        telemetryPacket -> {
+                            this.sleep(300);
+                            this.blockDown();
+                            return false;
+                        }
                 ));
 
         return this.strafeToOpenGate(actionBuilder, FieldSide.BLUE)      //open the gate if shouldOpenGate == true

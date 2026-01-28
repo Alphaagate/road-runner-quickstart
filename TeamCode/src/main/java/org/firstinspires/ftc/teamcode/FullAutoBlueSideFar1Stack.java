@@ -42,11 +42,18 @@ public class FullAutoBlueSideFar1Stack extends AbstractFullAuto {
                 .stopAndAdd(new SequentialAction(
                         //Further adjust the aiming before launching
                         this.getAimAction(null, null, true),
-                        this.getLaunchAction()
+                        this.getLaunchAction(),
+                        telemetryPacket -> {
+                            this.sleep(300);
+                            this.blockDown();
+                            return false;
+                        }
+
+
                 ))
                 .strafeToSplineHeading(new Vector2d(36 + xOffset, -24), Math.toRadians(-90 + degreeOffset))
                 .afterDisp(0, new SequentialAction(telemetryPacket -> {
-                            this.getIntakeAction();
+                            this.intakeMotor.setPower(1);
                             this.setOuttakeSpeed(0);
                             return false;
                         })
@@ -60,7 +67,7 @@ public class FullAutoBlueSideFar1Stack extends AbstractFullAuto {
                             return false;
                         },
                                 //Prepare the turret before doing intake, so it can reduce the aiming time
-                                this.getAimAction(-53d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
+                                this.getAimAction(-47d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
                 )
                 .strafeToConstantHeading(new Vector2d(53 + xOffset, -15 + yOffset )) //to launch spot
                 .stopAndAdd(new SequentialAction(

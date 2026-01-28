@@ -60,8 +60,6 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     private AprilTagProcessor aprilTagProcessor;                 // Used for managing the AprilTag detection process.
     private boolean targetFound = false;    // Set to true when an AprilTag target is detected
     private AprilTagDetection detectedAprilTag;        // Used to hold the data for a detected AprilTag
-
-    private static final double DESIRED_DISTANCE = 12.0;       //  this is how close the camera should get to the target (inches)
     protected static final int DESIRED_TAG_ID_RED = 24;       // Choose the tag you want to approach or set to -1 for ANY tag.
     protected static final int DESIRED_TAG_ID_BLUE = 20 ;       // Choose the tag you want to approach or set to -1 for ANY tag.
 
@@ -76,16 +74,16 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     protected static final double HOOD_MIN_POSITION = 0.1;   // lowest angle
     protected static final double HOOD_MAX_POSITION = 0.7;   // highest angle
     protected static final double HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE = 0.55;
-    protected static final double HOOD_INITIAL_TARGET_POSITION_FAR_SIDE = HOOD_MAX_POSITION;
+    protected static final double HOOD_INITIAL_TARGET_POSITION_FAR_SIDE = 0.65;
 
     // Linear model (range → hood)
     private static final double HOOD_K = 0.007;   // position per inch
-    private static final double HOOD_B = 0.12;    // base position
+    private static final double HOOD_B = 0.1;    // base position
 
     //TODO: blockservo 0.5 = down (blocking) blockservo 1 = up (unblocking)
 
     private int ballCount;
-    protected double lowVelocity = 1250d;// 1450 for far side
+    protected double lowVelocity = 1210d;// 1450 for far side
     protected double highVelocity = 1500d;// 1450 for far side
     // 84 = Tower height 99 - Robot height 35 + Goal height 20
     public static final double TARGET_HEIGHT = 84d;
@@ -123,17 +121,20 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         }
         while(opModeIsActive()) {
             outtakeMotor1.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
-            outtakeMotor2.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);this.detectAprilTag();
-            this.logInfo();
+            outtakeMotor2.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+            this.detectAprilTag();
+//            this.logInfo();
 
             TelemetryPacket packet = new TelemetryPacket();
             if (!pathAction.run(packet)) {
                 break;
             }
+            telemetry.update();
             drawAndLogTelemetry(packet);
 
         }
         stopVisionPortal();
+        telemetry.update();
     }
 
     protected TrajectoryActionBuilder strafeToOpenGate(TrajectoryActionBuilder actionBuilder, FieldSide fieldSide) {
@@ -183,6 +184,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     }
 
     protected void blockDown() {
+        this.sleep(300);
         blockServo.setPosition(0.5);
         //ensure the outtake has some time to spin up
 //        sleep(100);
@@ -270,8 +272,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 //            this.sleep(350);
             this.intakeMotor.setPower(1);
             this.sleep(1500);
-//            this.intakeMotor.setPower(0);
-            this.blockDown();
+            this.intakeMotor.setPower(0);
             return false;
         };
     }
@@ -394,8 +395,6 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         telemetry.addData("turrettargetpos", turretMotor.getTargetPosition());
 
 //        telemetry.addData("estimated pos:", driver.getPosition());
-
-        telemetry.update();
     }
     protected void detectAprilTag() {
 
@@ -443,7 +442,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
         if (isTargetFound()) {//&& !turretMotor.isBusy()
             // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
-            double rangeError = (this.getDetectedAprilTag().ftcPose.range - DESIRED_DISTANCE);
+            double range = this.getDetectedAprilTag().ftcPose.range;
             double headingError = this.getDetectedAprilTag().ftcPose.bearing;
             double yawError = this.getDetectedAprilTag().ftcPose.yaw;
 
@@ -453,12 +452,17 @@ public abstract class AbstractFullAuto extends LinearOpMode {
             int targetPosition = deltaPosition + currentPosition;
 
             telemetry.addLine("HeadingError: " + headingError);
-            telemetry.addLine("Moving turret");
             telemetry.addData("Target motor pos", targetPosition);
 
-            //move turret if the heading error > 3 degree
-            if (Math.abs(headingError) > 3) {// && Math.abs(targetPosition) < convertToTicks(70)
-                int offsetPosition = 10;
+            //move turret if the heading error > 1.5 degree
+            int offsetPosition = 0;
+            if (range >= 90 && Math.abs(headingError) > 1) { // For far side
+                offsetPosition = 18;
+                this.moveTurret(targetPosition + offsetPosition);
+
+            }
+            if (range > 0 && range < 100 && Math.abs(headingError) > 2) { // For close side
+                offsetPosition = 10;
                 this.moveTurret(targetPosition + offsetPosition);
             }
             else {
@@ -478,8 +482,10 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     }
 
     protected void moveTurret(int targetPosition) {
+        telemetry.addLine("Moving turret");
         turretMotor.setTargetPosition(targetPosition);
         turretMotor.setPower(MAX_TURRET_TURN_POWER);
+
 
     }
 
