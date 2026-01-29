@@ -58,4 +58,9 @@ public class AutoAimTest extends AbstractFullAuto {
         };
     }
 
+    @Override
+    protected double getTurretDegreeOffset() {
+        return 0d;
+    }
+
 }

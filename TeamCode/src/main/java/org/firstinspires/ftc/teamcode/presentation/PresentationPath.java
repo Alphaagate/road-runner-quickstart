@@ -47,6 +47,12 @@ public class PresentationPath extends AbstractFullAuto {
                 ))
                 .build();
     }
+
+    @Override
+    protected double getTurretDegreeOffset() {
+        return 0d;
+    }
+
     @Override
     protected PIDFCoefficients getPidfCoefficients() {
         return new PIDFCoefficients(NEW_P_CLOSE, 0, 0, NEW_F_CLOSE);

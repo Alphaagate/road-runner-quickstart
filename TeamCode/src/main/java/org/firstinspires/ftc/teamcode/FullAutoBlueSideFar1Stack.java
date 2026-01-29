@@ -79,6 +79,12 @@ public class FullAutoBlueSideFar1Stack extends AbstractFullAuto {
                 .build();
 
     }
+
+    @Override
+    protected double getTurretDegreeOffset() {
+        return 0;
+    }
+
     @Override
     protected PIDFCoefficients getPidfCoefficients() {
         return new PIDFCoefficients(NEW_P_FAR, 0, 0, NEW_F_FAR);

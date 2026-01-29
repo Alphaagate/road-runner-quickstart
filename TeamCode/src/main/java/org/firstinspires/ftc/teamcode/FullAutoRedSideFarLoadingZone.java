@@ -39,6 +39,11 @@ public class FullAutoRedSideFarLoadingZone extends AbstractFullAuto {
     }
 
     @Override
+    protected double getTurretDegreeOffset() {
+        return -4d;
+    }
+
+    @Override
     protected PIDFCoefficients getPidfCoefficients() {
         return new PIDFCoefficients(NEW_P_FAR, 0, 0, NEW_F_FAR);
     }

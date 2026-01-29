@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -67,6 +68,8 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     private double lastTargetPositionToMove = 0.0;
     protected static final double NEW_P_CLOSE = 40;
     protected static final double NEW_F_CLOSE = 15.3; //TODO: NEED TO TUNE P AND F FOR CLOSE SIDE
+
+
     protected static final double NEW_P_FAR = 90;
     protected static final double NEW_F_FAR = 14.3;
 
@@ -255,6 +258,8 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     }
 
     protected abstract Action getPathAction();
+    protected abstract double getTurretDegreeOffset();
+
 
     protected Action getLaunchAction() {
 
@@ -336,7 +341,11 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 //        driver.resetPosAndIMU();
 
         blockServo.setPosition(1);//0.5 is down, 1 is up
+        VoltageSensor batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
+        double voltage = batteryVoltageSensor.getVoltage();
+        double kV = voltage /12;
 
+//        NEW_F_CLOSE = 15.3/kV; //TODO: NEED TO TUNE P AND F FOR CLOSE SIDE
 
         resetMotorPosition();
     }
@@ -448,9 +457,9 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
             telemetry.addData("HeadingError: ", headingError);
 
-            double offsetDegree = 3d; // default to DESIRED_TAG_ID_BLUE
+            double offsetDegree = 0d; // default to DESIRED_TAG_ID_BLUE both blue side working
             if (getDesiredTagID() == DESIRED_TAG_ID_RED) {
-                offsetDegree = -3d;
+                offsetDegree = -2d; //close side red working
             }
 
             double headingErrorAfterOffset = headingError + offsetDegree;

@@ -28,6 +28,8 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
         return DESIRED_TAG_ID_BLUE;
     }
 
+
+
     @Override
     protected Action getPathAction() {
 
@@ -69,7 +71,7 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
                             return false;
                         },
                                 //Prepare the turret before doing intake, so it can reduce the aiming time
-                                this.getAimAction(-40d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
+                                this.getAimAction(-35d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
                 )
                 .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot
                 .stopAndAdd(new SequentialAction(
@@ -86,6 +88,12 @@ public class FullAutoBlueSideClose1Stack extends AbstractFullAuto {
                 .strafeToConstantHeading(new Vector2d(-12, -35))   //park outside launch
                 .build();
     }
+
+    @Override
+    protected double getTurretDegreeOffset() {
+        return 0;
+    }
+
     @Override
     protected PIDFCoefficients getPidfCoefficients() {
         return new PIDFCoefficients(NEW_P_CLOSE, 0, 0, NEW_F_CLOSE);

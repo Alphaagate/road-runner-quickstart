@@ -1,3 +1,5 @@
+
+
 package org.firstinspires.ftc.teamcode;
 
 
@@ -13,57 +15,30 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 @Config
 @Autonomous(group = "Autonomous")
-public class FullAutoBlueSideFar2Stack extends AbstractFullAuto {
+public class FullAutoRedSideClose2StackNoGate extends AbstractFullAuto {
     @Override
     protected int getDesiredTagID() {
-        return DESIRED_TAG_ID_BLUE;
-    }
-    @Override
-    public Pose2d getInitialPose() {
-        return new Pose2d(63, -15, Math.toRadians(180));
+        return DESIRED_TAG_ID_RED;
     }
 
     @Override
+    public Pose2d getInitialPose() {
+        return new Pose2d(-58.3, 45, Math.toRadians(-235));
+    }
+    @Override
     protected Action getPathAction() {
+
         return drive.actionBuilder(getInitialPose())
-                .setTangent(Math.toRadians(180))
-                .afterDisp(0, new ParallelAction(telemetryPacket -> {
-                            this.setOuttakeSpeed(highVelocity);
-                            return false;
-                        },
-                                //Prepare the turret before doing intake, so it can reduce the aiming time
-                                this.getAimAction(15d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
-                )
-                .strafeToConstantHeading(new Vector2d(53, -15)) //to launch spot
-                .stopAndAdd(new SequentialAction(
-                        //Further adjust the aiming before launching
-                        this.getAimAction(null, null, true),
-                        this.getLaunchAction(),
-                        telemetryPacket -> {
-                            this.sleep(300);
-                            this.blockDown();
-                            return false;
-                        }
-                ))
-                .strafeToSplineHeading(new Vector2d(36, -24), Math.toRadians(-90))
-                .afterDisp(0, new SequentialAction(telemetryPacket -> {
-                        this.setOuttakeSpeed(0);
-                        return false;
-                        }, this.getIntakeAction())
-                )
-                .strafeToConstantHeading(new Vector2d(36, -58 + 1), new TranslationalVelConstraint(15))  // to intake 1st stack spot
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                             intakeMotor.setVelocity(0);
-                            this.setOuttakeSpeed(highVelocity);
-                            blockUp();
+                            this.setOuttakeSpeed(lowVelocity);
                             return false;
                         },
                                 //Prepare the turret before doing intake, so it can reduce the aiming time
-                                this.getAimAction(-47d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
+                                this.getAimAction(3d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
                 )
-                .strafeToConstantHeading(new Vector2d(53, -15)) //to launch spot
+                .strafeToConstantHeading(new Vector2d(-12, 12))//to launch spot
                 .stopAndAdd(new SequentialAction(
-                        //Further adjust the aiming before launching
                         this.getAimAction(null, null, true),
                         this.getLaunchAction(),
                         telemetryPacket -> {
@@ -72,40 +47,75 @@ public class FullAutoBlueSideFar2Stack extends AbstractFullAuto {
                             return false;
                         }
                 ))
-                .strafeToSplineHeading(new Vector2d(12, -24), Math.toRadians(-90))
+                .strafeToSplineHeading(new Vector2d(-12, 24), Math.toRadians(85))   //change heading
                 .afterDisp(0, new SequentialAction(telemetryPacket -> {
+                            this.intakeMotor.setPower(1);
                             this.setOuttakeSpeed(0);
                             return false;
-                        }, this.getIntakeAction())
+                        })
                 )
-                .strafeToConstantHeading(new Vector2d(12, -58 + 1), new TranslationalVelConstraint(15))  // to intake 2nd stack spot
+                .strafeToConstantHeading(new Vector2d(-12, 54), new TranslationalVelConstraint(20))                     //to intake
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                             intakeMotor.setVelocity(0);
-                            this.setOuttakeSpeed(highVelocity);
-                            blockUp();
+                            this.setOuttakeSpeed(lowVelocity);
+                            this.sleep(200);
+                            this.blockUp();
                             return false;
                         },
                                 //Prepare the turret before doing intake, so it can reduce the aiming time
-                                this.getAimAction(-47d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
+                                this.getAimAction(35d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
                 )
-                .strafeToConstantHeading(new Vector2d(53, -15)) //to launch spot
+
+
+
+                .strafeToConstantHeading(new Vector2d(-12, 12))//to launch spot
                 .stopAndAdd(new SequentialAction(
-                        //Further adjust the aiming before launching
+                        this.getAimAction(null, null, true),
+                        this.getLaunchAction(),
+                        telemetryPacket -> {
+                            this.sleep(300);
+                            this.blockDown();
+                            return false;
+                        }
+                ))
+
+                .strafeToSplineHeading(new Vector2d(12, 24), Math.toRadians(90), new TranslationalVelConstraint(20))  //turn before intake
+                .afterDisp(0, new SequentialAction(telemetryPacket -> {
+                            this.intakeMotor.setPower(1);
+                            this.setOuttakeSpeed(0);
+                            return false;
+                        })
+                )
+                .strafeToConstantHeading(new Vector2d(12, 54), new TranslationalVelConstraint(15))                     //intake
+                .afterDisp(0, new ParallelAction(telemetryPacket -> {
+                            intakeMotor.setVelocity(0);
+                            this.setOuttakeSpeed(lowVelocity);
+                            this.sleep(200);
+                            this.blockUp();
+                            return false;
+                        },
+                                //Prepare the turret before doing intake, so it can reduce the aiming time
+                                this.getAimAction(35d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
+                )
+                .strafeToConstantHeading(new Vector2d(-12, 12))//to launch spot
+                .stopAndAdd(new SequentialAction(
+                        // adjust by using AprilTag again
                         this.getAimAction(null, null, true),
                         this.getLaunchAction()
+
                 ))
-                .strafeToConstantHeading(new Vector2d(36, -30))//park outside launch
+                .strafeToConstantHeading(new Vector2d(-12, 35))                     //park outside launch
                 .build();
     }
 
     @Override
     protected double getTurretDegreeOffset() {
-        return 0;
+        return -2d;
     }
 
     @Override
     protected PIDFCoefficients getPidfCoefficients() {
-        return new PIDFCoefficients(NEW_P_FAR, 0, 0, NEW_F_FAR);
+        return new PIDFCoefficients(NEW_P_CLOSE, 0, 0, NEW_F_CLOSE);
     }
 
 }

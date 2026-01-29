@@ -129,6 +129,12 @@ public class FullAutoBlueSideFar3Stack extends AbstractFullAuto {
                 .strafeToConstantHeading(new Vector2d(36, -30))//park outside launch
                 .build();
     }
+
+    @Override
+    protected double getTurretDegreeOffset() {
+        return 0;
+    }
+
     @Override
     protected PIDFCoefficients getPidfCoefficients() {
         return new PIDFCoefficients(NEW_P_FAR, 0, 0, NEW_F_FAR);

@@ -77,6 +77,10 @@ public class FullAutoRedSideClose1Stack extends AbstractFullAuto {
                 .build();
     }
 
+    @Override
+    protected double getTurretDegreeOffset() {
+        return -2d;
+    }
 
     @Override
     protected PIDFCoefficients getPidfCoefficients() {
