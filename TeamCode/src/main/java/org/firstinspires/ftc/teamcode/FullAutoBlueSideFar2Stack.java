@@ -19,6 +19,8 @@ public class FullAutoBlueSideFar2Stack extends AbstractFullAuto {
         return DESIRED_TAG_ID_BLUE;
     }
 
+
+
     @Override
     public Pose2d getInitialPose() {
         return new Pose2d(63, -15, Math.toRadians(180));

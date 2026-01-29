@@ -448,7 +448,11 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
             telemetry.addData("HeadingError: ", headingError);
 
-            double offsetDegree = 3d;
+            double offsetDegree = 3d; // default to DESIRED_TAG_ID_BLUE
+            if (getDesiredTagID() == DESIRED_TAG_ID_RED) {
+                offsetDegree = -3d;
+            }
+
             double headingErrorAfterOffset = headingError + offsetDegree;
             headingErrorAfterOffset = Range.clip(headingErrorAfterOffset, -40, 40);
 
@@ -458,6 +462,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
             telemetry.addData("Target motor pos", targetPosition);
 
             //For far side, move turret if the headingErrorAfterOffset > 1 degree
+
             if (range >= 85 && Math.abs(headingErrorAfterOffset) > 1) { // For far side
                 this.moveTurret(targetPosition);
             }
