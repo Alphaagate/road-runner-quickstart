@@ -35,7 +35,7 @@ public class FullAutoRedSideClose2StackNoGate extends AbstractFullAuto {
                             return false;
                         },
                                 //Prepare the turret before doing intake, so it can reduce the aiming time
-                                this.getAimAction(3d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
+                                this.getAimAction(4d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
                 )
                 .strafeToConstantHeading(new Vector2d(-12, 12))//to launch spot
                 .stopAndAdd(new SequentialAction(
@@ -47,14 +47,14 @@ public class FullAutoRedSideClose2StackNoGate extends AbstractFullAuto {
                             return false;
                         }
                 ))
-                .strafeToSplineHeading(new Vector2d(-12, 24), Math.toRadians(85))   //change heading
+                .strafeToSplineHeading(new Vector2d(-13, 24), Math.toRadians(85))   //change heading
                 .afterDisp(0, new SequentialAction(telemetryPacket -> {
                             this.intakeMotor.setPower(1);
                             this.setOuttakeSpeed(0);
                             return false;
                         })
                 )
-                .strafeToConstantHeading(new Vector2d(-12, 54), new TranslationalVelConstraint(20))                     //to intake
+                .strafeToConstantHeading(new Vector2d(-13, 55), new TranslationalVelConstraint(15))                     //to intake
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                             intakeMotor.setVelocity(0);
                             this.setOuttakeSpeed(lowVelocity);
@@ -79,14 +79,14 @@ public class FullAutoRedSideClose2StackNoGate extends AbstractFullAuto {
                         }
                 ))
 
-                .strafeToSplineHeading(new Vector2d(12, 24), Math.toRadians(90), new TranslationalVelConstraint(20))  //turn before intake
+                .strafeToSplineHeading(new Vector2d(13, 24), Math.toRadians(80))  //turn before intake
                 .afterDisp(0, new SequentialAction(telemetryPacket -> {
                             this.intakeMotor.setPower(1);
                             this.setOuttakeSpeed(0);
                             return false;
                         })
                 )
-                .strafeToConstantHeading(new Vector2d(12, 54), new TranslationalVelConstraint(15))                     //intake
+                .strafeToConstantHeading(new Vector2d(13, 55), new TranslationalVelConstraint(15))                     //intake
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                             intakeMotor.setVelocity(0);
                             this.setOuttakeSpeed(lowVelocity);

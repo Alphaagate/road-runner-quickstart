@@ -36,7 +36,7 @@ public class FullAutoRedSideClose1Stack extends AbstractFullAuto {
                             return false;
                         },
                                 //Prepare the turret before doing intake, so it can reduce the aiming time
-                                this.getAimAction(5d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
+                                this.getAimAction(7d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
                 )
                 .strafeToConstantHeading(new Vector2d(-12, 12))  //to launch spot
                 .stopAndAdd(new SequentialAction(
@@ -79,7 +79,7 @@ public class FullAutoRedSideClose1Stack extends AbstractFullAuto {
 
     @Override
     protected double getTurretDegreeOffset() {
-        return -2d;
+        return -7d;
     }
 
     @Override

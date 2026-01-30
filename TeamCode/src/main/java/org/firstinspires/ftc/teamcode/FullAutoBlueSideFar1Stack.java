@@ -58,7 +58,7 @@ public class FullAutoBlueSideFar1Stack extends AbstractFullAuto {
                             return false;
                         })
                 )
-                .strafeToConstantHeading(new Vector2d(36 + xOffset, -58), new TranslationalVelConstraint(20))  // to intake spot
+                .strafeToConstantHeading(new Vector2d(36 + xOffset, -58), new TranslationalVelConstraint(15))  // to intake spot
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                             intakeMotor.setVelocity(0);
                             this.setOuttakeSpeed(highVelocity);

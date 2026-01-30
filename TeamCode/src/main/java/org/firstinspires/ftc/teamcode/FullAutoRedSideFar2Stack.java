@@ -51,7 +51,7 @@ public class FullAutoRedSideFar2Stack extends AbstractFullAuto {
                             return false;
                         }, this.getIntakeAction())
                 )
-                .strafeToConstantHeading(new Vector2d(36, 58 + 1), new TranslationalVelConstraint(15))  // to intake 1st stack spot
+                .strafeToConstantHeading(new Vector2d(36, 58 + 1), new TranslationalVelConstraint(10))  // to intake 1st stack spot
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                             intakeMotor.setVelocity(0);
                             this.setOuttakeSpeed(highVelocity);
@@ -100,7 +100,7 @@ public class FullAutoRedSideFar2Stack extends AbstractFullAuto {
 
     @Override
     protected double getTurretDegreeOffset() {
-        return -4d;
+        return -8d;
     }
 
     @Override

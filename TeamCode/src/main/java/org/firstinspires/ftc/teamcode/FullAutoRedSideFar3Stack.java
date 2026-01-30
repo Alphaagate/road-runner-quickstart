@@ -33,7 +33,7 @@ public class FullAutoRedSideFar3Stack extends AbstractFullAuto {
                             return false;
                         },
                                 //Prepare the turret before doing intake, so it can reduce the aiming time
-                                this.getAimAction(-20d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
+                                this.getAimAction(-15d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
                 )
                 .strafeToConstantHeading(new Vector2d(53, 15)) //to launch spot
 
@@ -48,7 +48,7 @@ public class FullAutoRedSideFar3Stack extends AbstractFullAuto {
                             return false;
                         }, this.getIntakeAction())
                 )
-                .strafeToConstantHeading(new Vector2d(36, 58), new TranslationalVelConstraint(30.0))  // to intake 1st stack spot
+                .strafeToConstantHeading(new Vector2d(36, 58), new TranslationalVelConstraint(15))  // to intake 1st stack spot
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                             intakeMotor.setVelocity(0);
                             this.setOuttakeSpeed(highVelocity);
@@ -56,7 +56,7 @@ public class FullAutoRedSideFar3Stack extends AbstractFullAuto {
                             return false;
                         },
                                 //Prepare the turret before doing intake, so it can reduce the aiming time
-                                this.getAimAction(53d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
+                                this.getAimAction(47d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
                 )
                 .strafeToConstantHeading(new Vector2d(53, 15)) //to launch spot
 
@@ -77,7 +77,7 @@ public class FullAutoRedSideFar3Stack extends AbstractFullAuto {
                             return false;
                         }, this.getIntakeAction())
                 )
-                .strafeToConstantHeading(new Vector2d(12, 58), new TranslationalVelConstraint(30.0))  // to intake 2nd stack spot
+                .strafeToConstantHeading(new Vector2d(12, 58), new TranslationalVelConstraint(15))  // to intake 2nd stack spot
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                             intakeMotor.setVelocity(0);
                             this.setOuttakeSpeed(highVelocity);
@@ -85,7 +85,7 @@ public class FullAutoRedSideFar3Stack extends AbstractFullAuto {
                             return false;
                         },
                                 //Prepare the turret before doing intake, so it can reduce the aiming time
-                                this.getAimAction(53d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
+                                this.getAimAction(47d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
                 )
                 .strafeToConstantHeading(new Vector2d(53, 15)) //to launch spot
 
@@ -106,7 +106,7 @@ public class FullAutoRedSideFar3Stack extends AbstractFullAuto {
                             return false;
                         }, this.getIntakeAction())
                 )
-                .strafeToConstantHeading(new Vector2d(-12, 48))  // to intake 3rd stack spot //, new TranslationalVelConstraint(30.0)
+                .strafeToConstantHeading(new Vector2d(-12, 48), new TranslationalVelConstraint(20))  // to intake 3rd stack spot //, new TranslationalVelConstraint(30.0)
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                             intakeMotor.setVelocity(0);
                             this.setOuttakeSpeed(highVelocity);
@@ -114,7 +114,7 @@ public class FullAutoRedSideFar3Stack extends AbstractFullAuto {
                             return false;
                         },
                                 //Prepare the turret before doing intake, so it can reduce the aiming time
-                                this.getAimAction(53d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
+                                this.getAimAction(47d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
                 )
                 .strafeToConstantHeading(new Vector2d(53, 15)) //to launch spot
                 .stopAndAdd(new SequentialAction(

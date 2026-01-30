@@ -35,7 +35,7 @@ public class FullAutoRedSideClose2StackOpenGate extends AbstractFullAuto {
                             return false;
                         },
                                 //Prepare the turret before doing intake, so it can reduce the aiming time
-                                this.getAimAction(3d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
+                                this.getAimAction(4d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
                 )
                 .strafeToConstantHeading(new Vector2d(-12, 12))//to launch spot
                 .stopAndAdd(new SequentialAction(
@@ -47,7 +47,7 @@ public class FullAutoRedSideClose2StackOpenGate extends AbstractFullAuto {
                             return false;
                         }
                 ))
-                .strafeToSplineHeading(new Vector2d(12, 24), Math.toRadians(90), new TranslationalVelConstraint(20))  //turn before intake
+                .strafeToSplineHeading(new Vector2d(12, 24), Math.toRadians(90))  //turn before intake
                 .afterDisp(0, new SequentialAction(telemetryPacket -> {
                             this.intakeMotor.setPower(1);
                             this.setOuttakeSpeed(0);

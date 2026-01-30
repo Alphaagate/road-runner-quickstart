@@ -48,7 +48,7 @@ public class FullAutoBlueSideClose2StackOpenGate extends AbstractFullAuto {
                             return false;
                         }
                 ))
-                .strafeToSplineHeading(new Vector2d(12, -24), Math.toRadians(-85), new TranslationalVelConstraint(20))  //turn before intake
+                .strafeToSplineHeading(new Vector2d(12, -24), Math.toRadians(-85))  //turn before intake
 
                 .afterDisp(0, new SequentialAction(telemetryPacket -> {
                             this.intakeMotor.setPower(1);
@@ -78,7 +78,7 @@ public class FullAutoBlueSideClose2StackOpenGate extends AbstractFullAuto {
                             return false;
                         }
                 ))
-                .strafeToSplineHeading(new Vector2d(-12, -24), Math.toRadians(-85))   //change heading
+                .strafeToSplineHeading(new Vector2d(-12, -24), Math.toRadians(-90))   //change heading
 
                 .afterDisp(0, new SequentialAction(telemetryPacket -> {
                             this.intakeMotor.setPower(1);

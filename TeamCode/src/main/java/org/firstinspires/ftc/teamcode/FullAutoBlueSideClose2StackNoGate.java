@@ -57,7 +57,7 @@ public class FullAutoBlueSideClose2StackNoGate extends AbstractFullAuto {
                             return false;
                         })
                 )
-                .strafeToConstantHeading(new Vector2d(-12, -54), new TranslationalVelConstraint(20))  //to intake 1st stack
+                .strafeToConstantHeading(new Vector2d(-12, -54), new TranslationalVelConstraint(15))  //to intake 1st stack
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                             intakeMotor.setVelocity(0);
                             this.setOuttakeSpeed(lowVelocity);
@@ -79,7 +79,7 @@ public class FullAutoBlueSideClose2StackNoGate extends AbstractFullAuto {
                             return false;
                         }
                 ))
-                .strafeToSplineHeading(new Vector2d(12, -24), Math.toRadians(-85), new TranslationalVelConstraint(20))  //turn before intake
+                .strafeToSplineHeading(new Vector2d(12, -24), Math.toRadians(-85))  //turn before intake
 
                 .afterDisp(0, new SequentialAction(telemetryPacket -> {
                             this.intakeMotor.setPower(1);
