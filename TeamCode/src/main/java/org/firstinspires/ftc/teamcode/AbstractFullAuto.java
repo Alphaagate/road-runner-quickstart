@@ -86,7 +86,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     //TODO: blockservo 0.5 = down (blocking) blockservo 1 = up (unblocking)
 
     private int ballCount;
-    protected double lowVelocity = 1210d;// 1450 for far side
+    protected double lowVelocity = 1180d;// 1450 for far side
     protected double highVelocity = 1500d;// 1450 for far side
     // 84 = Tower height 99 - Robot height 35 + Goal height 20
     public static final double TARGET_HEIGHT = 84d;
