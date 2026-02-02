@@ -32,29 +32,38 @@ public class FullAutoRedSideFar1Stack extends AbstractFullAuto {
                             return false;
                         },
                                 //Prepare the turret before doing intake, so it can reduce the aiming time
-                                this.getAimAction(-15d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
+                                this.getAimAction(-16d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
                 )
                 .strafeToConstantHeading(new Vector2d(53, 15)) //to launch spot
                 .stopAndAdd(new SequentialAction(
                         //Further adjust the aiming before launching
                         this.getAimAction(null, null, true),
-                        this.getLaunchAction()
+                        this.getLaunchAction(),
+                        telemetryPacket -> {
+                            this.sleep(300);
+                            this.blockDown();
+                            return false;
+                        }
+
+
                 ))
                 .strafeToSplineHeading(new Vector2d(36, 24), Math.toRadians(90))
                 .afterDisp(0, new SequentialAction(telemetryPacket -> {
-                            this.blockDown();
+                            this.intakeMotor.setPower(1);
+                            this.setOuttakeSpeed(0);
                             return false;
-                        }, this.getIntakeAction())
+                        })
                 )
                 .strafeToConstantHeading(new Vector2d(36, 58), new TranslationalVelConstraint(15))  // to intake spot
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                             intakeMotor.setVelocity(0);
                             this.setOuttakeSpeed(highVelocity);
+                            this.blockUp();
 
                             return false;
                         },
                                 //Prepare the turret before doing intake, so it can reduce the aiming time
-                                this.getAimAction(53d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
+                                this.getAimAction(47d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
                 )
                 .strafeToConstantHeading(new Vector2d(53, 15)) //to launch spot
                 .stopAndAdd(new SequentialAction(
@@ -62,24 +71,14 @@ public class FullAutoRedSideFar1Stack extends AbstractFullAuto {
                         this.getAimAction(null, null, true),
                         this.getLaunchAction()
                 ))
-                .afterDisp(0, new SequentialAction(telemetryPacket -> {
-                            this.blockDown();
-                            return false;
-                        })
-                )
                 .strafeToConstantHeading(new Vector2d(36, 30))//park outside launch
-                .afterDisp(0, new SequentialAction(telemetryPacket -> {
-                            this.blockDown();
-                            return false;
-                        })
-                )
                 .build();
 
     }
 
     @Override
     protected double getTurretDegreeOffset() {
-        return -4d;
+        return -9d;
     }
 
     @Override
