@@ -81,6 +81,7 @@ public class FullAutoBlueSideFar3Stack extends AbstractFullAuto {
                             return false;
                         }, this.getIntakeAction())
                 )
+
                 .strafeToConstantHeading(new Vector2d(12, -58), new TranslationalVelConstraint(15))  // to intake 2nd stack spot
                 .afterDisp(0, new ParallelAction(telemetryPacket -> {
                             intakeMotor.setVelocity(0);

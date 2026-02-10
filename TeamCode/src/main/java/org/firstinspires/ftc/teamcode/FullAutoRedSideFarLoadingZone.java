@@ -26,13 +26,86 @@ public class FullAutoRedSideFarLoadingZone extends AbstractFullAuto {
     protected Action getPathAction() {
         return drive.actionBuilder(getInitialPose())
                 .setTangent(Math.toRadians(180))
+//                .afterDisp(0, new ParallelAction(telemetryPacket -> {
+//                            this.setOuttakeSpeed(highVelocity);
+//                            return false;
+//                        },
+//                                //Prepare the turret before doing intake, so it can reduce the aiming time
+//                                this.getAimAction(-15d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
+//                )
+//                .strafeToConstantHeading(new Vector2d(53, -15)) //to launch spot
+//
+//                .stopAndAdd(new SequentialAction(
+//                        //Further adjust the aiming before launching
+//                        this.getAimAction(null, null, true),
+//                        this.getLaunchAction(),
+//                        telemetryPacket -> {
+//                            this.sleep(300);
+//                            this.blockDown();
+//                            return false;
+//                        }
+//                ))
+                .strafeToSplineHeading(new Vector2d(36, 24), Math.toRadians(90))
+//                .afterDisp(0, new SequentialAction(telemetryPacket -> {
+//                            this.setOuttakeSpeed(0);
+//                            return false;
+//                        }, this.getIntakeAction())
+//                )
+                .strafeToConstantHeading(new Vector2d(36, 58), new TranslationalVelConstraint(15))  // to intake 1st stack spot
+//                .afterDisp(0, new ParallelAction(telemetryPacket -> {
+//                            intakeMotor.setVelocity(0);
+//                            this.setOuttakeSpeed(highVelocity);
+//                            blockUp();
+//                            return false;
+//                        },
+//                                //Prepare the turret before doing intake, so it can reduce the aiming time
+//                                this.getAimAction(53d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
+//                )
                 .strafeToConstantHeading(new Vector2d(53, 15)) //to launch spot
-                .stopAndAdd(this.getLaunchAction())
-                .strafeToSplineHeading(new Vector2d(63, 24), Math.toRadians(90))
-                .afterDisp(0, this.getIntakeAction())
-                .strafeToConstantHeading(new Vector2d(63, 64), new TranslationalVelConstraint(30.0))  // to intake spot
-                .strafeToConstantHeading(new Vector2d(53, 15)) //to launch spot
-                .stopAndAdd(this.getLaunchAction())
+
+//                .stopAndAdd(new SequentialAction(
+//                        //Further adjust the aiming before launching
+//                        this.getAimAction(null, null, true),
+//                        this.getLaunchAction(),
+//                        telemetryPacket -> {
+//                            this.sleep(300);
+//                            this.blockDown();
+//                            return false;
+//                        }
+//                ))
+
+
+                .strafeToLinearHeading(new Vector2d(36, 64), Math.toRadians(0))
+                //                .afterDisp(0, new SequentialAction(telemetryPacket -> {
+//                            this.setOuttakeSpeed(0);
+//                            return false;
+//                        }, this.getIntakeAction())
+//                )
+                .strafeToConstantHeading(new Vector2d(62, 64))
+
+                //                .afterDisp(0, new ParallelAction(telemetryPacket -> {
+//                            intakeMotor.setVelocity(0);
+//                            this.setOuttakeSpeed(highVelocity);
+//                            blockUp();
+//                            return false;
+//                        },
+//                                //Prepare the turret before doing intake, so it can reduce the aiming time
+//                                this.getAimAction(-15d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
+//                )
+                .setTangent(Math.toRadians(180))
+                .strafeToConstantHeading(new Vector2d(59, 45))
+                .strafeToLinearHeading(new Vector2d(53, 15), Math.toRadians(179)) //to launch spot
+//                .stopAndAdd(new SequentialAction(
+//                        //Further adjust the aiming before launching
+//                        this.getAimAction(null, null, true),
+//                        this.getLaunchAction(),
+//                        telemetryPacket -> {
+//                            this.sleep(300);
+//                            this.blockDown();
+//                            return false;
+//                        }
+//                ))
+
                 .strafeToConstantHeading(new Vector2d(36, 30))//park outside launch
                 .build();
 

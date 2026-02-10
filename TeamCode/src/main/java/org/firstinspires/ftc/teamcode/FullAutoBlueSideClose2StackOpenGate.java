@@ -3,6 +3,8 @@
 package org.firstinspires.ftc.teamcode;
 
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
@@ -29,11 +31,8 @@ public class FullAutoBlueSideClose2StackOpenGate extends AbstractFullAuto {
     protected Action getPathAction() {
 
         return drive.actionBuilder(getInitialPose())
-                .afterDisp(0, new ParallelAction(telemetryPacket -> {
-                            intakeMotor.setVelocity(0);
-                            this.setOuttakeSpeed(lowVelocity);
-                            return false;
-                        },
+                .afterDisp(0, new ParallelAction(
+                        this.getStopIntakeStartOuttakeAction(),
                         //Prepare the turret before doing intake, so it can reduce the aiming time
                         this.getAimAction(null, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
                 )
@@ -42,63 +41,57 @@ public class FullAutoBlueSideClose2StackOpenGate extends AbstractFullAuto {
                         // adjust by using AprilTag again
                         this.getAimAction(null, null, true),
                         this.getLaunchAction(),
-                        telemetryPacket -> {
-                            this.sleep(300);
-                            this.blockDown();
-                            return false;
-                        }
+                        this.getBlockDownAction()
                 ))
                 .strafeToSplineHeading(new Vector2d(12, -18), Math.toRadians(-90))  //turn before intake
 
-                .afterDisp(0, new SequentialAction(telemetryPacket -> {
-                            this.intakeMotor.setPower(1);
-                            this.setOuttakeSpeed(0);
-                            return false;
-                        })
+                .afterDisp(0, this.getStartIntakeStopOuttakeAction()
                 )
                 .strafeToConstantHeading(new Vector2d(12, -54), new TranslationalVelConstraint(15))      //intake 2nd stack
-                .afterDisp(0, new ParallelAction(telemetryPacket -> {
-                            intakeMotor.setVelocity(0);
-                            this.setOuttakeSpeed(lowVelocity);
-                            this.sleep(200);
-                            this.blockUp();
-                            return false;
-                        },
+                .afterDisp(0, new ParallelAction(
+                                this.getBlockUpAction(),
                                 //Prepare the turret before doing intake, so it can reduce the aiming time
                                 this.getAimAction(-35d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
                 )
-                .strafeToConstantHeading(new Vector2d(12, -36))
-                .strafeToConstantHeading(new Vector2d(8, -54))
-                .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot 3rd time
+                .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot 1st time
+                .stopAndAdd(new SequentialAction(
+                        // adjust by using AprilTag again
+                        this.getAimAction(null, null, true),
+                        this.getLaunchAction(),
+                        this.getBlockDownAction()
 
+                ))
+                .strafeToConstantHeading(new Vector2d(12, -36))
+                .afterDisp(0, this.getStartIntakeStopOuttakeAction()
+                )
+                .strafeToLinearHeading(new Vector2d(10, -56), Math.toRadians(-115)) // open gate
+                .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot 3rd time
+                .afterDisp(0, new ParallelAction(
+                                this.getBlockUpAction(),
+                                //Prepare the turret before doing intake, so it can reduce the aiming time
+                                this.getAimAction(-35d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
+                )
                 .stopAndAdd(new SequentialAction(
                         this.getAimAction(null, null, true),
                         this.getLaunchAction(),
-                        telemetryPacket -> {
-                            this.sleep(300);
-                            this.blockDown();
-                            return false;
-                        }
+                        this.getBlockDownAction()
                 ))
-                .strafeToSplineHeading(new Vector2d(-12, -24), Math.toRadians(-90))   //change heading
-
-                .afterDisp(0, new SequentialAction(telemetryPacket -> {
-                            this.intakeMotor.setPower(1);
-                            this.setOuttakeSpeed(0);
-                            return false;
-                        })
-                )
-                .strafeToConstantHeading(new Vector2d(-12, -54), new TranslationalVelConstraint(20))  //to intake 1st stack
-                .afterDisp(0, new ParallelAction(telemetryPacket -> {
-                            intakeMotor.setVelocity(0);
-                            this.setOuttakeSpeed(lowVelocity);
-                            this.sleep(200);
-                            this.blockUp();
-                            return false;
-                        },
+                .strafeToConstantHeading(new Vector2d(12, -36))
+                .strafeToSplineHeading(new Vector2d(10, -56), Math.toRadians(-115))
+                .afterDisp(0, new ParallelAction(
+                        this.getBlockUpAction(),
                         //Prepare the turret before doing intake, so it can reduce the aiming time
                         this.getAimAction(-35d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
                 )
+                .stopAndAdd(new SequentialAction(
+                        this.getAimAction(null, null, true),
+                        this.getLaunchAction(),
+                        this.getBlockDownAction()
+                ))
+
+
+                .strafeToConstantHeading(new Vector2d(12, -36))
+
                 .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot 2nd
 
                 .stopAndAdd(new SequentialAction(
@@ -109,6 +102,9 @@ public class FullAutoBlueSideClose2StackOpenGate extends AbstractFullAuto {
                 .strafeToConstantHeading(new Vector2d(-12, -35))                     //park outside launch
                 .build();
     }
+
+
+
 
     @Override
     protected double getTurretDegreeOffset() {

@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -260,7 +262,23 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     protected abstract Action getPathAction();
     protected abstract double getTurretDegreeOffset();
 
+    protected Action getBlockUpAction() {
+        return telemetryPacket -> {
+            intakeMotor.setVelocity(0);
+            this.setOuttakeSpeed(lowVelocity);
+            this.sleep(200);
+            this.blockUp();
+            return false;
+        };
+    }
 
+    protected Action getBlockDownAction() {
+        return telemetryPacket -> {
+            this.sleep(300);
+            this.blockDown();
+            return false;
+        };
+    }
     protected Action getLaunchAction() {
 
 //        Action launchAction = new Action() {
@@ -318,6 +336,20 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         };
     }
 
+    protected Action getStopIntakeStartOuttakeAction() {
+        return telemetryPacket -> {
+            intakeMotor.setVelocity(0);
+            this.setOuttakeSpeed(lowVelocity);
+            return false;
+        };
+    }
+    protected Action getStartIntakeStopOuttakeAction() {
+        return telemetryPacket -> {
+            this.intakeMotor.setPower(1);
+            this.setOuttakeSpeed(0);
+            return false;
+        };
+    }
     protected Action getIntakeAction() {
         return telemetryPacket -> {
             intakeMotor.setPower(1);
