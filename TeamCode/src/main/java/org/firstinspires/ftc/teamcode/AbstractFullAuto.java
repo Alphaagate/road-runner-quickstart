@@ -1,21 +1,20 @@
 package org.firstinspires.ftc.teamcode;
 
 
-import androidx.annotation.NonNull;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.InstantAction;
+import com.acmerobotics.roadrunner.NullAction;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -26,7 +25,6 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDir
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -189,19 +187,11 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     }
 
     protected void blockDown() {
-        this.sleep(300);
         blockServo.setPosition(0.5);
-        //ensure the outtake has some time to spin up
-//        sleep(100);
     }
-//    protected void stopOuttake() {
-//        outtakeMotor1.setVelocity(0);
-//        outtakeMotor2.setVelocity(0);
-//    }
+
     protected void blockUp() {
         blockServo.setPosition(1);
-        //ensure the outtake has some time to spin up
-//        sleep(100);
     }
 
     protected int convertToTicks(double degree) {
@@ -263,21 +253,23 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     protected abstract double getTurretDegreeOffset();
 
     protected Action getBlockUpAction() {
-        return telemetryPacket -> {
-            intakeMotor.setVelocity(0);
-            this.setOuttakeSpeed(lowVelocity);
-            this.sleep(200);
-            this.blockUp();
-            return false;
-        };
+
+        return new SequentialAction(
+                new InstantAction(() -> this.intakeMotor.setVelocity(0)),
+                new SleepAction(0.2),
+                new InstantAction(() -> this.setOuttakeSpeed(lowVelocity)),
+                new SleepAction(0.2),
+                new InstantAction(this::blockUp)
+        );
+
     }
 
     protected Action getBlockDownAction() {
-        return telemetryPacket -> {
-            this.sleep(300);
-            this.blockDown();
-            return false;
-        };
+        return new SequentialAction(
+                new SleepAction(0.3),
+                new InstantAction(this::blockDown)
+        );
+
     }
     protected Action getLaunchAction() {
 
@@ -290,70 +282,90 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 //            }
 //        };
 //        return launchAction;
-
-        return telemetryPacket -> {
-//            this.sleep(350);
-            this.intakeMotor.setPower(1);
-            this.sleep(1500);
-            this.intakeMotor.setPower(0);
-            return false;
-        };
+        return new SequentialAction(
+                new InstantAction(() -> this.intakeMotor.setPower(1)),
+                new SleepAction(1.5),
+                new InstantAction(() -> intakeMotor.setPower(0))
+        );
     }
 
     protected void setOuttakeSpeed(double outtakeSpeed) {
-        this.sleep(200);  //let the outtake to ramp up speed
         outtakeMotor1.setVelocity(-1 * outtakeSpeed);
         outtakeMotor2.setVelocity(outtakeSpeed);
     }
 
     protected Action getAimAction(Double turretInitialTargetDegree, Double hoodInitialTargetPosition, boolean runAprilTagAim) {
-        return telemetryPacket -> {
+        boolean needToWaitForTurretOrHoodServo = false;
 
-            boolean needToWaitForTurretOrHoodServo = false;
+        if (turretInitialTargetDegree != null || hoodInitialTargetPosition != null) {
+            needToWaitForTurretOrHoodServo = true;
+        }
 
+        Action moveTurretOrHoodToInitialPostionAction = telemetryPacket -> {
             //First move the turret and hood to a ballpark target position/angle
             if (turretInitialTargetDegree != null) {
                 this.moveTurret(convertToTicks(turretInitialTargetDegree));
-                needToWaitForTurretOrHoodServo = true;
             }
 
             if (hoodInitialTargetPosition != null) {
                 this.moveHoodServo(hoodInitialTargetPosition);
-                needToWaitForTurretOrHoodServo = true;
             }
+            return false;
+        };
 
+        Action aprilTagAimAtTargetAction = telemetryPacket -> {
             if (this.useAprilTag && runAprilTagAim) {
-                if (needToWaitForTurretOrHoodServo) {
-                    // Give the turret and hoodSevo some time run to the initial target position before we detect april tag
-                    sleep(300);
-                }
-                sleep(300);
                 //Further adjust the turret and hood angles by AprilTag detection and calculation
                 this.detectAprilTag();
                 this.aimAtTarget();  //aimAtTarget will move both turret and hood
             }
-            return false;
+            return false;  // If we don't use aprilTag, will return right away, i.e. do nothing
         };
+
+        if (needToWaitForTurretOrHoodServo) {
+            if (this.useAprilTag && runAprilTagAim) {
+                return new SequentialAction(
+                        moveTurretOrHoodToInitialPostionAction,
+                        new SleepAction(0.3),   // need to wait since we move turret in the previous action
+                        aprilTagAimAtTargetAction,
+                        new SleepAction(0.2));
+            }
+
+            return new SequentialAction(
+                    moveTurretOrHoodToInitialPostionAction,
+                    new SleepAction(0.3));  // need to wait since we move turret in the previous action
+
+        } else {
+            if (this.useAprilTag && runAprilTagAim) {
+                return new SequentialAction(
+                        aprilTagAimAtTargetAction,
+                        new SleepAction(0.2));
+            }
+            return new NullAction();
+        }
+
     }
 
     protected Action getStopIntakeStartOuttakeAction() {
-        return telemetryPacket -> {
-            intakeMotor.setVelocity(0);
-            this.setOuttakeSpeed(lowVelocity);
-            return false;
-        };
+
+        return new SequentialAction(
+                new InstantAction(() -> this.intakeMotor.setVelocity(0)),
+                new SleepAction(0.2),
+                new InstantAction(() -> this.setOuttakeSpeed(lowVelocity))
+        );
+
     }
     protected Action getStartIntakeStopOuttakeAction() {
-        return telemetryPacket -> {
-            this.intakeMotor.setPower(1);
-            this.setOuttakeSpeed(0);
-            return false;
-        };
+        return new SequentialAction(
+                new InstantAction(() -> this.intakeMotor.setPower(1)),
+                new SleepAction(0.2),
+                new InstantAction(() -> this.setOuttakeSpeed(0))
+        );
+
     }
     protected Action getIntakeAction() {
         return telemetryPacket -> {
             intakeMotor.setPower(1);
-
             return false;
         };
     }
@@ -519,10 +531,8 @@ public abstract class AbstractFullAuto extends LinearOpMode {
             //move hood servo
             double servoPosition = this.calculateHoodPositionByAprilTagRange(this.getDetectedAprilTag().ftcPose.range);
             this.moveHoodServo(servoPosition);
-            sleep(300);
         } else {
             telemetry.addLine("Target not found or turretMotor is busy");
-
 
         }
     }
@@ -531,8 +541,6 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         telemetry.addLine("Moving turret");
         turretMotor.setTargetPosition(targetPosition);
         turretMotor.setPower(MAX_TURRET_TURN_POWER);
-
-
     }
 
     private void doAprilDetection() {
@@ -587,7 +595,6 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
 
     protected void moveHoodServo(double targetPosition) {
-        telemetry.addData("HoodServo", "Trying to set position %f", targetPosition);
 
         double thePosition = Range.clip(targetPosition, HOOD_MIN_POSITION, HOOD_MAX_POSITION);
         telemetry.addData("HoodServo", "Setting position %f", thePosition);

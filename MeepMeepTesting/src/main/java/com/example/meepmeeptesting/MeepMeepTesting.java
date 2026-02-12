@@ -19,37 +19,64 @@ public class MeepMeepTesting {
                 .setConstraints(72.5, 72.5, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
 
-        Action action = myBot.getDrive().actionBuilder(new Pose2d(-58.3, -45, Math.toRadians(235)))
+        Action action = myBot.getDrive().actionBuilder(new Pose2d(-58.3, 45, Math.toRadians(-235)))
 
-                .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot 1st time
+                .strafeToConstantHeading(new Vector2d(-12, 12))//to launch spot
 
-                .strafeToSplineHeading(new Vector2d(12, -18), Math.toRadians(-90))  //turn before intake
+                .strafeToSplineHeading(new Vector2d(12, 18), Math.toRadians(90))  //turn before intake
 
+                .strafeToConstantHeading(new Vector2d(12, 54))      //intake 2nd stack
 
-                .strafeToConstantHeading(new Vector2d(12, -54))      //intake 2nd stack
+                .strafeToConstantHeading(new Vector2d(-12, 12))  //to launch spot 1st time
 
-                .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot 1st time
+                .strafeToConstantHeading(new Vector2d(12, 36))
 
-                .strafeToConstantHeading(new Vector2d(12, -36))
+                .strafeToLinearHeading(new Vector2d(10, 56), Math.toRadians(115)) // open gate
+                .strafeToLinearHeading(new Vector2d(12, 58), Math.toRadians(115)) // open gate
 
-                .strafeToSplineHeading(new Vector2d(10, -56), Math.toRadians(-115))
-                .splineTo(new Vector2d(10, -56), Math.PI / 2)
+                .strafeToConstantHeading(new Vector2d(12, 36))
 
+                .strafeToSplineHeading(new Vector2d(-12, 12), Math.toRadians(90))  //to launch spot 2nd
 
-                .strafeToConstantHeading(new Vector2d(12, -36))
+                .strafeToSplineHeading(new Vector2d(-12, 24), Math.toRadians(90))   //change heading
 
-                .strafeToSplineHeading(new Vector2d(-12, -12), Math.toRadians(-90))  //to launch spot 2nd
+                .strafeToConstantHeading(new Vector2d(-12, 54))  //to intake 1st stack
 
-               // .strafeToSplineHeading(new Vector2d(-12, -24), Math.toRadians(-90))   //change heading
+                .strafeToConstantHeading(new Vector2d(-12, 12))  //to launch spot 2nd
 
-
-                .strafeToConstantHeading(new Vector2d(-12, -54))  //to intake 1st stack
-
-                .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot 2nd
-
+                .strafeToConstantHeading(new Vector2d(-12, 35))                     //park outside launch
 
 
-                .strafeToConstantHeading(new Vector2d(-12, -35))                     //park outside launch
+
+//
+//                .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot 1st time
+//
+//                .strafeToSplineHeading(new Vector2d(12, -18), Math.toRadians(-90))  //turn before intake
+//
+//
+//                .strafeToConstantHeading(new Vector2d(12, -54))      //intake 2nd stack
+//
+//                .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot 1st time
+//
+//                .strafeToConstantHeading(new Vector2d(12, -36))
+//
+//                .strafeToSplineHeading(new Vector2d(10, -56), Math.toRadians(-115))
+//
+//
+//                .strafeToConstantHeading(new Vector2d(12, -36))
+//
+//                .strafeToSplineHeading(new Vector2d(-12, -12), Math.toRadians(-90))  //to launch spot 2nd
+//
+//                // .strafeToSplineHeading(new Vector2d(-12, -24), Math.toRadians(-90))   //change heading
+//
+//
+//                .strafeToConstantHeading(new Vector2d(-12, -54))  //to intake 1st stack
+//
+//                .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot 2nd
+//
+//
+//
+//                .strafeToConstantHeading(new Vector2d(-12, -35))                     //park outside launch
                 .build();
 
     myBot.runAction(action);

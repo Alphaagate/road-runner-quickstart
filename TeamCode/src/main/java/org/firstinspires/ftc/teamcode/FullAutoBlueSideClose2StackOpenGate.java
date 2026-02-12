@@ -10,6 +10,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -65,6 +66,10 @@ public class FullAutoBlueSideClose2StackOpenGate extends AbstractFullAuto {
                 .afterDisp(0, this.getStartIntakeStopOuttakeAction()
                 )
                 .strafeToLinearHeading(new Vector2d(10, -56), Math.toRadians(-115)) // open gate
+                .strafeToConstantHeading(new Vector2d(12, -58)) // move away from gate
+
+                .stopAndAdd(new SleepAction(2))
+
                 .strafeToConstantHeading(new Vector2d(-12, -12))  //to launch spot 3rd time
                 .afterDisp(0, new ParallelAction(
                                 this.getBlockUpAction(),
