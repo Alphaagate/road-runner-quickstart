@@ -42,16 +42,17 @@ public class FullAutoRedSideClose2StackOpenGate extends AbstractFullAuto {
                         this.getLaunchAction(),
                         this.getBlockDownAction()
                 ))
-                .strafeToSplineHeading(new Vector2d(12, 18), Math.toRadians(90))  //turn before intake
+                .strafeToSplineHeading(new Vector2d(14, 18), Math.toRadians(85))  //turn before intake
 
                 .afterDisp(0, this.getStartIntakeStopOuttakeAction()
                 )
-                .strafeToConstantHeading(new Vector2d(12, 54), new TranslationalVelConstraint(15))      //intake 2nd stack
+                .strafeToConstantHeading(new Vector2d(14, 56), new TranslationalVelConstraint(30))      //intake 2nd stack
                 .afterDisp(0, new ParallelAction(
                         this.getBlockUpAction(),
                         //Prepare the turret before doing intake, so it can reduce the aiming time
                         this.getAimAction(35d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
                 )
+                .setTangent(180)
                 .strafeToConstantHeading(new Vector2d(-12, 12))  //to launch spot 1st time
                 .stopAndAdd(new SequentialAction(
                         // adjust by using AprilTag again
@@ -60,33 +61,33 @@ public class FullAutoRedSideClose2StackOpenGate extends AbstractFullAuto {
                         this.getBlockDownAction()
 
                 ))
-                .strafeToConstantHeading(new Vector2d(12, 36))
+                .strafeToConstantHeading(new Vector2d(6, 36))
                 .afterDisp(0, this.getStartIntakeStopOuttakeAction()
                 )
-                .strafeToLinearHeading(new Vector2d(10, 56), Math.toRadians(115)) // open gate
+                .strafeToLinearHeading(new Vector2d(6, 52), Math.toRadians(85)) // open gate
 
-                .strafeToConstantHeading(new Vector2d(12, 58)) // move away from gate
 
-                .stopAndAdd(new SleepAction(2))
-                .strafeToConstantHeading(new Vector2d(12, 36))
+                .strafeToLinearHeading(new Vector2d(18, 60), Math.toRadians(145)) // move away from gate
 
-                .strafeToSplineHeading(new Vector2d(-12, 12), Math.toRadians(90))  //to launch spot 2nd
+                .stopAndAdd(new SleepAction(1.5))
                 .afterDisp(0, new ParallelAction(
                         this.getBlockUpAction(),
                         //Prepare the turret before doing intake, so it can reduce the aiming time
                         this.getAimAction(35d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
                 )
+                .strafeToSplineHeading(new Vector2d(-12, 12), Math.toRadians(85))  //to launch spot 2nd
+
                 .stopAndAdd(new SequentialAction(
                         this.getAimAction(null, null, true),
                         this.getLaunchAction(),
                         this.getBlockDownAction()
                 ))
-                .strafeToSplineHeading(new Vector2d(-12, 24), Math.toRadians(90))   //change heading
-
-                .strafeToConstantHeading(new Vector2d(-12, 54))  //to intake 1st stack
-
+                .strafeToSplineHeading(new Vector2d(-12, 24), Math.toRadians(85))   //change heading
                 .afterDisp(0, this.getStartIntakeStopOuttakeAction()
                 )
+                .strafeToConstantHeading(new Vector2d(-12, 52), new TranslationalVelConstraint(20))  //to intake 1st stack
+
+
 
                 .afterDisp(0, new ParallelAction(
                         this.getBlockUpAction(),

@@ -187,11 +187,11 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     }
 
     protected void blockDown() {
-        blockServo.setPosition(0.5);
+        blockServo.setPosition(0.0);
     }
 
     protected void blockUp() {
-        blockServo.setPosition(1);
+        blockServo.setPosition(0.8);
     }
 
     protected int convertToTicks(double degree) {
@@ -384,7 +384,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
 //        driver.resetPosAndIMU();
 
-        blockServo.setPosition(1);//0.5 is down, 1 is up
+        blockServo.setPosition(0.8);//0.5 is down, 1 is up
         VoltageSensor batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
         double voltage = batteryVoltageSensor.getVoltage();
         double kV = voltage /12;

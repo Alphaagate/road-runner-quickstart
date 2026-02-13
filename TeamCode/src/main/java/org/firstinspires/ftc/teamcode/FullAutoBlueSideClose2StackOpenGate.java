@@ -48,7 +48,7 @@ public class FullAutoBlueSideClose2StackOpenGate extends AbstractFullAuto {
 
                 .afterDisp(0, this.getStartIntakeStopOuttakeAction()
                 )
-                .strafeToConstantHeading(new Vector2d(12, -54), new TranslationalVelConstraint(15))      //intake 2nd stack
+                .strafeToConstantHeading(new Vector2d(14, -54), new TranslationalVelConstraint(100))      //intake 2nd stack
                 .afterDisp(0, new ParallelAction(
                                 this.getBlockUpAction(),
                                 //Prepare the turret before doing intake, so it can reduce the aiming time
@@ -62,11 +62,11 @@ public class FullAutoBlueSideClose2StackOpenGate extends AbstractFullAuto {
                         this.getBlockDownAction()
 
                 ))
-                .strafeToConstantHeading(new Vector2d(12, -36))
+                .strafeToLinearHeading(new Vector2d(14, -36), Math.toRadians(-90))
                 .afterDisp(0, this.getStartIntakeStopOuttakeAction()
                 )
-                .strafeToLinearHeading(new Vector2d(10, -56), Math.toRadians(-115)) // open gate
-                .strafeToConstantHeading(new Vector2d(12, -58)) // move away from gate
+                .strafeToLinearHeading(new Vector2d(14, -56), Math.toRadians(-115)) // open gate
+                .strafeToConstantHeading(new Vector2d(16, -58)) // move away from gate
 
                 .stopAndAdd(new SleepAction(2))
 
@@ -74,7 +74,7 @@ public class FullAutoBlueSideClose2StackOpenGate extends AbstractFullAuto {
                 .afterDisp(0, new ParallelAction(
                                 this.getBlockUpAction(),
                                 //Prepare the turret before doing intake, so it can reduce the aiming time
-                                this.getAimAction(-35d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
+                                this.getAimAction(-15d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
                 )
                 .stopAndAdd(new SequentialAction(
                         this.getAimAction(null, null, true),
@@ -86,7 +86,7 @@ public class FullAutoBlueSideClose2StackOpenGate extends AbstractFullAuto {
                 .afterDisp(0, new ParallelAction(
                         this.getBlockUpAction(),
                         //Prepare the turret before doing intake, so it can reduce the aiming time
-                        this.getAimAction(-35d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
+                        this.getAimAction(-15d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
                 )
                 .stopAndAdd(new SequentialAction(
                         this.getAimAction(null, null, true),
