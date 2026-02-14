@@ -50,7 +50,7 @@ public class FullAutoBlueSideClose2StackOpenGate extends AbstractFullAuto {
 
                 .afterDisp(0, this.getStartIntakeStopOuttakeAction()
                 )
-                .strafeToConstantHeading(new Vector2d(12, -54), new TranslationalVelConstraint(100))      //intake 2nd stack
+                .strafeToConstantHeading(new Vector2d(14, -57), new TranslationalVelConstraint(100))      //intake 2nd stack
                 .afterDisp(0, new ParallelAction(
                                 this.getBlockUpAction(),
                                 //Prepare the turret before doing intake, so it can reduce the aiming time
