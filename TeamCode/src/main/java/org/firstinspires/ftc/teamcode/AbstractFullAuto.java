@@ -76,12 +76,12 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     // Hood Constants
     protected static final double HOOD_MIN_POSITION = 0.1;   // lowest angle
     protected static final double HOOD_MAX_POSITION = 0.7;   // highest angle
-    protected static final double HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE = 0.55;
+    protected static final double HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE = 0.50;
     protected static final double HOOD_INITIAL_TARGET_POSITION_FAR_SIDE = 0.65;
 
     // Linear model (range → hood)
     private static final double HOOD_K = 0.007;   // position per inch
-    private static final double HOOD_B = 0.1;    // base position
+    private static final double HOOD_B = 0.03;    // base position
 
     //TODO: blockservo 0.5 = down (blocking) blockservo 1 = up (unblocking)
 
@@ -284,7 +284,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 //        return launchAction;
         return new SequentialAction(
                 new InstantAction(() -> this.intakeMotor.setPower(1)),
-                new SleepAction(1.5),
+                new SleepAction(1.2),
                 new InstantAction(() -> intakeMotor.setPower(0))
         );
     }
