@@ -39,7 +39,7 @@ public class BlueFar3Stack extends AbstractFullAuto {
                         this.getLaunchAction(),
                         this.getBlockDownAction()
                 ))
-                .strafeToSplineHeading(new Vector2d(36, -24), Math.toRadians(-90))
+                .strafeToSplineHeading(new Vector2d(36, -24), Math.toRadians(-85))
                 .afterDisp(0, this.getStartIntakeStopOuttakeAction()
                 )
                 .strafeToConstantHeading(new Vector2d(36, -58), new TranslationalVelConstraint(15))  // to intake 1st stack spot
@@ -57,7 +57,7 @@ public class BlueFar3Stack extends AbstractFullAuto {
                 ))
 
 
-                .strafeToSplineHeading(new Vector2d(12, -24), Math.toRadians(-90))
+                .strafeToSplineHeading(new Vector2d(12, -24), Math.toRadians(-85))
                 .afterDisp(0, this.getStartIntakeStopOuttakeAction()
                 )
 
@@ -75,7 +75,7 @@ public class BlueFar3Stack extends AbstractFullAuto {
                         this.getBlockDownAction()
                 ))
 
-                .strafeToSplineHeading(new Vector2d(-14, -24), Math.toRadians(-90))
+                .strafeToSplineHeading(new Vector2d(-14, -24), Math.toRadians(-85))
                 .afterDisp(0, this.getStartIntakeStopOuttakeAction()
                 )
                 .strafeToConstantHeading(new Vector2d(-14, -48), new TranslationalVelConstraint(20))  // to intake 3rd stack spot //, new TranslationalVelConstraint(30.0)

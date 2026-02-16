@@ -43,14 +43,14 @@ public class BlueFar1Stack extends AbstractFullAuto {
                         this.getLaunchAction(),
                         this.getBlockDownAction()
                 ))
-                .strafeToSplineHeading(new Vector2d(36, -24), Math.toRadians(-90))
+                .strafeToSplineHeading(new Vector2d(36, -24), Math.toRadians(-85))
                 .afterDisp(0, this.getStartIntakeStopOuttakeAction()
                 )
                 .strafeToConstantHeading(new Vector2d(36, -58), new TranslationalVelConstraint(15))  // to intake 1st stack spot
                 .afterDisp(0, new ParallelAction(
                         this.getBlockUpAction(),
                         //Prepare the turret before doing intake, so it can reduce the aiming time
-                        this.getAimAction(-35d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
+                        this.getAimAction(-53d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
                 )
 
                 .strafeToConstantHeading(new Vector2d(53, -15)) //to launch spot
