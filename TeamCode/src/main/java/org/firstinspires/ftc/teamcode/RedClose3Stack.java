@@ -8,14 +8,13 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 @Config
 @Autonomous(group = "Autonomous")
-public class FullAutoRedSideClose3Stack extends AbstractFullAuto {
+public class RedClose3Stack extends AbstractFullAuto {
     @Override
     protected int getDesiredTagID() {
         return DESIRED_TAG_ID_RED;
@@ -143,4 +142,8 @@ public class FullAutoRedSideClose3Stack extends AbstractFullAuto {
         return new PIDFCoefficients(NEW_P_CLOSE, 0, 0, NEW_F_CLOSE);
     }
 
+    @Override
+    protected double getCloseOrFar() {
+        return 1;
+    }
 }

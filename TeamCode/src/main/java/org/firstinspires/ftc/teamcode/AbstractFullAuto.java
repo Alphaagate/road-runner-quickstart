@@ -75,13 +75,13 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
     // Hood Constants
     protected static final double HOOD_MIN_POSITION = 0.1;   // lowest angle
-    protected static final double HOOD_MAX_POSITION = 0.7;   // highest angle
+    protected static final double HOOD_MAX_POSITION = 0.58;   // highest angle
     protected static final double HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE = 0.50;
-    protected static final double HOOD_INITIAL_TARGET_POSITION_FAR_SIDE = 0.65;
+    protected static final double HOOD_INITIAL_TARGET_POSITION_FAR_SIDE = 0.58;
 
     // Linear model (range → hood)
     private static final double HOOD_K = 0.007;   // position per inch
-    private static final double HOOD_B = 0.03;    // base position
+    private static final double HOOD_B = 0;    // base position
 
     //TODO: blockservo 0.5 = down (blocking) blockservo 1 = up (unblocking)
 
@@ -164,6 +164,8 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
 
     protected abstract PIDFCoefficients getPidfCoefficients();
+    protected abstract double getCloseOrFar();
+
 
     private void drawAndLogTelemetry(TelemetryPacket packet) {
         Pose2d pose = getCurrentPos(drive);
@@ -187,8 +189,8 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     }
 
     protected void blockDown() {
-        blockServo.setPosition(0.0);
-    }
+        blockServo.setPosition(0.055);
+    } // teleop works better?
 
     protected void blockUp() {
         blockServo.setPosition(0.8);
@@ -253,14 +255,25 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     protected abstract double getTurretDegreeOffset();
 
     protected Action getBlockUpAction() {
+        if (getCloseOrFar() == 1){
+            return new SequentialAction(
+                    new InstantAction(() -> this.intakeMotor.setVelocity(0)),
+                    new SleepAction(0.2),
+                    new InstantAction(() -> this.setOuttakeSpeed(lowVelocity)),
+                    new SleepAction(0.2),
+                    new InstantAction(this::blockUp)
+            );
+        }
+        else {
+            return new SequentialAction(
+                    new InstantAction(() -> this.intakeMotor.setVelocity(0)),
+                    new SleepAction(0.2),
+                    new InstantAction(() -> this.setOuttakeSpeed(highVelocity)),
+                    new SleepAction(0.2),
+                    new InstantAction(this::blockUp)
+            );
+        }
 
-        return new SequentialAction(
-                new InstantAction(() -> this.intakeMotor.setVelocity(0)),
-                new SleepAction(0.2),
-                new InstantAction(() -> this.setOuttakeSpeed(lowVelocity)),
-                new SleepAction(0.2),
-                new InstantAction(this::blockUp)
-        );
 
     }
 
@@ -347,14 +360,24 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     }
 
     protected Action getStopIntakeStartOuttakeAction() {
+        if (getCloseOrFar() == 1) {
+            return new SequentialAction(
+                    new InstantAction(() -> this.intakeMotor.setVelocity(0)),
+                    new SleepAction(0.2),
+                    new InstantAction(() -> this.setOuttakeSpeed(lowVelocity))
+            );
+        }
+        else  {
+            return new SequentialAction(
+                    new InstantAction(() -> this.intakeMotor.setVelocity(0)),
+                    new SleepAction(0.2),
+                    new InstantAction(() -> this.setOuttakeSpeed(highVelocity))
+            );
+        }
 
-        return new SequentialAction(
-                new InstantAction(() -> this.intakeMotor.setVelocity(0)),
-                new SleepAction(0.2),
-                new InstantAction(() -> this.setOuttakeSpeed(lowVelocity))
-        );
 
     }
+
     protected Action getStartIntakeStopOuttakeAction() {
         return new SequentialAction(
                 new InstantAction(() -> this.intakeMotor.setPower(1)),
@@ -501,10 +524,8 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
             telemetry.addData("HeadingError: ", headingError);
 
-            double offsetDegree = 0d; // default to DESIRED_TAG_ID_BLUE both blue side working
-            if (getDesiredTagID() == DESIRED_TAG_ID_RED) {
-                offsetDegree = -2d; //close side red working
-            }
+            double offsetDegree = getTurretDegreeOffset(); // default to DESIRED_TAG_ID_BLUE both blue side working
+
 
             double headingErrorAfterOffset = headingError + offsetDegree;
             headingErrorAfterOffset = Range.clip(headingErrorAfterOffset, -40, 40);

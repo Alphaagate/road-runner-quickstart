@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 @Config
 @Autonomous(group = "Autonomous")
-public class FullAutoRedSideClose1Stack extends AbstractFullAuto {
+public class RedClose1Stack extends AbstractFullAuto {
     @Override
     protected int getDesiredTagID() {
         return DESIRED_TAG_ID_RED;
@@ -87,4 +87,8 @@ public class FullAutoRedSideClose1Stack extends AbstractFullAuto {
         return new PIDFCoefficients(NEW_P_CLOSE, 0, 0, NEW_F_CLOSE);
     }
 
+    @Override
+    protected double getCloseOrFar() {
+        return 1;
+    }
 }
