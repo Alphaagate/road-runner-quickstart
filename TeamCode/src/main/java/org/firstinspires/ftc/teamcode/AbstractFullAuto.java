@@ -76,17 +76,17 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     // Hood Constants
     protected static final double HOOD_MIN_POSITION = 0.1;   // lowest angle
     protected static final double HOOD_MAX_POSITION = 0.58;   // highest angle
-    protected static final double HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE = 0.50;
+    protected static final double HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE = 0.37;
     protected static final double HOOD_INITIAL_TARGET_POSITION_FAR_SIDE = 0.58;
 
     // Linear model (range → hood)
-    private static final double HOOD_K = 0.007;   // position per inch
-    private static final double HOOD_B = 0;    // base position
+    protected static final double HOOD_K = 0.007;   // position per inch
+    protected static final double HOOD_B = 0;    // base position
 
     //TODO: blockservo 0.5 = down (blocking) blockservo 1 = up (unblocking)
 
     private int ballCount;
-    protected double lowVelocity = 1180d;// 1450 for far side
+    protected double lowVelocity = 1170d;// 1450 for far side
     protected double highVelocity = 1500d;// 1450 for far side
     // 84 = Tower height 99 - Robot height 35 + Goal height 20
     public static final double TARGET_HEIGHT = 84d;
@@ -189,7 +189,13 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     }
 
     protected void blockDown() {
-        blockServo.setPosition(0.055);
+        if (getCloseOrFar() == 2) {
+            blockServo.setPosition(0.055);
+        }
+        else {
+            blockServo.setPosition(0);
+        }
+
     } // teleop works better?
 
     protected void blockUp() {
@@ -540,8 +546,8 @@ public abstract class AbstractFullAuto extends LinearOpMode {
             if (range >= 85 && Math.abs(headingErrorAfterOffset) > 1) { // For far side
                 this.moveTurret(targetPosition);
             }
-            //For close side, move turret if the headingErrorAfterOffset > 2 degree
-            else if (range > 0 && range < 85 && Math.abs(headingErrorAfterOffset) > 2) { // For close side
+            //For close side, move turret if the headingErrorAfterOffset > 1 degree
+            else if (range > 0 && range < 85 && Math.abs(headingErrorAfterOffset) > 1) { // For close side
                 this.moveTurret(targetPosition);
             }
             else {
@@ -610,7 +616,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
     // Calculate the hood sevo position by liner model. We can't really calculate the position via geometry based on the
     // current position as the sevo doesn't have real current position returned from hardware.
-    private double calculateHoodPositionByAprilTagRange(double range) {
+    protected double calculateHoodPositionByAprilTagRange(double range) {
         return HOOD_K * range + HOOD_B;
     }
 

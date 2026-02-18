@@ -112,7 +112,7 @@ public class RedFarLoadingZone extends AbstractFullAuto {
 
     @Override
     protected double getTurretDegreeOffset() {
-        return -4d;
+        return -0.5d;
     }
 
     @Override

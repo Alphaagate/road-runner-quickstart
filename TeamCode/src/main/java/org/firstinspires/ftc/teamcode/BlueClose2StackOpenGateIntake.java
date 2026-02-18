@@ -70,7 +70,7 @@ public class BlueClose2StackOpenGateIntake extends AbstractFullAuto {
                 .splineToLinearHeading(new Pose2d(18, -58, -115), Math.toRadians(-90))
                 .strafeToLinearHeading(new Vector2d(18, -58), Math.toRadians(-115)) // move away from gate
 
-                .stopAndAdd(new SleepAction(1.5))
+                .stopAndAdd(new SleepAction(1.3))
                 .strafeToLinearHeading(new Vector2d(8, -12), Math.toRadians(-85))
                 .afterDisp(0, new ParallelAction(
                         this.getBlockUpAction(),
@@ -111,7 +111,12 @@ public class BlueClose2StackOpenGateIntake extends AbstractFullAuto {
 
     @Override
     protected double getTurretDegreeOffset() {
-        return 5;
+        return 4;
+    }
+
+    @Override
+    protected double calculateHoodPositionByAprilTagRange(double range) {
+        return HOOD_K * range + HOOD_B - 0.16;
     }
 
     @Override
