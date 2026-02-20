@@ -91,6 +91,7 @@ public class RedClose3Stack extends AbstractFullAuto {
                 ))
                 .strafeToConstantHeading(new Vector2d(-12, 35))                     //park outside launch
                 .build();
+
     }
 
     @Override
