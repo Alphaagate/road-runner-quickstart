@@ -42,7 +42,7 @@ public class BlueClose2StackOpenGateIntake extends AbstractFullAuto {
                         this.getLaunchAction(),
                         this.getBlockDownAction()
                 ))
-                .strafeToSplineHeading(new Vector2d(12, -18), Math.toRadians(-82))  //turn before intake
+                .strafeToSplineHeading(new Vector2d(14, -18), Math.toRadians(-82))  //turn before intake
 
                 .afterDisp(0, this.getStartIntakeStopOuttakeAction()
                 )
@@ -111,7 +111,7 @@ public class BlueClose2StackOpenGateIntake extends AbstractFullAuto {
 
     @Override
     protected double getTurretDegreeOffset() {
-        return 4;
+        return 2;
     }
 
     @Override

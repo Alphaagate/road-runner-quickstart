@@ -86,7 +86,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     //TODO: blockservo 0.5 = down (blocking) blockservo 1 = up (unblocking)
 
     private int ballCount;
-    protected double lowVelocity = 1170d;// 1450 for far side
+    protected double lowVelocity = 1200d;// 1450 for far side
     protected double highVelocity = 1500d;// 1450 for far side
     // 84 = Tower height 99 - Robot height 35 + Goal height 20
     public static final double TARGET_HEIGHT = 84d;
@@ -302,6 +302,9 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 //        };
 //        return launchAction;
         return new SequentialAction(
+                new SleepAction(0.2),
+
+                // above is for testing
                 new InstantAction(() -> this.intakeMotor.setPower(1)),
                 new SleepAction(1.2),
                 new InstantAction(() -> intakeMotor.setPower(0))

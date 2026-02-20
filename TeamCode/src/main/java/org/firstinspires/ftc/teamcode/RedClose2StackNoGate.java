@@ -82,9 +82,12 @@ public class RedClose2StackNoGate extends AbstractFullAuto {
 
     @Override
     protected double getTurretDegreeOffset() {
-        return -2d;
+        return -3.5d;
     }
-
+    @Override
+    protected double calculateHoodPositionByAprilTagRange(double range) {
+        return HOOD_K * range + HOOD_B - 0.15;
+    }
     @Override
     protected PIDFCoefficients getPidfCoefficients() {
         return new PIDFCoefficients(NEW_P_CLOSE, 0, 0, NEW_F_CLOSE);

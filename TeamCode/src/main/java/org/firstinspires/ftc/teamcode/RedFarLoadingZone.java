@@ -85,18 +85,16 @@ public class RedFarLoadingZone extends AbstractFullAuto {
 
                 //testing
 
-
-                .strafeToLinearHeading(new Vector2d(36, 64), Math.toRadians(0))
+                .strafeToSplineHeading(new Vector2d(36, 24), Math.toRadians(85))
                 .afterDisp(0, this.getStartIntakeStopOuttakeAction()
                 )
-                .strafeToConstantHeading(new Vector2d(62, 64), new TranslationalVelConstraint(20))
-                .setTangent(Math.toRadians(180))
-                .strafeToConstantHeading(new Vector2d(59, 45))
+                .strafeToConstantHeading(new Vector2d(36, 58), new TranslationalVelConstraint(15))  // to intake 1st stack spot
                 .afterDisp(0, new ParallelAction(
                         this.getBlockUpAction(),
                         //Prepare the turret before doing intake, so it can reduce the aiming time
                         this.getAimAction(53d, HOOD_INITIAL_TARGET_POSITION_FAR_SIDE, false))
                 )
+
                 .strafeToLinearHeading(new Vector2d(53, 15), Math.toRadians(85)) //to launch spot
                 .stopAndAdd(new SequentialAction(
                         // adjust by using AprilTag again
@@ -112,9 +110,13 @@ public class RedFarLoadingZone extends AbstractFullAuto {
 
     @Override
     protected double getTurretDegreeOffset() {
-        return -0.5d;
+        return -1.5d;
     }
 
+    @Override
+    protected double calculateHoodPositionByAprilTagRange(double range) {
+        return HOOD_K * range + HOOD_B + 0.1;
+    }
     @Override
     protected PIDFCoefficients getPidfCoefficients() {
         return new PIDFCoefficients(NEW_P_FAR, 0, 0, NEW_F_FAR);

@@ -96,7 +96,12 @@ public class BlueClose2StackOpenGateNoIntake extends AbstractFullAuto {
 
     @Override
     protected double getTurretDegreeOffset() {
-        return 5;
+        return 2;
+    }
+
+    @Override
+    protected double calculateHoodPositionByAprilTagRange(double range) {
+        return HOOD_K * range + HOOD_B - 0.16;
     }
 
     @Override

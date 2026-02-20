@@ -97,7 +97,12 @@ public class RedFar3Stack extends AbstractFullAuto {
 
     @Override
     protected double getTurretDegreeOffset() {
-        return -4d;
+        return -1.5d;
+    }
+
+    @Override
+    protected double calculateHoodPositionByAprilTagRange(double range) {
+        return HOOD_K * range + HOOD_B + 0.15;
     }
 
     @Override

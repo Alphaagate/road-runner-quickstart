@@ -42,11 +42,11 @@ public class RedClose2StackOpenGateNoIntake extends AbstractFullAuto {
                         this.getLaunchAction(),
                         this.getBlockDownAction()
                 ))
-                .strafeToSplineHeading(new Vector2d(14, 18), Math.toRadians(82))  //turn before intake
+                .strafeToSplineHeading(new Vector2d(13, 18), Math.toRadians(82))  //turn before intake
 
                 .afterDisp(0, this.getStartIntakeStopOuttakeAction()
                 )
-                .strafeToConstantHeading(new Vector2d(14, 57), new TranslationalVelConstraint(100))      //intake 2nd stack
+                .strafeToConstantHeading(new Vector2d(13, 57), new TranslationalVelConstraint(20))      //intake 2nd stack
                 .afterDisp(0, new ParallelAction(
                         this.getBlockUpAction(),
                         //Prepare the turret before doing intake, so it can reduce the aiming time
@@ -55,7 +55,7 @@ public class RedClose2StackOpenGateNoIntake extends AbstractFullAuto {
                 .strafeToConstantHeading(new Vector2d(9, 36))
                 .strafeToLinearHeading(new Vector2d(9, 53), Math.toRadians(85)) // open gate
 
-                .strafeToSplineHeading(new Vector2d(14, 18), Math.toRadians(85))  //turn before intake
+                .strafeToSplineHeading(new Vector2d(12, 18), Math.toRadians(85))  //turn before intake
                 .strafeToConstantHeading(new Vector2d(-12, 12))  //to launch spot 1st time
                 .stopAndAdd(new SequentialAction(
                         // adjust by using AprilTag again
@@ -66,10 +66,10 @@ public class RedClose2StackOpenGateNoIntake extends AbstractFullAuto {
                 ))
 
 
-                .strafeToSplineHeading(new Vector2d(-12, 24), Math.toRadians(85))   //change heading
+                .strafeToSplineHeading(new Vector2d(-14, 24), Math.toRadians(82))   //change heading
                 .afterDisp(0, this.getStartIntakeStopOuttakeAction()
                 )
-                .strafeToConstantHeading(new Vector2d(-12, 52), new TranslationalVelConstraint(20))  //to intake 1st stack
+                .strafeToConstantHeading(new Vector2d(-14, 57), new TranslationalVelConstraint(20))  //to intake 1st stack
 
 
 

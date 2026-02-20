@@ -96,7 +96,7 @@ public class RedClose3Stack extends AbstractFullAuto {
 
     @Override
     protected double getTurretDegreeOffset() {
-        return -7d;
+        return -3.5d;
     }
     
     @Override
