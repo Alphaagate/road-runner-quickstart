@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 @Config
-@Autonomous(group = "Autonomous")
+//@Autonomous(group = "Autonomous")
 public class BlueClose3Stack extends AbstractFullAuto {
     @Override
     protected int getDesiredTagID() {

@@ -68,9 +68,13 @@ public class BlueFar1Stack extends AbstractFullAuto {
 
     @Override
     protected double getTurretDegreeOffset() {
-        return 0;
+        return -3d;
     }
 
+    @Override
+    protected double calculateHoodPositionByAprilTagRange(double range) {
+        return HOOD_K * range + HOOD_B + 0.15;
+    }
     @Override
     protected PIDFCoefficients getPidfCoefficients() {
         return new PIDFCoefficients(NEW_P_FAR, 0, 0, NEW_F_FAR);

@@ -19,7 +19,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 
 @Config
-@Autonomous(name = "BLUE_TEST_CLOSE_AUTO_PIXEL", group = "Autonomous")
+//@Autonomous(name = "BLUE_TEST_CLOSE_AUTO_PIXEL", group = "Autonomous")
 public class TestAuto extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera

@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
  * PIDF-related functions of the DcMotorEx class.
  */
 
-@Autonomous(name="Flywheel PIDF tuning", group = "Autonomous")
+//@Autonomous(name="Flywheel PIDF tuning", group = "Autonomous")
 public class FlywheelTuning extends LinearOpMode {
 
     // our DC motor

@@ -89,7 +89,6 @@ public class RedClose2StackOpenGateNoIntake extends AbstractFullAuto {
                 .strafeToConstantHeading(new Vector2d(-12, 35))                     //park outside launch
                 .build();
     }
-
     @Override
     protected double getTurretDegreeOffset() {
         return -3.5d;

@@ -49,7 +49,7 @@ public class RedClose1Stack extends AbstractFullAuto {
                 .afterDisp(0, new ParallelAction(
                         this.getBlockUpAction(),
                         //Prepare the turret before doing intake, so it can reduce the aiming time
-                        this.getAimAction(-35d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
+                        this.getAimAction(35d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
                 )
                 .strafeToConstantHeading(new Vector2d(-12, 12))  //to launch spot
                 .stopAndAdd(new SequentialAction(

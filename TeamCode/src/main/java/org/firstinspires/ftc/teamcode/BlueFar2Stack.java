@@ -84,12 +84,10 @@ public class BlueFar2Stack extends AbstractFullAuto {
     protected double calculateHoodPositionByAprilTagRange(double range) {
         return HOOD_K * range + HOOD_B + 0.15;
     }
-
     @Override
     protected PIDFCoefficients getPidfCoefficients() {
         return new PIDFCoefficients(NEW_P_FAR, 0, 0, NEW_F_FAR);
     }
-
     @Override
     protected double getCloseOrFar() {
         return 2;

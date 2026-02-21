@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 @Config
-@Autonomous(group = "Autonomous")
+//@Autonomous(group = "Autonomous")
 public class RedFar3Stack extends AbstractFullAuto {
     @Override
     protected int getDesiredTagID() {
@@ -102,9 +102,8 @@ public class RedFar3Stack extends AbstractFullAuto {
 
     @Override
     protected double calculateHoodPositionByAprilTagRange(double range) {
-        return HOOD_K * range + HOOD_B + 0.15;
+        return HOOD_K * range + HOOD_B + 0.1;
     }
-
     @Override
     protected PIDFCoefficients getPidfCoefficients() {
         return new PIDFCoefficients(NEW_P_FAR, 0, 0, NEW_F_FAR);

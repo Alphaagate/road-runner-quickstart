@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit;
 * added to the Driver Station.
 */
 
-@TeleOp
+//@TeleOp
 
 public class NPC30522_teleOp2026_Test extends LinearOpMode {
    
