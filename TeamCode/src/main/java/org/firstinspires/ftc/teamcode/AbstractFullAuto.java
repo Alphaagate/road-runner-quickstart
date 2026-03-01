@@ -190,7 +190,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
     protected void blockDown() {
         if (getCloseOrFar() == 2) {
-            blockServo.setPosition(0.055);
+            blockServo.setPosition(0.02);
         }
         else {
             blockServo.setPosition(0);

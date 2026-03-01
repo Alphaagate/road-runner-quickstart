@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -55,10 +56,10 @@ public class RedFarLoadingZone extends AbstractFullAuto {
                 .stopAndAdd(new SequentialAction(
                         // adjust by using AprilTag again
                         this.getAimAction(null, null, true),
+                        new SleepAction(0.8),
                         this.getLaunchAction(),
                         this.getBlockDownAction()
                 ))
-
 
                 .strafeToLinearHeading(new Vector2d(36, 64), Math.toRadians(0))
                 .afterDisp(0, this.getStartIntakeStopOuttakeAction()
@@ -75,6 +76,7 @@ public class RedFarLoadingZone extends AbstractFullAuto {
                 .stopAndAdd(new SequentialAction(
                         // adjust by using AprilTag again
                         this.getAimAction(null, null, true),
+                        new SleepAction(0.8),
                         this.getLaunchAction(),
                         this.getBlockDownAction()
                 ))
@@ -99,6 +101,7 @@ public class RedFarLoadingZone extends AbstractFullAuto {
                 .stopAndAdd(new SequentialAction(
                         // adjust by using AprilTag again
                         this.getAimAction(null, null, true),
+//                        new SleepAction(0.8),
                         this.getLaunchAction(),
                         this.getBlockDownAction()
                 ))
@@ -110,7 +113,7 @@ public class RedFarLoadingZone extends AbstractFullAuto {
 
     @Override
     protected double getTurretDegreeOffset() {
-        return -1.5d;
+        return -2d;
     }
 
     @Override
