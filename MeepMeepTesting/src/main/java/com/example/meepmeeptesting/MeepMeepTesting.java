@@ -12,69 +12,30 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class MeepMeepTesting {
     public static void main(String[] args) {
-        MeepMeep meepMeep = new MeepMeep(800);
+        MeepMeep meepMeep = new MeepMeep(500);
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
+                .setConstraints(72.5, 72.5, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
 
-        Action action = myBot.getDrive().actionBuilder(new Pose2d(63, -15, Math.toRadians(180)))
-//                .afterDisp(0, new ParallelAction(telemetryPacket -> {
-//                            intakeMotor.setVelocity(0);
-//                            this.setOuttakeSpeed(lowVelocity);
-//                            return false;
-//                        },
-//                                //Prepare the turret before doing intake, so it can reduce the aiming time
-//                                this.getAimAction(-5d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
-//                )
-                .strafeToConstantHeading(new Vector2d(-12, 12))//to launch spot
-//                .stopAndAdd(new SequentialAction(
-//                        this.getAimAction(-30d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, true),
-//                        this.getLaunchAction()
-//                ))
-                .strafeToSplineHeading(new Vector2d(-12, 24), Math.toRadians(-90))   //change heading
-//                .afterDisp(0, new SequentialAction(
-//                        telemetryPacket -> {
-//                            this.reverseOuttake();
-//                            return false;
-//                        }, this.getIntakeAction()
-//
-//                ))
-                .strafeToConstantHeading(new Vector2d(-12, 48))                     //to intake
-//                .afterDisp(0, new ParallelAction(telemetryPacket -> {
-//                            intakeMotor.setVelocity(0);
-//                            this.setOuttakeSpeed(lowVelocity);
-//                            return false;
-//                        },
-//                                //Prepare the turret before doing intake, so it can reduce the aiming time
-//                                this.getAimAction(-40d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
-//                )
-                .strafeToConstantHeading(new Vector2d(-12, 12))//to launch spot
-//                .stopAndAdd(new SequentialAction(
-//                        this.getAimAction(-30d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, true),
-//                        this.getLaunchAction()
-//                ))
+        Action action = myBot.getDrive().actionBuilder(new Pose2d(0, 0, Math.toRadians(0)))
+                .strafeToConstantHeading(new Vector2d(24, 0))//to launch spot
+                .turn(Math.toRadians(90))
+                .strafeToConstantHeading(new Vector2d(24, 24))  //turn before intake
 
-                .strafeToSplineHeading(new Vector2d(12, 24), Math.toRadians(-90))  //to launch spot
-//                .afterDisp(0, new ParallelAction(telemetryPacket -> {
-//                            intakeMotor.setVelocity(0);
-//                            this.setOuttakeSpeed(lowVelocity);
-//                            return false;
-//                        },
-//                                //Prepare the turret before doing intake, so it can reduce the aiming time
-//                                this.getAimAction(-40d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, false))
-//                )
-                .strafeToConstantHeading(new Vector2d(12, 48))                     //intake
-                .strafeToConstantHeading(new Vector2d(-12, 12))//to launch spot
-//                .stopAndAdd(new SequentialAction(
-//                        this.getAimAction(-30d, HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE, true),
-//                        this.getLaunchAction()
-//                ))
-                .strafeToConstantHeading(new Vector2d(-12, 35))                     //park outside launch
+                .turn(Math.toRadians(90))
+
+
+
+                .strafeToConstantHeading(new Vector2d(-24, 24))  //turn before intake
+                .turn(Math.toRadians(90))
+
+                .strafeToConstantHeading(new Vector2d(-24, -24))  //to launch spot 1st time
+                .turn(Math.toRadians(90))
+                .strafeToConstantHeading(new Vector2d(24, -24))  //to launch spot 1st time
+
                 .build();
-
-
     myBot.runAction(action);
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_DECODE_OFFICIAL)

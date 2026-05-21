@@ -5,14 +5,19 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.InstantAction;
+import com.acmerobotics.roadrunner.NullAction;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -20,7 +25,6 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDir
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -48,6 +52,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     protected DcMotorEx turretMotor = null;
     protected Servo hoodServo = null;
     protected Servo blockServo;
+//    protected GoBildaPinpointDriver driver;
 
 
     // Below are for AprilTag
@@ -56,8 +61,6 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     private AprilTagProcessor aprilTagProcessor;                 // Used for managing the AprilTag detection process.
     private boolean targetFound = false;    // Set to true when an AprilTag target is detected
     private AprilTagDetection detectedAprilTag;        // Used to hold the data for a detected AprilTag
-
-    private static final double DESIRED_DISTANCE = 12.0;       //  this is how close the camera should get to the target (inches)
     protected static final int DESIRED_TAG_ID_RED = 24;       // Choose the tag you want to approach or set to -1 for ANY tag.
     protected static final int DESIRED_TAG_ID_BLUE = 20 ;       // Choose the tag you want to approach or set to -1 for ANY tag.
 
@@ -65,26 +68,31 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     private double lastTargetPositionToMove = 0.0;
     protected static final double NEW_P_CLOSE = 40;
     protected static final double NEW_F_CLOSE = 15.3; //TODO: NEED TO TUNE P AND F FOR CLOSE SIDE
+
+
     protected static final double NEW_P_FAR = 90;
     protected static final double NEW_F_FAR = 14.3;
 
     // Hood Constants
-    protected static final double HOOD_MIN_POSITION = 0.18;   // lowest angle
-    protected static final double HOOD_MAX_POSITION = 0.62;   // highest angle
-    protected static final double HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE = 0.55;
-    protected static final double HOOD_INITIAL_TARGET_POSITION_FAR_SIDE = HOOD_MAX_POSITION;
+    protected static final double HOOD_MIN_POSITION = 0.1;   // lowest angle
+    protected static final double HOOD_MAX_POSITION = 0.58;   // highest angle
+    protected static final double HOOD_INITIAL_TARGET_POSITION_CLOSE_SIDE = 0.37;
+    protected static final double HOOD_INITIAL_TARGET_POSITION_FAR_SIDE = 0.58;
 
     // Linear model (range → hood)
-    private static final double HOOD_K = 0.007;   // position per inch
-    private static final double HOOD_B = 0.12;    // base position
+    protected static final double HOOD_K = 0.007;   // position per inch
+    protected static final double HOOD_B = 0;    // base position
+
+    //TODO: blockservo 0.5 = down (blocking) blockservo 1 = up (unblocking)
 
     private int ballCount;
-    protected double lowVelocity = 1250d;// 1450 for far side
+    protected double lowVelocity = 1200d;// 1450 for far side
     protected double highVelocity = 1500d;// 1450 for far side
     // 84 = Tower height 99 - Robot height 35 + Goal height 20
     public static final double TARGET_HEIGHT = 84d;
 
     protected boolean useAprilTag = true;
+    protected boolean shouldOpenGate = false;
 
     @Override
     public void runOpMode() {
@@ -105,8 +113,9 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 //        outtakeservo.setPosition(0.475);
 
         telemetry.update();
-
         waitForStart();
+        //TODO: check if we need to move to init
+        //TODO: robot must be stationary!! and init when stationary
 
         Action pathAction = getPathAction();
 
@@ -115,21 +124,48 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         }
         while(opModeIsActive()) {
             outtakeMotor1.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
-            outtakeMotor2.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);this.detectAprilTag();
-            this.logInfo();
+            outtakeMotor2.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+//            this.detectAprilTag();   // no need to detect here, we will detect april tag when robot is at lunch spot
+//            this.logInfo();
 
             TelemetryPacket packet = new TelemetryPacket();
             if (!pathAction.run(packet)) {
                 break;
             }
+            telemetry.update();
             drawAndLogTelemetry(packet);
 
         }
         stopVisionPortal();
+        telemetry.update();
+    }
+
+    protected TrajectoryActionBuilder strafeToOpenGate(TrajectoryActionBuilder actionBuilder, FieldSide fieldSide) {
+
+        if (!shouldOpenGate) {
+            //just return the actionBuilder since we don't need open gate
+            return actionBuilder;
+        }
+
+        Vector2d gatePosition = null;
+        switch (fieldSide) {
+            case BLUE:
+                gatePosition = new Vector2d(0, -52);
+                return actionBuilder.setTangent(0)
+                        .splineToConstantHeading(gatePosition, Math.toRadians(-90)); //to open gate
+            case RED:
+                gatePosition = new Vector2d(0, 52);
+                return actionBuilder.setTangent(0)
+                        .splineToConstantHeading(gatePosition, Math.toRadians(90)); //to open gate
+            default:
+                return actionBuilder;
+        }
     }
 
 
     protected abstract PIDFCoefficients getPidfCoefficients();
+    protected abstract double getCloseOrFar();
+
 
     private void drawAndLogTelemetry(TelemetryPacket packet) {
         Pose2d pose = getCurrentPos(drive);
@@ -152,11 +188,18 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         dashboard.sendTelemetryPacket(packet);
     }
 
-    protected void reverseOuttake() {
-        outtakeMotor1.setVelocity(900);
-        outtakeMotor2.setVelocity(-900);
-        //ensure the outtake has some time to spin up
-        sleep(100);
+    protected void blockDown() {
+        if (getCloseOrFar() == 2) {
+            blockServo.setPosition(0.02);
+        }
+        else {
+            blockServo.setPosition(0);
+        }
+
+    } // teleop works better?
+
+    protected void blockUp() {
+        blockServo.setPosition(0.8);
     }
 
     protected int convertToTicks(double degree) {
@@ -215,7 +258,38 @@ public abstract class AbstractFullAuto extends LinearOpMode {
     }
 
     protected abstract Action getPathAction();
+    protected abstract double getTurretDegreeOffset();
 
+    protected Action getBlockUpAction() {
+        if (getCloseOrFar() == 1){
+            return new SequentialAction(
+                    new InstantAction(() -> this.intakeMotor.setVelocity(0)),
+                    new SleepAction(0.2),
+                    new InstantAction(() -> this.setOuttakeSpeed(lowVelocity)),
+                    new SleepAction(0.2),
+                    new InstantAction(this::blockUp)
+            );
+        }
+        else {
+            return new SequentialAction(
+                    new InstantAction(() -> this.intakeMotor.setVelocity(0)),
+                    new SleepAction(0.2),
+                    new InstantAction(() -> this.setOuttakeSpeed(highVelocity)),
+                    new SleepAction(0.2),
+                    new InstantAction(this::blockUp)
+            );
+        }
+
+
+    }
+
+    protected Action getBlockDownAction() {
+        return new SequentialAction(
+                new SleepAction(0.3),
+                new InstantAction(this::blockDown)
+        );
+
+    }
     protected Action getLaunchAction() {
 
 //        Action launchAction = new Action() {
@@ -227,59 +301,103 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 //            }
 //        };
 //        return launchAction;
+        return new SequentialAction(
+                new SleepAction(0.2),
 
-        return telemetryPacket -> {
-
-            this.sleep(350);
-            this.intakeMotor.setPower(1);
-            this.sleep(2000);
-//            this.intakeMotor.setPower(0);
-
-            return false;
-        };
+                // above is for testing
+                new InstantAction(() -> this.intakeMotor.setPower(1)),
+                new SleepAction(1.2),
+                new InstantAction(() -> intakeMotor.setPower(0))
+        );
     }
 
     protected void setOuttakeSpeed(double outtakeSpeed) {
         outtakeMotor1.setVelocity(-1 * outtakeSpeed);
         outtakeMotor2.setVelocity(outtakeSpeed);
-
-        this.sleep(200);
     }
 
     protected Action getAimAction(Double turretInitialTargetDegree, Double hoodInitialTargetPosition, boolean runAprilTagAim) {
-        return telemetryPacket -> {
+        boolean needToWaitForTurretOrHoodServo = false;
 
-            boolean needToWaitForTurretOrHoodServo = false;
+        if (turretInitialTargetDegree != null || hoodInitialTargetPosition != null) {
+            needToWaitForTurretOrHoodServo = true;
+        }
 
+        Action moveTurretOrHoodToInitialPostionAction = telemetryPacket -> {
             //First move the turret and hood to a ballpark target position/angle
             if (turretInitialTargetDegree != null) {
                 this.moveTurret(convertToTicks(turretInitialTargetDegree));
-                needToWaitForTurretOrHoodServo = true;
             }
 
             if (hoodInitialTargetPosition != null) {
                 this.moveHoodServo(hoodInitialTargetPosition);
-                needToWaitForTurretOrHoodServo = true;
             }
+            return false;
+        };
 
+        Action aprilTagAimAtTargetAction = telemetryPacket -> {
             if (this.useAprilTag && runAprilTagAim) {
-                if (needToWaitForTurretOrHoodServo) {
-                    // Give the turret and hoodSevo some time run to the initial target position before we detect april tag
-                    sleep(300);
-                }
-                sleep(500);
                 //Further adjust the turret and hood angles by AprilTag detection and calculation
                 this.detectAprilTag();
                 this.aimAtTarget();  //aimAtTarget will move both turret and hood
             }
-            return false;
+            return false;  // If we don't use aprilTag, will return right away, i.e. do nothing
         };
+
+        if (needToWaitForTurretOrHoodServo) {
+            if (this.useAprilTag && runAprilTagAim) {
+                return new SequentialAction(
+                        moveTurretOrHoodToInitialPostionAction,
+                        new SleepAction(0.3),   // need to wait since we move turret in the previous action
+                        aprilTagAimAtTargetAction,
+                        new SleepAction(0.2));
+            }
+
+            return new SequentialAction(
+                    moveTurretOrHoodToInitialPostionAction,
+                    new SleepAction(0.3));  // need to wait since we move turret in the previous action
+
+        } else {
+            if (this.useAprilTag && runAprilTagAim) {
+                return new SequentialAction(
+                        aprilTagAimAtTargetAction,
+                        new SleepAction(0.2));
+            }
+            return new NullAction();
+        }
+
     }
 
+    protected Action getStopIntakeStartOuttakeAction() {
+        if (getCloseOrFar() == 1) {
+            return new SequentialAction(
+                    new InstantAction(() -> this.intakeMotor.setVelocity(0)),
+                    new SleepAction(0.2),
+                    new InstantAction(() -> this.setOuttakeSpeed(lowVelocity))
+            );
+        }
+        else  {
+            return new SequentialAction(
+                    new InstantAction(() -> this.intakeMotor.setVelocity(0)),
+                    new SleepAction(0.2),
+                    new InstantAction(() -> this.setOuttakeSpeed(highVelocity))
+            );
+        }
+
+
+    }
+
+    protected Action getStartIntakeStopOuttakeAction() {
+        return new SequentialAction(
+                new InstantAction(() -> this.intakeMotor.setPower(1)),
+                new SleepAction(0.2),
+                new InstantAction(() -> this.setOuttakeSpeed(0))
+        );
+
+    }
     protected Action getIntakeAction() {
         return telemetryPacket -> {
             intakeMotor.setPower(1);
-
             return false;
         };
     }
@@ -293,8 +411,17 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         intakeMotor = hardwareMap.get(DcMotorEx.class,"intakemotor");
         hoodServo = hardwareMap.get(Servo.class, "hoodservo");
         blockServo = hardwareMap.get(Servo.class, "blockservo");
+//        driver = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
+        //TODO: remember to check if this assumes start pos is 0,0
 
-        blockServo.setPosition(1);//0.5 is down, 1 is up
+//        driver.resetPosAndIMU();
+
+        blockServo.setPosition(0.8);//0.5 is down, 1 is up
+        VoltageSensor batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
+        double voltage = batteryVoltageSensor.getVoltage();
+        double kV = voltage /12;
+
+//        NEW_F_CLOSE = 15.3/kV; //TODO: NEED TO TUNE P AND F FOR CLOSE SIDE
 
         resetMotorPosition();
     }
@@ -352,7 +479,7 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         telemetry.addData("turretpos", turretMotor.getCurrentPosition());
         telemetry.addData("turrettargetpos", turretMotor.getTargetPosition());
 
-        telemetry.update();
+//        telemetry.addData("estimated pos:", driver.getPosition());
     }
     protected void detectAprilTag() {
 
@@ -400,23 +527,31 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
         if (isTargetFound()) {//&& !turretMotor.isBusy()
             // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
-            double rangeError = (this.getDetectedAprilTag().ftcPose.range - DESIRED_DISTANCE);
+            double range = this.getDetectedAprilTag().ftcPose.range;
             double headingError = this.getDetectedAprilTag().ftcPose.bearing;
             double yawError = this.getDetectedAprilTag().ftcPose.yaw;
 
-            int deltaPosition = convertToTicks(headingError);
-            //cap the delta to maximum 2 clicks
-//            deltaPosition = Range.clip(deltaPosition, 0, 2);
+            telemetry.addData("HeadingError: ", headingError);
+
+            double offsetDegree = getTurretDegreeOffset(); // default to DESIRED_TAG_ID_BLUE both blue side working
+
+
+            double headingErrorAfterOffset = headingError + offsetDegree;
+            headingErrorAfterOffset = Range.clip(headingErrorAfterOffset, -40, 40);
+
+            int deltaPosition = convertToTicks(headingErrorAfterOffset);
             int targetPosition = deltaPosition + currentPosition;
 
-            telemetry.addLine("HeadingError: " + headingError);
-            telemetry.addLine("Moving turret");
             telemetry.addData("Target motor pos", targetPosition);
 
-            //move turret if the heading error > 3 degree
-            if (Math.abs(headingError) > 3) {// && Math.abs(targetPosition) < convertToTicks(70)
-                int offsetPosition = 5;
-                this.moveTurret(targetPosition + offsetPosition);
+            //For far side, move turret if the headingErrorAfterOffset > 1 degree
+
+            if (range >= 85 && Math.abs(headingErrorAfterOffset) > 1) { // For far side
+                this.moveTurret(targetPosition);
+            }
+            //For close side, move turret if the headingErrorAfterOffset > 1 degree
+            else if (range > 0 && range < 85 && Math.abs(headingErrorAfterOffset) > 1) { // For close side
+                this.moveTurret(targetPosition);
             }
             else {
                 telemetry.addLine("Target aimed, no need to move, stop the motor");
@@ -429,14 +564,13 @@ public abstract class AbstractFullAuto extends LinearOpMode {
         } else {
             telemetry.addLine("Target not found or turretMotor is busy");
 
-
         }
     }
 
     protected void moveTurret(int targetPosition) {
+        telemetry.addLine("Moving turret");
         turretMotor.setTargetPosition(targetPosition);
         turretMotor.setPower(MAX_TURRET_TURN_POWER);
-
     }
 
     private void doAprilDetection() {
@@ -485,13 +619,12 @@ public abstract class AbstractFullAuto extends LinearOpMode {
 
     // Calculate the hood sevo position by liner model. We can't really calculate the position via geometry based on the
     // current position as the sevo doesn't have real current position returned from hardware.
-    private double calculateHoodPositionByAprilTagRange(double range) {
+    protected double calculateHoodPositionByAprilTagRange(double range) {
         return HOOD_K * range + HOOD_B;
     }
 
 
     protected void moveHoodServo(double targetPosition) {
-        telemetry.addData("HoodServo", "Trying to set position %f", targetPosition);
 
         double thePosition = Range.clip(targetPosition, HOOD_MIN_POSITION, HOOD_MAX_POSITION);
         telemetry.addData("HoodServo", "Setting position %f", thePosition);
